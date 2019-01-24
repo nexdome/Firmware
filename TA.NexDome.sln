@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28407.52
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TA.NexDome.Rotator", "TA.NexDome.Rotator\TA.NexDome.Rotator.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AdvancedStepper", "AdvancedStepper\AdvancedStepper.vcxitems", "{893A4046-8112-4D9C-A69C-C1D11554760F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TA.NexDome.Shutter", "TA.NexDome.Shutter\TA.NexDome.Shutter.vcxproj", "{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharedCode", "SharedCode\SharedCode.vcxitems", "{DEB85C95-F303-4660-A4D9-713323FFA19A}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		AdvancedStepper\AdvancedStepper.vcxitems*{893a4046-8112-4d9c-a69c-c1d11554760f}*SharedItemsImports = 9
+		AdvancedStepper\AdvancedStepper.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		SharedCode\SharedCode.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		SharedCode\SharedCode.vcxitems*{deb85c95-f303-4660-a4d9-713323ffa19a}*SharedItemsImports = 9
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.ActiveCfg = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.Build.0 = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.ActiveCfg = Release|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.Build.0 = Release|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|x86.ActiveCfg = Debug|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|x86.Build.0 = Debug|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|x86.ActiveCfg = Release|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DF46B522-DC99-4BA6-9FB4-83AB03DD2946}
+	EndGlobalSection
+EndGlobal

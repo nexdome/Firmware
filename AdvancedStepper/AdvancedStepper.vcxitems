@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{893a4046-8112-4d9c-a69c-c1d11554760f}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)readme.txt" />
+    <Text Include="$(MSBuildThisFileDirectory)library.properties" />
+    <Text Include="$(MSBuildThisFileDirectory)AdvancedStepper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- <ClInclude Include="$(MSBuildThisFileDirectory)AdvancedStepper.h" /> -->
+    <ClInclude Include="$(MSBuildThisFileDirectory)CounterTimer1StepGenerator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IStepGenerator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IStepSequencer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MicrosteppingMotor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AdvancedStepper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CounterTimer1StepGenerator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MicrosteppingMotor.cpp" />
+  </ItemGroup>
+</Project>
