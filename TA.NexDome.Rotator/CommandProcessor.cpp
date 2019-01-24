@@ -4,7 +4,7 @@
 
 bool Command::IsMotorCommand()
 	{
-	return TargetDevice == '1' || TargetDevice == '2';
+	return TargetDevice == 'R' || TargetDevice == 'S';
 	}
 
 bool Command::IsSystemCommand()
@@ -12,9 +12,10 @@ bool Command::IsSystemCommand()
 	return TargetDevice == '0';
 	}
 
-CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator)
+CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings)
 	{
 	this->rotator = &rotator;
+	this->settings = &settings;
 	}
 
 MicrosteppingMotor* CommandProcessor::GetMotor(Command& command)
@@ -30,14 +31,6 @@ Response CommandProcessor::HandleCommand(Command& command)
 		if (command.Verb == "MI") return HandleMI(command);	// Move motor in
 		if (command.Verb == "MO") return HandleMO(command);	// Move motor out
 		if (command.Verb == "AW") return HandleAW(command);	// Set limit of travel
-		if (command.Verb == "BR") return HandleBR(command);	// Set limit of travel
-		if (command.Verb == "BW") return HandleBW(command);	// Set limit of travel
-		if (command.Verb == "CS") return HandleCS(command);	// Calibration start
-		if (command.Verb == "CR") return HandleCR(command);	// Read calibration state
-		if (command.Verb == "CE") return HandleCE(command);	// Abort calibration
-		if (command.Verb == "Cl") return HandleCl(command);	// Set FSR low threshold
-		if (command.Verb == "CL") return HandleCL(command);	// Set FSR high threshold
-		if (command.Verb == "Cv") return HandleCv(command);	// Set calibration slow speed
 		if (command.Verb == "SW") return HandleSW(command);	// Stop motor
 		if (command.Verb == "PR") return HandlePR(command);	// Position read
 		if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
@@ -49,9 +42,7 @@ Response CommandProcessor::HandleCommand(Command& command)
 		}
 	if (command.IsSystemCommand())
 		{
-		if (command.Verb == "ER") return HandleER(command);	// Read force-sensitive resistor
 		if (command.Verb == "FR") return HandleFR(command);	// Read firmware version
-		if (command.Verb == "TR") return HandleTR(command);	// Read temperature probe
 		if (command.Verb == "X") return HandleX(command);	// Get movement status
 		if (command.Verb == "ZD") return HandleZD(command);	// Reset to factory settings (load defaults).
 		if (command.Verb == "ZR") return HandleZR(command);	// Load settings from persistent storage
@@ -104,20 +95,20 @@ Response CommandProcessor::HandleSW(Command & command)
 
 Response CommandProcessor::HandleZW(Command & command)
 	{
-	//settings->Save();
+	settings->Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleZR(Command & command)
 {
-	//*settings = PersistentSettings::Load();
+	*settings = PersistentSettings::Load();
 	return Response::FromSuccessfulCommand(command);
 }
 
 Response CommandProcessor::HandleZD(Command & command)
 	{
-	//*settings = PersistentSettings();
-	//settings->Save();
+	*settings = PersistentSettings();
+	settings->Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 

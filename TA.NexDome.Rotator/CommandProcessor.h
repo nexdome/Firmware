@@ -10,6 +10,7 @@
 
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
+#include "PersistentSettings.h"
 
 struct Command
 	{
@@ -52,7 +53,7 @@ struct Response
 class CommandProcessor
 	{
 	public:
-		CommandProcessor(MicrosteppingMotor& rotator);
+		CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings);
 		Response HandleCommand(Command& command);
 		static int32_t MicrostepsToSteps(int32_t microsteps);
 		static int32_t StepsToMicrosteps(int32_t wholesteps);
@@ -60,16 +61,6 @@ class CommandProcessor
 	private:
 		MicrosteppingMotor * GetMotor(Command& command);		// Gets the motor addressed by the command
 		Response HandleAW(Command & command);	// AW - Acceleration ramp time write
-		Response HandleBR(Command & command);	// Backlash steps read
-		Response HandleBW(Command & command);	// Backlash steps write
-		Response HandleCS(Command & command);	// Calibration start
-		Response HandleCR(Command & command);	// Calibration state read
-		Response HandleCE(Command & command);	// Calibration end (abort/cancel)
-		Response HandleCl(Command & command);	// Calibration sensor first contact threshold
-		Response HandleCL(Command & command);	// Calibration sensor hard stop threshold
-		Response HandleCv(Command & command);	// Calibration slow motion velocity [sic] steps/sec
-		Response HandleCW(Command & command);	// Calibration state write
-		Response HandleER(Command & command);	// FSR value read
 		Response HandleFR(Command & command);	// Firmware version read
 		Response HandleMI(Command & command);	// Move motor in
 		Response HandleMO(Command & command);	// Move motor out
@@ -78,7 +69,6 @@ class CommandProcessor
 		Response HandleRR(Command & command);	// Range (limit of travel) read
 		Response HandleRW(Command & command);	// Range (limit of travel) write
 		Response HandleSW(Command & command);	// Stop write (motor emergency stop)
-		Response HandleTR(Command & command);	// Temperature read (in Celsius)
 		Response HandleVR(Command & command);	// Velocity [sic] read (motor maximum speed in microsteps/sec)
 		Response HandleVW(Command & command);	// Velocity [sic] write (microsteps/sec)
 		Response HandleX(Command & command);	// Movement status read
@@ -86,7 +76,10 @@ class CommandProcessor
 		Response HandleZR(Command & command);	// EEPROM read (load settings)
 		Response HandleZD(Command & command);	// Reset to factory settings (clears both EEPROM and working settings)
 		MicrosteppingMotor *rotator;
+		PersistentSettings *settings;
 	};
 
 extern Response DispatchCommand(Command& command);
+extern Response DispatchCommand(char *buffer, unsigned int charCount);
+
 #endif

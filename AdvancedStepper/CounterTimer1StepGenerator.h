@@ -11,8 +11,8 @@
 
 #include "IStepGenerator.h"
 
-#define Fmax	(16000000)
-#define Fmin	(244.1443503)
+#define Fmax	(F_CPU) 
+#define Fmin	(F_CPU / 65535L)
 
 class CounterTimer1StepGenerator : public IStepGenerator
 	{
