@@ -11,26 +11,51 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TA.NexDome.Shutter", "TA.Ne
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharedCode", "SharedCode\SharedCode.vcxitems", "{DEB85C95-F303-4660-A4D9-713323FFA19A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4BFADFB-E20F-4030-92E8-5401C303E3E8}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		License.md = License.md
+		ReadMe.md = ReadMe.md
+		TA.NexDome.sln.DotSettings = TA.NexDome.sln.DotSettings
+		Upload-Firmware.ps1 = Upload-Firmware.ps1
+		XBee Data Sheet 43-1431_v1.pdf = XBee Data Sheet 43-1431_v1.pdf
+		XBee.md = XBee.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TA.NexDome.FirmwareUpdater", "TA.NexDome.FirmwareUpdater\TA.NexDome.FirmwareUpdater.csproj", "{0264E8BB-A223-41E3-BB28-5EBA1DC42441}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		AdvancedStepper\AdvancedStepper.vcxitems*{893a4046-8112-4d9c-a69c-c1d11554760f}*SharedItemsImports = 9
 		AdvancedStepper\AdvancedStepper.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{deb85c95-f303-4660-a4d9-713323ffa19a}*SharedItemsImports = 9
+		AdvancedStepper\AdvancedStepper.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
+		SharedCode\SharedCode.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.ActiveCfg = Debug|Win32
-		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.Build.0 = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|Any CPU.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.ActiveCfg = Release|Win32
-		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.Build.0 = Release|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|x86.ActiveCfg = Debug|Win32
-		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|x86.Build.0 = Debug|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|Any CPU.ActiveCfg = Release|Win32
 		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|x86.ActiveCfg = Release|Win32
-		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|x86.Build.0 = Release|Win32
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|x86.Build.0 = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.ActiveCfg = Release|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

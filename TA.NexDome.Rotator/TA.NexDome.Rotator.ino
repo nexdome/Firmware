@@ -1,4 +1,7 @@
 #if defined(ARDUINO) && ARDUINO >= 100
+#include "Command.h"
+#include "Command.h"
+#include "XbeeState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -7,6 +10,7 @@
 #include "NexDome.h"
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
+#include <XBee.h>
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 
@@ -14,8 +18,17 @@ auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto rotatorMotor = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, stepGenerator, settings.rotator);
 auto commandProcessor = CommandProcessor(rotatorMotor, settings);
+auto &xbee = Serial1;
 
-
+void XbeeDiagnostic()
+{
+	auto available = xbee.available();
+	if (available>0)
+	{
+		const auto input = xbee.read();
+		Serial.write(input);
+	}
+}
 
 void HandleSerialCommunications()
 {
@@ -99,6 +112,7 @@ Response DispatchCommand(char *buffer, unsigned int charCount)
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(115200);
+	xbee.begin(9600);
 	rotatorMotor.ReleaseMotor();
 	interrupts();
 }
@@ -107,4 +121,5 @@ void setup() {
 void loop() {
 	rotatorMotor.Loop();
 	HandleSerialCommunications();
+	XbeeDiagnostic();
 }

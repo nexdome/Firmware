@@ -11,44 +11,8 @@
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
 #include "PersistentSettings.h"
-
-struct Command
-	{
-	String Verb;
-	char TargetDevice;
-	int32_t StepPosition;	// Target step position for a move command
-	bool IsMotorCommand();
-	bool IsSystemCommand();
-	};
-
-struct Response
-	{
-	static const String Terminator;
-	String Message;
-	bool success;
-
-	/*
-		Creates an error response.
-	*/
-	static Response Error();
-
-	/*
-		Creates a success response by echoing the command verb,
-		terminated with a '#'.
-	*/
-	static Response FromSuccessfulCommand(Command& command);
-
-	/*
-		Creates a response consisting of the command verb,
-		plus an unsigned integer (usually a motor step position).
-	*/
-	static Response FromPosition(Command& command, uint32_t position);
-
-	/*
-		Creates a response consisting of just an integer and the terminator.
-	*/
-	static Response FromInteger(Command& command, int i);
-	};
+#include "Command.h"
+#include "Response.h"
 
 class CommandProcessor
 	{
@@ -78,6 +42,7 @@ class CommandProcessor
 		MicrosteppingMotor *rotator;
 		PersistentSettings *settings;
 	};
+
 
 extern Response DispatchCommand(Command& command);
 extern Response DispatchCommand(char *buffer, unsigned int charCount);

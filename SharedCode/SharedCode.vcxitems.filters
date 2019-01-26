@@ -5,5 +5,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)NexDome.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Command.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Response.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\TA.NexDome.Rotator\XbeeState.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\TA.NexDome.Rotator\XbeeState.cpp" />
   </ItemGroup>
 </Project>

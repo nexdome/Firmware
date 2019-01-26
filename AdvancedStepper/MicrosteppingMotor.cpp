@@ -42,7 +42,7 @@ MicrosteppingMotor::MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8
 
 /*
 The Step method will be called from an interrupt service routine, so
-operations must be a short as possible and modify as little state as possible.
+operations must be as short as possible and modify as little state as possible.
 */
 void MicrosteppingMotor::Step(bool state)
 	{
@@ -50,7 +50,7 @@ void MicrosteppingMotor::Step(bool state)
 	if (state)
 		{
 		// Increment position on leading edge.
-		configuration->currentPosition += state ? direction : 0;
+		configuration->currentPosition += direction;
 		}
 	else
 		{
