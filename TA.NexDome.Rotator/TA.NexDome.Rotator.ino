@@ -1,7 +1,5 @@
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "Command.h"
-#include "Command.h"
-#include "XbeeState.h"
+#include "XBeeApiDetectShutterState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -10,7 +8,7 @@
 #include "NexDome.h"
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
-#include <XBee.h>
+#include <XBee-Arduino_library/XBee.h>
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 
@@ -18,15 +16,18 @@ auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto rotatorMotor = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, stepGenerator, settings.rotator);
 auto commandProcessor = CommandProcessor(rotatorMotor, settings);
-auto &xbee = Serial1;
+auto &xbeeSerial = Serial1;
+auto& host = Serial;
+const std::vector<String> xbeeInitSequence = { "CE1","ID6FBF","CH0C","MYD0","DH0","DHFFFF","A25","SM0","AP2" };
+XBee xbeeApi = XBee();
 
 void XbeeDiagnostic()
 {
-	auto available = xbee.available();
+	auto available = xbeeSerial.available();
 	if (available>0)
 	{
-		const auto input = xbee.read();
-		Serial.write(input);
+		const auto input = xbeeSerial.read();
+		host.write(input);
 	}
 }
 
@@ -35,9 +36,9 @@ void HandleSerialCommunications()
 	static char rxBuffer[SERIAL_RX_BUFFER_SIZE];
 	static unsigned int rxIndex = 0;
 
-	if (Serial.available() <= 0)
+	if (host.available() <= 0)
 		return;	// No data available.
-	auto rx = Serial.read();
+	auto rx = host.read();
 	if (rx < 0)
 		return;	// No data available.
 	char rxChar = (char)rx;
@@ -51,7 +52,7 @@ void HandleSerialCommunications()
 		if (rxIndex > 0)
 		{
 			auto response = DispatchCommand(rxBuffer, rxIndex);
-			Serial.println(response.Message);
+			host.println(response.Message);
 		}
 		rxIndex = 0;
 		break;
@@ -111,15 +112,29 @@ Response DispatchCommand(char *buffer, unsigned int charCount)
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-	Serial.begin(115200);
-	xbee.begin(9600);
 	rotatorMotor.ReleaseMotor();
+	host.begin(115200);
+	xbeeSerial.begin(9600);
+	xbeeApi.setSerial(xbeeSerial);
+
+
 	interrupts();
 }
+
+void HandleXbeeReceive()
+	{
+	xbeeApi.readPacket();
+	if (!xbeeApi.getResponse().isAvailable())
+		return;
+
+	// Complete XBee API packet received.
+	// ToDo: interpret the received response and trigger the XBee state machine.
+	};
 
 // the loop function runs over and over again until power down or reset
 void loop() {
 	rotatorMotor.Loop();
 	HandleSerialCommunications();
+	HandleXbeeReceive();
 	XbeeDiagnostic();
 }

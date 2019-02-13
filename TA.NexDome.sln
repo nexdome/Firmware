@@ -22,13 +22,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		XBee.md = XBee.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TA.NexDome.FirmwareUpdater", "TA.NexDome.FirmwareUpdater\TA.NexDome.FirmwareUpdater.csproj", "{0264E8BB-A223-41E3-BB28-5EBA1DC42441}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TA.NexDome.FirmwareUpdater", "TA.NexDome.FirmwareUpdater\TA.NexDome.FirmwareUpdater.csproj", "{0264E8BB-A223-41E3-BB28-5EBA1DC42441}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeTerminal", "XBeeTerminal\XBeeTerminal.vcxproj", "{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Timer", "Timer\Timer.vcxitems", "{A7498378-97AB-4F1D-AF51-37412422EF0F}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		AdvancedStepper\AdvancedStepper.vcxitems*{893a4046-8112-4d9c-a69c-c1d11554760f}*SharedItemsImports = 9
+		Timer\Timer.vcxitems*{a7498378-97ab-4f1d-af51-37412422ef0f}*SharedItemsImports = 9
 		AdvancedStepper\AdvancedStepper.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		Timer\Timer.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{deb85c95-f303-4660-a4d9-713323ffa19a}*SharedItemsImports = 9
 		AdvancedStepper\AdvancedStepper.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
@@ -56,6 +62,12 @@ Global
 		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.ActiveCfg = Release|Any CPU
 		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.Build.0 = Release|Any CPU
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|x86.ActiveCfg = Debug|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|x86.Build.0 = Debug|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|Any CPU.ActiveCfg = Release|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|x86.ActiveCfg = Release|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

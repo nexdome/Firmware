@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+  <loop>false</loop>
+  <repeat_times>1</repeat_times>
+  <repeat_period>500</repeat_period>
+  <frames_list>
+    <frame name="Hello from Rotator">
+      <payload>7E00221001000000000000FFFF00D1000048656C6C6F2066726F6D20526F7461746F720D0A35</payload>
+    </frame>
+    <frame name="Notify Device Associated">
+      <payload>7E00028A0273</payload>
+    </frame>
+    <frame name="Notify Device Disassociated">
+      <payload>7E00028A0372</payload>
+    </frame>
+  </frames_list>
+</data>

@@ -1,7 +1,25 @@
 Summary of XBee Operation
-=========================
+=====================
 
-The XBees work as a Personal Area Network with a Coordinator. The rotator unit is the coordinator and the shutter unit is allowed to associate with the rotator. The settings used are:
+Key Requirements
+----------------
+
+The goal of the XBee implementation is to ensure a robust, error tolerant communication between the rotator module and the shutter module. The modules must be able to easily find each other and communicate, and to verify that communication has been successful, while avoiding any possibility of interfering with neighbouring installations.
+
+By default, XBees are configured in a "transparent" mode where any data sent to one is relayed to all others on the network. This mode doesn't really address any of the key aims, except that it works simply and without much configuration. In particular, it is likely to cause problems with multiple installations.
+
+Proposed Method of Operation
+----------------------------
+
+We will assume that all of the fevices in one dome are on the same PAN (Personal Area Network) and that devices in different domes will be on different PANs.
+
+The rotator module will assume the role of Coordinator, default PAN ID 0x6FBF, short address 0xD0, with automatic PAN ID reassignment. In this mode, the module will start up and scan for existing PANs, and will choose a PAN that does not conflict.
+
+The Shutter module will assume the role of an Endpoint Device, default PAN ID 0x6FBF, short address 0xD1 and will be configured to associate to the Coordinator with the strongest signal.
+
+Once a shutter module has associated successfully, the Rotator module will be reconfigured to disallow further associations. This should mean that, as long as rotator and shutter modules are powered-on in pairs, the shutter should always associate with the correct rotator.
+
+The XBees will be configured to operate in API mode (rather than transparent mode), so that the PAN can be monitored and communications will be fault-tolerant.
 
 Configuration
 -------------

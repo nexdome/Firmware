@@ -18,13 +18,22 @@
     <None Include="TA.NexDome.Rotator.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="__vm\.TA.NexDome.Rotator.vsarduino.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CommandProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PersistentSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XBeeStateMachine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="__vm\.TA.NexDome.Rotator.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XBeeWaitForOkState.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XBeeApiDetectShutterState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -36,6 +45,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PersistentSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeStateMachine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeStartupRotatorState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeWaitForOkState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeApiDetectShutterState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
