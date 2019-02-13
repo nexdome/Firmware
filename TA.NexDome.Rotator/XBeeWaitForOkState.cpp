@@ -1,24 +1,19 @@
 ﻿#include "XBeeWaitForOkState.h"
-
-XBeeWaitForOkState::XBeeWaitForOkState(XBeeStateMachine& machine) : IXBeeState(machine)
-	{
-	timer.SetDuration(XBEE_AT_GUARD_TIME * 2);
-	}
-
-
+#include "XBeeStartupState.h"
+#include "XBeeApiDetectShutterState.h"
 
 void XBeeWaitForOkState::OnTimerExpired()
 	{
 		if (timer.Expired())
 		{
-		machine.ChangeState(new XBeeStartupRotatorState(machine));
+		machine.ChangeState(new XBeeStartupState(machine));
 		}
 
 	}
 
 void XBeeWaitForOkState::OnEnter()
 	{
-	timer.SetDuration(XBEE_BOOT_TIME_MILLIS);
+	timer.SetDuration(XBEE_AT_GUARD_TIME * 2);
 	}
 
 void XBeeWaitForOkState::OnSerialLineReceived(String& rxData) 

@@ -118,6 +118,8 @@
     <ClInclude Include="CommandProcessor.h" />
     <ClInclude Include="PersistentSettings.h" />
     <ClInclude Include="XBeeApiDetectShutterState.h" />
+    <ClInclude Include="XBeeShutterReadyState.h" />
+    <ClInclude Include="XBeeStartupState.h" />
     <ClInclude Include="XBeeStateMachine.h" />
     <ClInclude Include="XBeeWaitForOkState.h" />
     <ClInclude Include="__vm\.TA.NexDome.Rotator.vsarduino.h" />
@@ -127,7 +129,8 @@
     <ClCompile Include="PersistentSettings.cpp" />
     <ClCompile Include="Response.cpp" />
     <ClCompile Include="XBeeApiDetectShutterState.cpp" />
-    <ClCompile Include="XBeeStartupRotatorState.cpp" />
+    <ClCompile Include="XBeeShutterReadyState.cpp" />
+    <ClCompile Include="XBeeStartupState.cpp" />
     <ClCompile Include="XBeeStateMachine.cpp" />
     <ClCompile Include="XBeeWaitForOkState.cpp" />
   </ItemGroup>

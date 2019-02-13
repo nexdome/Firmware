@@ -1,4 +1,6 @@
 #if defined(ARDUINO) && ARDUINO >= 100
+#include "XBeeStartupState.h"
+#include "XBeeShutterReadyState.h"
 #include "XBeeApiDetectShutterState.h"
 #include "Arduino.h"
 #else
@@ -20,16 +22,7 @@ auto &xbeeSerial = Serial1;
 auto& host = Serial;
 const std::vector<String> xbeeInitSequence = { "CE1","ID6FBF","CH0C","MYD0","DH0","DHFFFF","A25","SM0","AP2" };
 XBee xbeeApi = XBee();
-
-void XbeeDiagnostic()
-{
-	auto available = xbeeSerial.available();
-	if (available>0)
-	{
-		const auto input = xbeeSerial.read();
-		host.write(input);
-	}
-}
+auto machine = XBeeStateMachine(xbeeSerial, host);
 
 void HandleSerialCommunications()
 {
@@ -117,24 +110,13 @@ void setup() {
 	xbeeSerial.begin(9600);
 	xbeeApi.setSerial(xbeeSerial);
 
-
 	interrupts();
+	machine.ChangeState(new XBeeStartupState(machine));
 }
-
-void HandleXbeeReceive()
-	{
-	xbeeApi.readPacket();
-	if (!xbeeApi.getResponse().isAvailable())
-		return;
-
-	// Complete XBee API packet received.
-	// ToDo: interpret the received response and trigger the XBee state machine.
-	};
 
 // the loop function runs over and over again until power down or reset
 void loop() {
 	rotatorMotor.Loop();
 	HandleSerialCommunications();
-	HandleXbeeReceive();
-	XbeeDiagnostic();
+	machine.Loop();
 }

@@ -1,6 +1,6 @@
 #include "XBeeStateMachine.h"
 
-XBeeStateMachine::XBeeStateMachine(HardwareSerial& port) : xbeeSerial(port)
+XBeeStateMachine::XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort) : xbeeSerial(xBeePort), debug(debugPort)
 	{
 	xbeeApi = XBee();
 	xbeeApi.setSerial(xbeeSerial);
@@ -8,7 +8,10 @@ XBeeStateMachine::XBeeStateMachine(HardwareSerial& port) : xbeeSerial(port)
 
 void XBeeStateMachine::Loop()
 	{
-	if (ApiModeEnabled) {}
+	if (ApiModeEnabled)
+		{
+		xbee_api_receive();
+		}
 	else
 		{
 		xbee_serial_receive();
@@ -16,8 +19,15 @@ void XBeeStateMachine::Loop()
 	currentState->Loop();
 	}
 
+void XBeeStateMachine::SendToXbee(String message) const
+	{
+	debug.println(message + " to X");
+	xbeeSerial.print(message);
+	}
+
 void XBeeStateMachine::ChangeState(IXBeeState* newState)
 	{
+	debug.println(newState->name());
 	if (currentState != NULL)
 		currentState->OnExit();
 	newState->OnEnter();
@@ -36,6 +46,28 @@ void XBeeStateMachine::ListenInApiMode()
 	xbeeSerial.begin(115200);
 	}
 
+void XBeeStateMachine::SetShutterAddress(const XBeeAddress64& remote)
+	{
+	shutterAddress = XBeeAddress64(remote);
+	}
+
+/*
+ * Returns the next frame ID and ensures that it is never zero.
+ * Frame ID of zero has special connotations in XBee protocol.
+ */
+unsigned XBeeStateMachine::GetNextFrameId()
+	{
+	auto next = ++frameId;
+	if (next == 0)
+		next = ++frameId;
+	return next;
+	}
+
+void XBeeStateMachine::SendXbeeApiFrame(XBeeRequest& request)
+	{
+	xbeeApi.send(request);
+	}
+
 void XBeeStateMachine::xbee_serial_receive()
 	{
 	static String rxBuffer;
@@ -45,35 +77,47 @@ void XBeeStateMachine::xbee_serial_receive()
 	if (rx < 0)
 		return; // Nothing read.
 	char ch = static_cast<char>(rx);
-	if (ch == '\n')
-	{
+	debug.println(ch);
+	if (ch == 0x0D)
+		{
+		debug.println(rxBuffer + " from X");
 		currentState->OnSerialLineReceived(rxBuffer);
 		rxBuffer = String();
-	}
+		}
 	else
 		rxBuffer.concat(ch);
 	}
 
+union rxResponses
+	{
+	Rx64Response rx64;
+	Rx16Response rx16;
+	};
+
 void XBeeStateMachine::xbee_api_receive()
 	{
-	xbee.readPacket();
+	// Reusable response objects for responses we expect to handle.
+	static auto xbeeResponse = XBeeResponse();
+	static rxResponses response = {Rx64Response()};
 
-	if (xbee.getResponse().isAvailable()) {
+	xbeeApi.readPacket();
+	if (xbeeApi.getResponse().isAvailable())
+		{
 		// got something
 
-		if (xbee.getResponse().getApiId() == RX_16_RESPONSE || xbee.getResponse().getApiId() == RX_64_RESPONSE) {
+		if (xbeeApi.getResponse().getApiId() == RX_16_RESPONSE || xbeeApi.getResponse().getApiId() == RX_64_RESPONSE)
+			{
 			// got a rx packet
 
-			if (xbee.getResponse().getApiId() == RX_16_RESPONSE) {
-				xbee.getResponse().getRx16Response(rx16);
-				option = rx16.getOption();
-				data = rx16.getData(0);
+			if (xbeeApi.getResponse().getApiId() == RX_16_RESPONSE)
+				{
+				xbeeApi.getResponse().getRx16Response(response.rx16);
+				}
+			else
+				{
+				xbeeApi.getResponse().getRx64Response(response.rx64);
+				currentState->OnApiRx64FrameReceived(response.rx64);
+				}
 			}
-			else {
-				xbee.getResponse().getRx64Response(rx64);
-				option = rx64.getOption();
-				data = rx64.getData(0);
-			}
+		}
 	}
-
-IXBeeState::~IXBeeState() = default;

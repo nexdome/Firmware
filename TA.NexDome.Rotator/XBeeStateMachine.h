@@ -10,7 +10,6 @@
 #endif
 
 #include "NexDome.h"
-#include "Command.h"
 #include "Timer.h"
 #include <XBee-Arduino_library/XBee.h>
 
@@ -19,22 +18,27 @@ class IXBeeState;
 class XBeeStateMachine
 {
 public:
-	XBeeStateMachine(HardwareSerial& serialPort);
+	XBeeStateMachine(HardwareSerial& serialPort, Stream& debugPort);
 	void Loop();
-	void SendToXbee(String message);
+	void SendToXbee(String message) const;
 	void ChangeState(IXBeeState* newState);
 	void ListenInAtCommandMode();
 	void ListenInApiMode();
+	void SetShutterAddress(const XBeeAddress64& remote);
+	unsigned int GetNextFrameId();
+void SendXbeeApiFrame(XBeeRequest& request);
 
 private:
 	void xbee_serial_receive();
 	void xbee_api_receive();
 	HardwareSerial& xbeeSerial;
 	XBee xbeeApi;
+	XBeeAddress64 shutterAddress;
 	IXBeeState* currentState;
 	unsigned long startTime;
 	bool ApiModeEnabled = false;
-	//friend class XBeeStartupRotatorState;
+	unsigned int frameId = 1;
+	Stream& debug;
 };
 
 
@@ -42,28 +46,20 @@ class IXBeeState
 {
 public:
 	// State machine "plumbing"
+	IXBeeState(XBeeStateMachine& machine) : machine(machine) {}
+	virtual ~IXBeeState() = default;
 	virtual String name() = 0;
 	virtual void Loop() { if (timer.Expired()) OnTimerExpired(); }
 	virtual void OnExit() {};
 	virtual void OnEnter() {};
-	IXBeeState(XBeeStateMachine& machine) : machine(machine) {}
-	virtual ~IXBeeState();
 	// State machine triggers
 	virtual void OnTimerExpired() {};
 	virtual void OnSerialLineReceived(String& rxData) {};
 	virtual void OnApiRx64FrameReceived(Rx64Response& frame) {};
+	virtual void SendMessage(Tx64Request& message) {};
 protected:
 	XBeeStateMachine& machine;
 	Timer timer;
 };
 
-class XBeeStartupRotatorState : public IXBeeState
-{
-public:
-	String name() override { return "Start"; };
-	void OnEnter() override;
-	void Loop() override;
-	void OnTimerExpired() override;
-	XBeeStartupRotatorState(XBeeStateMachine& machine);
-};
 #endif
