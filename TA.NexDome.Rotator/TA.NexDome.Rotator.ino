@@ -1,6 +1,6 @@
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "XBeeStartupState.h"
-#include "XBeeShutterReadyState.h"
+#include "XBeeShutterOnlineState.h"
 #include "XBeeApiDetectShutterState.h"
 #include "Arduino.h"
 #else
@@ -16,8 +16,8 @@
 
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
-auto rotatorMotor = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, stepGenerator, settings.rotator);
-auto commandProcessor = CommandProcessor(rotatorMotor, settings);
+auto stepper = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, stepGenerator, settings.motor);
+auto commandProcessor = CommandProcessor(stepper, settings);
 auto &xbeeSerial = Serial1;
 auto& host = Serial;
 const std::vector<String> xbeeInitSequence = { "CE1","ID6FBF","CH0C","MYD0","DH0","DHFFFF","A25","SM0","AP2" };
@@ -105,7 +105,7 @@ Response DispatchCommand(char *buffer, unsigned int charCount)
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-	rotatorMotor.ReleaseMotor();
+	stepper.ReleaseMotor();
 	host.begin(115200);
 	xbeeSerial.begin(9600);
 	xbeeApi.setSerial(xbeeSerial);
@@ -116,7 +116,7 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	rotatorMotor.Loop();
+	stepper.Loop();
 	HandleSerialCommunications();
 	machine.Loop();
 }

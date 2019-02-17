@@ -59,6 +59,7 @@
   <ImportGroup Label="Shared">
     <Import Project="..\AdvancedStepper\AdvancedStepper.vcxitems" Label="Shared" />
     <Import Project="..\SharedCode\SharedCode.vcxitems" Label="Shared" />
+    <Import Project="..\Timer\Timer.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -114,14 +115,31 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommandProcessor.h" />
+    <ClInclude Include="PersistentSettings.h" />
+    <ClInclude Include="XBeeAssociatedState.h" />
+    <ClInclude Include="XBeeStartupState.h" />
+    <ClInclude Include="XBeeStateMachine.h" />
+    <ClInclude Include="XBeeWaitForAssociationState.h" />
+    <ClInclude Include="XBeeWaitForCommandModeState.h" />
     <ClInclude Include="__vm\.TA.NexDome.Shutter.vsarduino.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandProcessor.cpp" />
+    <ClCompile Include="PersistentSettings.cpp" />
+    <ClCompile Include="Response.cpp" />
+    <ClCompile Include="XBeeAssociatedState.cpp" />
+    <ClCompile Include="XBeeStartupState.cpp" />
+    <ClCompile Include="XBeeStateMachine.cpp" />
+    <ClCompile Include="XBeeWaitForAssociationState.cpp" />
+    <ClCompile Include="XBeeWaitForCommandModeState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties arduino.upload.port="COM10" />
+      <UserProperties arduino.upload.port="COM12" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

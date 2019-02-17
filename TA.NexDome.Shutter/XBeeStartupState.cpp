@@ -1,6 +1,7 @@
 
 #include "XBeeStartupState.h"
 #include "XBeeWaitForCommandModeState.h"
+#include "NexDome.h"
 
 String XBeeStartupState::name() { return "Start"; }
 

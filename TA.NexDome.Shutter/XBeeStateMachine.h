@@ -9,9 +9,8 @@
 #include "WProgram.h"
 #endif
 
-#include "NexDome.h"
-#include "Timer.h"
 #include <XBee-Arduino_library/XBee.h>
+#include "Timer.h"
 
 class IXBeeState;
 
@@ -41,18 +40,7 @@ private:
 	Stream& debug;
 };
 
-class IXBeeStateTriggers
-	{
-	virtual void OnTimerExpired() {};
-	virtual void OnSerialLineReceived(String& rxData) {};
-	virtual void OnApiRx64FrameReceived(Rx64Response& frame) {};
-	virtual void SendMessage(Tx64Request& message) {};
-	};
 
-class IXBeeStatePlumbing
-	{
-	
-	};
 class IXBeeState
 {
 public:
@@ -61,13 +49,14 @@ public:
 	virtual ~IXBeeState() = default;
 	virtual String name() = 0;
 	virtual void Loop() { if (timer.Expired()) OnTimerExpired(); }
-	virtual void OnExit() {};
-	virtual void OnEnter() {};
+	virtual void OnExit() {}
+	virtual void OnEnter() {}
 	// State machine triggers
-	virtual void OnTimerExpired() {};
-	virtual void OnSerialLineReceived(String& rxData) {};
-	virtual void OnApiRx64FrameReceived(Rx64Response& frame) {};
-	virtual void SendMessage(Tx64Request& message) {};
+	virtual void OnTimerExpired() {}
+	virtual void OnSerialLineReceived(String& rxData) {}
+	virtual void OnApiRx64FrameReceived(Rx64Response& frame) {}
+	virtual void OnModemStatusReceived(uint8_t state) {}
+	virtual void SendMessage(Tx64Request& message) {}
 protected:
 	XBeeStateMachine& machine;
 	Timer timer;

@@ -1,6 +1,7 @@
 ﻿#include "XBeeWaitForCommandModeState.h"
 #include "XBeeStartupState.h"
-#include "XBeeApiDetectShutterState.h"
+#include "XBeeWaitForAssociationState.h"
+#include "NexDome.h"
 
 void XBeeWaitForCommandModeState::OnTimerExpired()
 	{
@@ -8,7 +9,6 @@ void XBeeWaitForCommandModeState::OnTimerExpired()
 		{
 		machine.ChangeState(new XBeeStartupState(machine));
 		}
-
 	}
 
 void XBeeWaitForCommandModeState::OnEnter()
@@ -21,9 +21,9 @@ void XBeeWaitForCommandModeState::OnSerialLineReceived(String& rxData)
 	if (rxData != "OK")
 		return;
 	// Set serial comms parameters and API mode 2
-	machine.SendToXbee(XBEE_ROTATOR_INIT_STRING);	// Enter API mode.
+	machine.SendToXbee(XBEE_SHUTTER_INIT_STRING);	// Enter API mode.
 	machine.ListenInApiMode();
-	machine.ChangeState(new XBeeApiDetectShutterState(machine));
+	machine.ChangeState(new XBeeWaitForAssociationState(machine));
 	}
 
 

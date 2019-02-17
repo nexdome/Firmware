@@ -21,9 +21,8 @@ void XBeeStateMachine::Loop()
 
 void XBeeStateMachine::SendToXbee(String message) const
 	{
-	xbeeSerial.print(message);
-	xbeeSerial.flush();
 	debug.println(message + " to X");
+	xbeeSerial.print(message);
 	}
 
 void XBeeStateMachine::ChangeState(IXBeeState* newState)
@@ -89,39 +88,30 @@ void XBeeStateMachine::xbee_serial_receive()
 		rxBuffer.concat(ch);
 	}
 
-union rxResponses
-	{
-	Rx64Response rx64;
-	Rx16Response rx16;
-	};
-
 void XBeeStateMachine::xbee_api_receive()
 	{
-	// Reusable response objects for responses we expect to handle.
-	static auto xbeeResponse = XBeeResponse();
-	static rxResponses response = {Rx64Response()};
-
 	xbeeApi.readPacket();
 	if (xbeeApi.getResponse().isAvailable())
 		{
-		auto frameType = xbeeApi.getResponse().getApiId();
 		// got something
+		auto frameType = xbeeApi.getResponse().getApiId();
 		debug.print("xf ");
 		debug.println(frameType);
-
-		if (frameType == RX_16_RESPONSE || frameType == RX_64_RESPONSE)
+		switch (frameType)
 			{
-			// got a rx packet
-
-			if (frameType == RX_16_RESPONSE)
-				{
-				xbeeApi.getResponse().getRx16Response(response.rx16);
-				}
-			else
-				{
-				xbeeApi.getResponse().getRx64Response(response.rx64);
-				currentState->OnApiRx64FrameReceived(response.rx64);
-				}
+		case RX_64_RESPONSE:
+			Rx64Response rx64Response;
+			xbeeApi.getResponse().getRx64Response(rx64Response);
+			currentState->OnApiRx64FrameReceived(rx64Response);
+			break;
+		case MODEM_STATUS_RESPONSE:
+			ModemStatusResponse response;
+			xbeeApi.getResponse().getModemStatusResponse(response);
+			auto status = response.getStatus();
+			currentState->OnModemStatusReceived(status);
+			break;
+		default:
+			debug.println("ignore frame");
 			}
 		}
 	}
