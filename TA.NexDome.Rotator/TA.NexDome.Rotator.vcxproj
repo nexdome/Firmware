@@ -60,6 +60,7 @@
     <Import Project="..\AdvancedStepper\AdvancedStepper.vcxitems" Label="Shared" />
     <Import Project="..\SharedCode\SharedCode.vcxitems" Label="Shared" />
     <Import Project="..\Timer\Timer.vcxitems" Label="Shared" />
+    <Import Project="..\XBeeStatemachine\XBeeStatemachine.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -120,7 +121,6 @@
     <ClInclude Include="XBeeApiDetectShutterState.h" />
     <ClInclude Include="XBeeShutterOnlineState.h" />
     <ClInclude Include="XBeeStartupState.h" />
-    <ClInclude Include="XBeeStateMachine.h" />
     <ClInclude Include="XBeeWaitForCommandModeState.h" />
     <ClInclude Include="__vm\.TA.NexDome.Rotator.vsarduino.h" />
   </ItemGroup>
@@ -131,7 +131,6 @@
     <ClCompile Include="XBeeApiDetectShutterState.cpp" />
     <ClCompile Include="XBeeShutterOnlineState.cpp" />
     <ClCompile Include="XBeeStartupState.cpp" />
-    <ClCompile Include="XBeeStateMachine.cpp" />
     <ClCompile Include="XBeeWaitForCommandModeState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

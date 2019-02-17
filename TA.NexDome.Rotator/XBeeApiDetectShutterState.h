@@ -9,7 +9,7 @@
 	#include "WProgram.h"
 #endif
 
-#include "XBeeStateMachine.h"
+#include <XBeeStateMachine.h>
 
 class XBeeApiDetectShutterState : public IXBeeState
 	{

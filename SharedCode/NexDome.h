@@ -18,8 +18,3 @@
 
 #define SERIAL_RX_BUFFER_SIZE (16) // Receive buffer for PC/USB communications
 
-#define XBEE_BOOT_TIME_MILLIS (5000) // Time for XBEE to become ready from cold reset
-#define XBEE_AT_GUARD_TIME (1000)    // Time between sending "+++" and receiving "OK"
-#define XBEE_ROTATOR_INIT_STRING "ATCE1,ID6FBF,CHC,MYFFFF,DH0,DLFFFF,A27,AP2,SM0,WR,AC,FR,CN\x0D"
-//#define XBEE_ROTATOR_INIT_STRING "ATCE1,A27,AP2,WR,AC,CN\r"
-#define XBEE_SHUTTER_INIT_STRING "ATCE0,ID6FBF,CH0C,MYFFFE,DH0,DLFFFF,A15,AP2,SM0,AC,CN\r"

@@ -24,9 +24,6 @@
     <ClInclude Include="PersistentSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XBeeStateMachine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="__vm\.TA.NexDome.Rotator.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,9 +48,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PersistentSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XBeeStateMachine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XBeeApiDetectShutterState.cpp">

@@ -8,7 +8,7 @@
 #else
 	#include "WProgram.h"
 #endif
-#include "XBeeStateMachine.h"
+#include <XBeeStateMachine.h>
 
 class XBeeStartupState : public IXBeeState
 {

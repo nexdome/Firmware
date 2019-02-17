@@ -21,9 +21,6 @@
     <ClInclude Include="XBeeStartupState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XBeeStateMachine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XBeeWaitForAssociationState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -45,9 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XBeeStartupState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XBeeStateMachine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XBeeWaitForAssociationState.cpp">

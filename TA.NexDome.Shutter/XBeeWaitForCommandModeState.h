@@ -5,7 +5,7 @@
 // File: XBeeWaitForOkState.h  Last modified: 2019-02-13@14:22 by Tim Long
 
 #pragma once
-#include "XBeeStateMachine.h"
+#include <XBeeStateMachine.h>
 
 class XBeeWaitForCommandModeState : public IXBeeState
 	{
