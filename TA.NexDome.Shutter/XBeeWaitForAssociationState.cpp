@@ -10,6 +10,7 @@
 void XBeeWaitForAssociationState::OnEnter()
 	{
 	timer.SetDuration(20000);
+	machine.ListenInApiMode();
 	}
 
 void XBeeWaitForAssociationState::OnModemStatusReceived(uint8_t status)

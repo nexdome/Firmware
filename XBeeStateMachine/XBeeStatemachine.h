@@ -41,7 +41,7 @@ private:
 	void xbee_serial_receive();
 	void xbee_api_receive();
 	HardwareSerial& xbeeSerial;
-	XBee xbeeApi;
+	XBeeWithCallbacks xbeeApi;
 	XBeeAddress64 remoteAddress;
 	IXBeeState* currentState;
 	unsigned long startTime;

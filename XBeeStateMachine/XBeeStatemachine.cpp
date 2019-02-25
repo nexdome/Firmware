@@ -1,15 +1,33 @@
 #include "XBeeStateMachine.h"
+#include <Printers.h>
 
 XBeeStateMachine::XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort) : xbeeSerial(xBeePort), debug(debugPort)
 	{
-	xbeeApi = XBee();
+	xbeeApi = XBeeWithCallbacks();
 	xbeeApi.setSerial(xbeeSerial);
+	auto xbeePrint = (uintptr_t)(Print*)& Serial;
+	// Make sure that any errors are logged to Serial. The address of
+    // Serial is first cast to Print*, since that's what the callback
+    // expects, and then to uintptr_t to fit it inside the data parameter.
+	xbeeApi.onPacketError(printErrorCb, xbeePrint);
+	xbeeApi.onTxStatusResponse(printErrorCb, xbeePrint);
+	xbeeApi.onZBTxStatusResponse(printErrorCb, xbeePrint);
+
+	// These are called when an actual packet received
+	//xbeeApi.onZBRxResponse(zbReceive);
+	//xbeeApi.onRx16Response(receive16);
+	//xbeeApi.onRx64Response(receive64);
+
+	// Print any unhandled response with proper formatting
+	xbeeApi.onOtherResponse(printResponseCb, xbeePrint);
+
 	}
 
 void XBeeStateMachine::Loop()
 	{
 	if (ApiModeEnabled)
 		{
+		xbeeApi.loop();
 		xbee_api_receive();
 		}
 	else
