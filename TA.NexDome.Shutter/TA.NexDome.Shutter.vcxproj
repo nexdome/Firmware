@@ -57,9 +57,9 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
-    <Import Project="..\AdvancedStepper\AdvancedStepper.vcxitems" Label="Shared" />
     <Import Project="..\SharedCode\SharedCode.vcxitems" Label="Shared" />
     <Import Project="..\Timer\Timer.vcxitems" Label="Shared" />
+    <Import Project="..\AdvancedStepper\AdvancedStepper.vcxitems" Label="Shared" />
     <Import Project="..\XBeeStatemachine\XBeeStatemachine.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -93,10 +93,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\TA.NexDome.Shutter;$(ProjectDir)..\XBeeStatemachine;$(ProjectDir)..\..\..\..\OneDrive\Documents\Arduino\libraries\XBee-Arduino_library;$(ProjectDir)..\..\..\..\OneDrive\Documents\Arduino\libraries\ArduinoSTL\src;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.21\libraries\EEPROM\src;$(ProjectDir)..\Timer;$(ProjectDir)..\AdvancedStepper;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.21\libraries;$(ProjectDir)..\..\..\..\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.21\cores\arduino;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.21\variants\leonardo;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\avr\include\avr;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.4-arduino2\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ProjectDir)__vm\.TA.NexDome.Shutter.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PreprocessorDefinitions>__AVR_ATmega32u4__;__AVR_ATmega32U4__;F_CPU=16000000L;ARDUINO=10805;ARDUINO_AVR_LEONARDO;ARDUINO_ARCH_AVR;USB_VID=0x2341;USB_PID=0x8036;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -119,6 +123,7 @@
     <ClInclude Include="CommandProcessor.h" />
     <ClInclude Include="PersistentSettings.h" />
     <ClInclude Include="XBeeAssociatedState.h" />
+    <ClInclude Include="XBeeOnlineState.h" />
     <ClInclude Include="XBeeStartupState.h" />
     <ClInclude Include="XBeeWaitForAssociationState.h" />
     <ClInclude Include="XBeeWaitForCommandModeState.h" />
@@ -129,6 +134,7 @@
     <ClCompile Include="PersistentSettings.cpp" />
     <ClCompile Include="Response.cpp" />
     <ClCompile Include="XBeeAssociatedState.cpp" />
+    <ClCompile Include="XBeeOnlineState.cpp" />
     <ClCompile Include="XBeeStartupState.cpp" />
     <ClCompile Include="XBeeWaitForAssociationState.cpp" />
     <ClCompile Include="XBeeWaitForCommandModeState.cpp" />
@@ -138,7 +144,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties arduino.upload.port="COM12" />
+      <UserProperties arduino.upload.port="COM10" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

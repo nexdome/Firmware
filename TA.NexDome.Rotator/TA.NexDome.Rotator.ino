@@ -1,7 +1,4 @@
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "XBeeStartupState.h"
-#include "XBeeShutterOnlineState.h"
-#include "XBeeApiDetectShutterState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -10,9 +7,13 @@
 #include "NexDome.h"
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
-#include <XBee-Arduino_library/XBee.h>
+#include <XBee.h>
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
+#include "XBeeStartupState.h"
+#include "XBeeShutterOnlineState.h"
+#include "XBeeApiDetectShutterState.h"
+
 
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();

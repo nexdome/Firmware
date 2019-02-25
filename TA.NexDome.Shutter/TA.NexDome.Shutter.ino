@@ -1,4 +1,5 @@
 #if defined(ARDUINO) && ARDUINO >= 100
+#include "XBeeOnlineState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -6,12 +7,14 @@
 
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
-#include <XBee-Arduino_library/XBee.h>
+#include <XBee.h>
 #include "NexDome.h"
 #include "XBeeStateMachine.h"
 #include "XBeeStartupState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
+
+
 
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();

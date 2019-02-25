@@ -6,6 +6,7 @@
 
 #pragma once
 #include <XBeeStateMachine.h>
+#include <ArduinoSTL.h>
 
 class XBeeWaitForCommandModeState : public IXBeeState
 	{
@@ -15,4 +16,6 @@ public:
 	void OnTimerExpired() override;
 	void OnEnter() override;
 	void OnSerialLineReceived(String& rxData) override;
+private:
+	const String XBeeInitString = "ATCE0,ID6FBF,CHC,MYFFFF,DH0,DLFFFE,A15,AP2,SM0,AC,CN\0xD";
 	};

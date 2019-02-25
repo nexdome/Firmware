@@ -10,7 +10,7 @@
 #endif
 
 #include "Timer.h"
-#include <XBee-Arduino_library/XBee.h>
+#include <XBee.h>
 
 #define XBEE_BOOT_TIME_MILLIS (5000)			// Time for XBEE to become ready from cold reset
 #define XBEE_AT_GUARD_TIME (1000)				// Wait time before sending "+++" and receiving "OK"
@@ -20,7 +20,6 @@
 
 //ToDo: The following defs are project specific and need to be moved into the projects.
 #define XBEE_ROTATOR_INIT_STRING "ATCE1,ID6FBF,CHC,MYFFFF,DH0,DLFFFF,A27,AP2,SM0,WR,AC,FR,CN\x0D"
-#define XBEE_SHUTTER_INIT_STRING "ATCE0,ID6FBF,CH0C,MYFFFE,DH0,DLFFFF,A15,AP2,SM0,AC,CN\r"
 
 class IXBeeState;
 
@@ -36,6 +35,7 @@ public:
 	unsigned int GetNextFrameId();
 	void SendXbeeApiFrame(XBeeRequest& request);
 	void SetDestinationAddress(uint64_t address);
+	void XBeeApiSendMessage(const String& message);
 
 private:
 	void xbee_serial_receive();
@@ -48,6 +48,7 @@ private:
 	bool ApiModeEnabled = false;
 	unsigned int frameId = 1;
 	Stream& debug;
+	Tx64Request messageTx;
 };
 
 class IXBeeState

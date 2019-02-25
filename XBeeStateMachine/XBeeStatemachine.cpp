@@ -126,4 +126,12 @@ void XBeeStateMachine::xbee_api_receive()
 		}
 	}
 
+void XBeeStateMachine::XBeeApiSendMessage(const String& message)
+	{
+	messageTx.setAddress64(remoteAddress);
+	messageTx.setFrameId(GetNextFrameId());
+	messageTx.setPayload((uint8_t*)message.begin());
+	SendXbeeApiFrame(messageTx);
+	}
+
 

@@ -39,6 +39,9 @@
     <ClInclude Include="XBeeWaitForCommandModeState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="XBeeOnlineState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XBeeStartupState.cpp">
@@ -60,6 +63,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XBeeWaitForCommandModeState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeOnlineState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -18,6 +18,7 @@ public:
 	explicit XBeeWaitForAssociationState(XBeeStateMachine& machine) : IXBeeState(machine) { }
 	void OnEnter() override;
 	void OnModemStatusReceived(uint8_t state) override;
+	void OnTimerExpired() override;
 	};
 
 #endif
