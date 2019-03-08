@@ -13,7 +13,7 @@ void XBeeWaitForCommandModeState::OnTimerExpired()
 
 void XBeeWaitForCommandModeState::OnEnter()
 	{
-	timer.SetDuration(XBEE_AT_GUARD_TIME * 2);
+	timer.SetDuration(XBEE_AT_GUARD_TIME * 3);
 	}
 
 void XBeeWaitForCommandModeState::OnSerialLineReceived(String& rxData) 

@@ -41,26 +41,26 @@ private:
 	void xbee_serial_receive();
 	void xbee_api_receive();
 	HardwareSerial& xbeeSerial;
-	XBeeWithCallbacks xbeeApi;
+	XBee xbeeApi;
 	XBeeAddress64 remoteAddress;
 	IXBeeState* currentState;
 	unsigned long startTime;
 	bool ApiModeEnabled = false;
 	unsigned int frameId = 1;
 	Stream& debug;
-	Tx64Request messageTx;
+	Tx64Request tx64Frame;
 };
 
 class IXBeeState
 {
 public:
 	// State machine "plumbing"
-	explicit IXBeeState(XBeeStateMachine& machine) : machine(machine) {}
+	explicit IXBeeState(XBeeStateMachine& machine) : machine(machine) { timer.Stop(); }
 	virtual ~IXBeeState() = default;
 	virtual String name() = 0;
-	virtual void Loop() { if (timer.Expired()) OnTimerExpired(); }
+	virtual void Loop() { if (timer.Enabled() && timer.Expired()) OnTimerExpired(); }
 	virtual void OnExit() {}
-	virtual void OnEnter() {}
+	virtual void OnEnter() { timer.SetDuration(0); }
 	// State machine triggers
 	virtual void OnTimerExpired() {}
 	virtual void OnSerialLineReceived(String& rxData) {}

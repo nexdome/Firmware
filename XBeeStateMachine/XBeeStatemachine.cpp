@@ -1,25 +1,25 @@
 #include "XBeeStateMachine.h"
-#include <Printers.h>
+//#include <Printers.h>
 
 XBeeStateMachine::XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort) : xbeeSerial(xBeePort), debug(debugPort)
 	{
-	xbeeApi = XBeeWithCallbacks();
+	xbeeApi = XBee();
 	xbeeApi.setSerial(xbeeSerial);
-	auto xbeePrint = (uintptr_t)(Print*)& Serial;
-	// Make sure that any errors are logged to Serial. The address of
-    // Serial is first cast to Print*, since that's what the callback
-    // expects, and then to uintptr_t to fit it inside the data parameter.
-	xbeeApi.onPacketError(printErrorCb, xbeePrint);
-	xbeeApi.onTxStatusResponse(printErrorCb, xbeePrint);
-	xbeeApi.onZBTxStatusResponse(printErrorCb, xbeePrint);
+	//auto xbeePrint = (uintptr_t)(Print*)& Serial;
+	//// Make sure that any errors are logged to Serial. The address of
+ //   // Serial is first cast to Print*, since that's what the callback
+ //   // expects, and then to uintptr_t to fit it inside the data parameter.
+	//xbeeApi.onPacketError(printErrorCb, xbeePrint);
+	//xbeeApi.onTxStatusResponse(printErrorCb, xbeePrint);
+	//xbeeApi.onZBTxStatusResponse(printErrorCb, xbeePrint);
 
-	// These are called when an actual packet received
-	//xbeeApi.onZBRxResponse(zbReceive);
-	//xbeeApi.onRx16Response(receive16);
-	//xbeeApi.onRx64Response(receive64);
+	//// These are called when an actual packet received
+	////xbeeApi.onZBRxResponse(zbReceive);
+	////xbeeApi.onRx16Response(receive16);
+	////xbeeApi.onRx64Response(receive64);
 
-	// Print any unhandled response with proper formatting
-	xbeeApi.onOtherResponse(printResponseCb, xbeePrint);
+	//// Print any unhandled response with proper formatting
+	//xbeeApi.onOtherResponse(printResponseCb, xbeePrint);
 
 	}
 
@@ -27,7 +27,7 @@ void XBeeStateMachine::Loop()
 	{
 	if (ApiModeEnabled)
 		{
-		xbeeApi.loop();
+		//xbeeApi.loop();
 		xbee_api_receive();
 		}
 	else
@@ -49,19 +49,21 @@ void XBeeStateMachine::ChangeState(IXBeeState* newState)
 	debug.println(newState->name());
 	if (currentState != NULL)
 		currentState->OnExit();
-	newState->OnEnter();
 	delete currentState;
 	currentState = newState;
+	newState->OnEnter();
 	}
 
 void XBeeStateMachine::ListenInAtCommandMode()
 	{
 	ApiModeEnabled = false;
+	xbeeSerial.begin(9600);
 	}
 
 void XBeeStateMachine::ListenInApiMode()
 	{
 	ApiModeEnabled = true;
+	xbeeApi.begin(xbeeSerial);
 	//xbeeSerial.begin(115200);
 	}
 
@@ -107,49 +109,45 @@ void XBeeStateMachine::xbee_serial_receive()
 		rxBuffer.concat(ch);
 	}
 
-union rxResponses
-	{
-	Rx64Response rx64;
-	Rx16Response rx16;
-	};
-
 void XBeeStateMachine::xbee_api_receive()
 	{
-	// Reusable response objects for responses we expect to handle.
-	static auto xbeeResponse = XBeeResponse();
-	static rxResponses response = {Rx64Response()};
-
 	xbeeApi.readPacket();
 	if (xbeeApi.getResponse().isAvailable())
 		{
 		auto frameType = xbeeApi.getResponse().getApiId();
 		// got something
-		debug.print("xf ");
-		debug.println(frameType);
+		debug.print("RxF ");
+		debug.println(frameType, HEX);
 
-		if (frameType == RX_16_RESPONSE || frameType == RX_64_RESPONSE)
-			{
+		switch (frameType)
+		{
+		case RX_64_RESPONSE: {
 			// got a rx packet
-
-			if (frameType == RX_16_RESPONSE)
-				{
-				xbeeApi.getResponse().getRx16Response(response.rx16);
-				}
-			else
-				{
-				xbeeApi.getResponse().getRx64Response(response.rx64);
-				currentState->OnApiRx64FrameReceived(response.rx64);
-				}
+			auto frameRx64 = Rx64Response();
+			xbeeApi.getResponse().getRx64Response(frameRx64);
+			currentState->OnApiRx64FrameReceived(frameRx64);
+		}
+			break;
+		case MODEM_STATUS_RESPONSE:
+		{
+			auto frameModemStatus = ModemStatusResponse();
+			xbeeApi.getResponse().getModemStatusResponse(frameModemStatus);
+			auto status = frameModemStatus.getStatus();
+			currentState->OnModemStatusReceived(status);
+		}
+			break;
 			}
 		}
 	}
 
 void XBeeStateMachine::XBeeApiSendMessage(const String& message)
 	{
-	messageTx.setAddress64(remoteAddress);
-	messageTx.setFrameId(GetNextFrameId());
-	messageTx.setPayload((uint8_t*)message.begin());
-	SendXbeeApiFrame(messageTx);
+	debug.print("Tx: ");
+	debug.println(message);
+	tx64Frame.setAddress64(remoteAddress);
+	tx64Frame.setFrameId(GetNextFrameId());
+	tx64Frame.setPayload((uint8_t*)message.begin());
+	SendXbeeApiFrame(tx64Frame);
 	}
 
 

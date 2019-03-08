@@ -6,7 +6,7 @@
 */
 
 #include "Timer.h"
-unsigned long millis();	// VMicro doesn't correctly detect this, so manually declare it.
+extern unsigned long millis();	// VMicro doesn't correctly detect this, so manually declare it.
 
 Timer::Timer()
 	{
@@ -28,9 +28,14 @@ unsigned long Timer::Elapsed()
 	return millis() - startedAt;
 	}
 
+unsigned long Timer::Remaining()
+{
+	return interval - Elapsed();
+}
+
 bool Timer::Expired()
 	{
-	return Elapsed() >= interval;
+	return Enabled() ? Elapsed() >= interval : false;
 	}
 
 /*
@@ -42,6 +47,16 @@ void Timer::Repeat()
 	{
 	startedAt += interval;
 	}
+
+bool Timer::Enabled()
+{
+	return interval > 0;
+}
+
+void Timer::Stop()
+{
+	interval = 0;
+}
 
 
 

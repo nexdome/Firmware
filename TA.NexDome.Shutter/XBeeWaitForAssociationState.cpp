@@ -9,7 +9,7 @@
 
 void XBeeWaitForAssociationState::OnEnter()
 	{
-	timer.SetDuration(20000);
+	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
 	machine.ListenInApiMode();
 	}
 
@@ -19,7 +19,7 @@ void XBeeWaitForAssociationState::OnModemStatusReceived(uint8_t status)
 	timer.Repeat();
 	if (status == ASSOCIATED)
 		{
-		machine.XBeeApiSendMessage(XBEE_HELLO_MESSAGE);
+		//machine.XBeeApiSendMessage(XBEE_HELLO_MESSAGE);
 		machine.ChangeState(new XBeeAssociatedState(machine));
 		}
 	}
@@ -32,4 +32,3 @@ void XBeeWaitForAssociationState::OnTimerExpired()
 	{
 	machine.ChangeState(new XBeeStartupState(machine));
 	}
-
