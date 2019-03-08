@@ -103,7 +103,7 @@ void XBeeStateMachine::xbee_serial_receive()
 		{
 		debug.println(rxBuffer + " from X");
 		currentState->OnSerialLineReceived(rxBuffer);
-		rxBuffer = String();
+		rxBuffer.remove(0);	// Truncate to empty string
 		}
 	else
 		rxBuffer.concat(ch);

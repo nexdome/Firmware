@@ -12,9 +12,9 @@
 #include "Timer.h"
 #include <XBee.h>
 
-#define XBEE_BOOT_TIME_MILLIS (5000)			// Time for XBEE to become ready from cold reset
-#define XBEE_AT_GUARD_TIME (1000)				// Wait time before sending "+++" and receiving "OK"
-#define XBEE_REMOTE_HANDSHAKE_TIMEOUT (20000)	// Maximum time to wait for remote device to say hello.
+#define XBEE_BOOT_TIME_MILLIS (5000UL)			// Time for XBEE to become ready from cold reset
+#define XBEE_AT_GUARD_TIME (1000UL)				// Wait time before sending "+++" and receiving "OK"
+#define XBEE_REMOTE_HANDSHAKE_TIMEOUT (20000UL)	// Maximum time to wait for remote device to say hello.
 #define XBEE_HELLO_MESSAGE "Yoohoo"				// A retro shout-out to FidoNet era mailer called dBridge.
 #define XBEE_HELLO_ACK "Yoohoo2U2"				// (yes I am old enough to remember FidoNet).
 
@@ -55,12 +55,18 @@ class IXBeeState
 {
 public:
 	// State machine "plumbing"
-	explicit IXBeeState(XBeeStateMachine& machine) : machine(machine) { timer.Stop(); }
+	explicit IXBeeState(XBeeStateMachine& machine) : machine(machine) {}
 	virtual ~IXBeeState() = default;
 	virtual String name() = 0;
-	virtual void Loop() { if (timer.Enabled() && timer.Expired()) OnTimerExpired(); }
+	virtual void Loop()
+	{
+		if (timer.Enabled() && timer.Expired())
+		{
+			OnTimerExpired();
+		}
+	}
 	virtual void OnExit() {}
-	virtual void OnEnter() { timer.SetDuration(0); }
+	virtual void OnEnter() {}
 	// State machine triggers
 	virtual void OnTimerExpired() {}
 	virtual void OnSerialLineReceived(String& rxData) {}

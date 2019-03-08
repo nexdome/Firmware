@@ -9,6 +9,7 @@
 void XBeeApiDetectShutterState::OnEnter()
 	{
 	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
+	machine.ListenInApiMode();
 	}
 
 /*

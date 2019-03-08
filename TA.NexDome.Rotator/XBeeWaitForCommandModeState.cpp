@@ -4,11 +4,7 @@
 
 void XBeeWaitForCommandModeState::OnTimerExpired()
 	{
-		if (timer.Expired())
-		{
-		machine.ChangeState(new XBeeStartupState(machine));
-		}
-
+	machine.ChangeState(new XBeeStartupState(machine));
 	}
 
 void XBeeWaitForCommandModeState::OnEnter()
@@ -20,9 +16,8 @@ void XBeeWaitForCommandModeState::OnSerialLineReceived(String& rxData)
 	{
 	if (rxData != "OK")
 		return;
-	// Set serial comms parameters and API mode 2
-	machine.SendToXbee(XBEE_ROTATOR_INIT_STRING);	// Enter API mode.
-	machine.ListenInApiMode();
+	// Send configuration string to XBee
+	machine.SendToXbee(rotatorInitString);	// Enter API2 mode.
 	machine.ChangeState(new XBeeApiDetectShutterState(machine));
 	}
 

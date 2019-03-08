@@ -16,7 +16,7 @@ class XBeeShutterOnlineState : public IXBeeState
 protected:
 
 public:
-	String name() override { return "Yoohoo"; };
+	String name() override { return "Online"; };
 	explicit XBeeShutterOnlineState(XBeeStateMachine& machine) : IXBeeState(machine) {}
 	void SendMessage(Tx64Request& message) override;
 	};

@@ -15,4 +15,6 @@ public:
 	void OnTimerExpired() override;
 	void OnEnter() override;
 	void OnSerialLineReceived(String& rxData) override;
+private:
+	const String rotatorInitString = XBEE_ROTATOR_INIT_STRING;
 	};

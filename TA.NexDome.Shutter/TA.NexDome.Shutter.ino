@@ -117,7 +117,9 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
+	if (millis() % 1000 != 0) return;
 	stepper.Loop();
 	HandleSerialCommunications();
 	machine.Loop();
+	while (millis() % 1000 == 0);
 }
