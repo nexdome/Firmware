@@ -11,7 +11,7 @@ void XBeeWaitForAssociationState::OnEnter()
 	{
 	//timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
 	timer.SetDuration(86400000UL);
-	//machine.ListenInApiMode();
+	machine.ListenInApiMode();
 	}
 
 void XBeeWaitForAssociationState::OnModemStatusReceived(uint8_t status)

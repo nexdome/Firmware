@@ -1,5 +1,4 @@
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "XBeeOnlineState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -7,14 +6,13 @@
 
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
-#include <XBee.h>
+#include <XBeeApi.h>
 #include "NexDome.h"
 #include "XBeeStateMachine.h"
 #include "XBeeStartupState.h"
+#include "XBeeOnlineState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
-
-
 
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
@@ -22,8 +20,17 @@ auto stepper = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, 
 auto commandProcessor = CommandProcessor(stepper, settings);
 auto& xbeeSerial = Serial1;
 auto& host = Serial;
-XBee xbeeApi = XBee();
-auto machine = XBeeStateMachine(xbeeSerial, host);
+std::vector<byte> receiveBuffer;
+auto xbee = XBeeApi(xbeeSerial, receiveBuffer, (ReceiveHandler) HandleFrameRecveived);
+auto machine = XBeeStateMachine(xbeeSerial, host, xbee);
+
+XBeeApi xbee;
+XBeeStateMachine machine;
+
+void HandleFrameRecveived(FrameType type, std::vector<byte> payload)
+{
+	machine.OnXbeeFrameReceived(type, payload);
+}
 
 void HandleSerialCommunications()
 {
@@ -109,9 +116,8 @@ void setup() {
 	stepper.ReleaseMotor();
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	xbeeApi.setSerial(xbeeSerial);
-
 	interrupts();
+
 	machine.ChangeState(new XBeeStartupState(machine));
 }
 
