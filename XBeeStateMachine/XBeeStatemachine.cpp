@@ -106,8 +106,12 @@ void XBeeStateMachine::OnXbeeFrameReceived(FrameType type, std::vector<byte>& pa
 	switch (type)
 	{
 	case ModemStatusResponse:
-		currentState->OnModemStatusReceived(XBeeApi::GetModemStatus(payload));
+	{
+		auto status = XBeeApi::GetModemStatus(payload);
+		XBeeApi::printModemStatus(status);
+		currentState->OnModemStatusReceived(status);
 		break;
+	}
 	default:
 		break;
 	}

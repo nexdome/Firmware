@@ -35,6 +35,7 @@ void XBeeApi::reset()
 	escapeNextCharacter = false;
 	checksum = 0;
 	frameLength = 0;
+	frameType = FrameType(-1);
 }
 
 uint64_t XBeeApi::GetRemoteAddress(std::vector<byte>& payload)
@@ -61,6 +62,7 @@ Handles escaped data bytes and checksum validation.
 */
 void XBeeApi::handleReceivedByte(byte rxb)
 {
+	printRxChar(rxb);
 	// Unescaped frame start character always causes a reset.
 	if (rxb == API_FRAME_START)
 		reset();
@@ -103,14 +105,17 @@ void XBeeApi::handleReceivedByte(byte rxb)
 		frameType = FrameType(rxb);
 		checksum = rxb;
 		rxState = ReceivePayload;
+		printFrame();
 		break;
 	case ReceivePayload:
 		buffer.push_back(rxb);
-		if (buffer.size() == frameLength)
+		checksum += rxb;
+		if (buffer.size() == (frameLength-1))
 			rxState = ReceiveChecksum;
 		break;
 	case ReceiveChecksum:
 		checksum += rxb;
+		printChecksum();
 		if (checksum == 0xFFu)
 		{
 			rxState = Complete;
@@ -122,5 +127,34 @@ void XBeeApi::handleReceivedByte(byte rxb)
 	default:
 		break;
 	}
+}
+
+void XBeeApi::printFrame()
+{
+	Serial.print(F("Type: "));
+	Serial.print(frameType, HEX);
+	Serial.print(F(" Length: "));
+	Serial.print(frameLength);
+	Serial.println();
+}
+
+void XBeeApi::printModemStatus(ModemStatus status)
+{
+	Serial.print(F("Modem status: "));
+	Serial.println(status);
+}
+
+void XBeeApi::printChecksum()
+{
+	Serial.print("Checksum: ");
+	Serial.println(checksum, HEX);
+}
+
+void XBeeApi::printRxChar(byte rxb)
+{
+	Serial.print("State: ");
+	Serial.print(rxState, HEX);
+	Serial.print(" Rx: ");
+	Serial.println(rxb, HEX);
 }
 

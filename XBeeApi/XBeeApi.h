@@ -84,6 +84,9 @@ public:
 	void reset();
 	static uint64_t GetRemoteAddress(std::vector<byte>& payload);
 	static ModemStatus GetModemStatus(std::vector<byte>& payload);
+	static void printModemStatus(ModemStatus status);
+
+
 private:
 	Stream& channel;
 	std::vector<byte>& buffer;
@@ -94,7 +97,9 @@ private:
 	uint16_t frameLength;
 	FrameType frameType;
 	ReceiveHandler onFrameReceived;
-
+	void printFrame();
+	void printChecksum();
+	void printRxChar(byte rxb);
 	};
 
 #endif

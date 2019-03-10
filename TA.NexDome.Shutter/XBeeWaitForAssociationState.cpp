@@ -14,11 +14,11 @@ void XBeeWaitForAssociationState::OnEnter()
 	machine.ListenInApiMode();
 	}
 
-void XBeeWaitForAssociationState::OnModemStatusReceived(uint8_t status)
+void XBeeWaitForAssociationState::OnModemStatusReceived(ModemStatus status)
 	{
 	// Any change of status resets the timer.
 	timer.Repeat();
-	if (status == ASSOCIATED)
+	if (status == Associated)
 		{
 		//machine.XBeeApiSendMessage(XBEE_HELLO_MESSAGE);
 		machine.ChangeState(new XBeeAssociatedState(machine));

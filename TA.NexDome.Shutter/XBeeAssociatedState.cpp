@@ -24,7 +24,6 @@ void XBeeAssociatedState::OnEnter()
  */
 void XBeeAssociatedState::OnApiRx64FrameReceived(std::vector<byte>& payload)
 	{
-	auto sender = XBeeApi::Get
 	//if( memcmp(xbeeHelloAckMessage.begin(), payload, xbeeHelloAckMessage.length())==0)
 	//	{
 	//	// Showtime

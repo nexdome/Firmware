@@ -17,7 +17,7 @@ public:
 	String name() override { return "WaitAssociate"; }
 	explicit XBeeWaitForAssociationState(XBeeStateMachine& machine) : IXBeeState(machine) { }
 	void OnEnter() override;
-	void OnModemStatusReceived(uint8_t state) override;
+	void OnModemStatusReceived(ModemStatus state) override;
 	void OnTimerExpired() override;
 	};
 

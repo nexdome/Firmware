@@ -7,7 +7,7 @@ String XBeeStartupState::name() { return "Start"; }
 
 void XBeeStartupState::OnEnter()
 {
-	machine.SetDestinationAddress(XBeeAddress64(0xFFFE));	// Coordinator address is default destination
+	machine.SetDestinationAddress(0x0000FFFEu);	// Coordinator address is default destination
 	machine.ListenInAtCommandMode();
 	timer.SetDuration(XBEE_BOOT_TIME_MILLIS);	// Allow enough time for the XBee to boot up.
 }

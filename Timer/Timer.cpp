@@ -28,13 +28,13 @@ unsigned long Timer::Elapsed()
 	if (!Enabled())
 		return 0;
 	unsigned long elapsed = millis() - startedAt;
-	Serial.print(startedAt);
-	Serial.print(',');
-	Serial.print(interval);
-	Serial.print(',');
-	Serial.print(millis());
-	Serial.print(',');
-	Serial.println(elapsed);
+	//Serial.print(startedAt);
+	//Serial.print(',');
+	//Serial.print(interval);
+	//Serial.print(',');
+	//Serial.print(millis());
+	//Serial.print(',');
+	//Serial.println(elapsed);
 	return elapsed;
 	}
 

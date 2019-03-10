@@ -72,7 +72,7 @@ public:
 	virtual void OnTimerExpired() {}
 	virtual void OnSerialLineReceived(String& rxData) {}
 	virtual void OnApiRx64FrameReceived(std::vector<byte>& payload) {}
-	virtual void OnModemStatusReceived(uint8_t state) {}
+	virtual void OnModemStatusReceived(ModemStatus state) {}
 
 protected:
 	XBeeStateMachine& machine;

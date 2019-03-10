@@ -21,11 +21,10 @@ auto commandProcessor = CommandProcessor(stepper, settings);
 auto& xbeeSerial = Serial1;
 auto& host = Serial;
 std::vector<byte> receiveBuffer;
+void HandleFrameRecveived(FrameType type, std::vector<byte> payload);	// forward reference
+
 auto xbee = XBeeApi(xbeeSerial, receiveBuffer, (ReceiveHandler) HandleFrameRecveived);
 auto machine = XBeeStateMachine(xbeeSerial, host, xbee);
-
-XBeeApi xbee;
-XBeeStateMachine machine;
 
 void HandleFrameRecveived(FrameType type, std::vector<byte> payload)
 {
@@ -123,9 +122,9 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	if (millis() % 1000 != 0) return;
+	if (millis() % 200 != 0) return;
 	stepper.Loop();
 	HandleSerialCommunications();
 	machine.Loop();
-	while (millis() % 1000 == 0);
+	while (millis() % 200 == 0);
 }

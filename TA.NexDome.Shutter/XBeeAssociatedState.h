@@ -17,7 +17,7 @@ public:
 	explicit XBeeAssociatedState(XBeeStateMachine& machine) : IXBeeState(machine){}
 	String name() override { return "Associated"; }
 	void OnEnter() override;
-	void OnApiRx64FrameReceived(Rx64Response& frame) override;
+	void OnApiRx64FrameReceived(std::vector<byte>& payload) override;
 	void OnTimerExpired() override;
 private:
 	const String xbeeHelloAckMessage = XBEE_HELLO_ACK;
