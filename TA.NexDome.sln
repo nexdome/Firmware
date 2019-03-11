@@ -34,13 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeApi", "XBeeApi\XBeeApi.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerTest", "TimerTest\TimerTest.vcxproj", "{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NexDomeShutter", "NexDomeShutter\NexDomeShutter.vcxproj", "{07F0EB97-F511-498A-AC37-314C84BEFE9D}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Timer\Timer.vcxitems*{07f0eb97-f511-498a-ac37-314c84befe9d}*SharedItemsImports = 4
-		XBeeApi\XBeeApi.vcxitems*{07f0eb97-f511-498a-ac37-314c84befe9d}*SharedItemsImports = 4
-		XBeeStatemachine\XBeeStatemachine.vcxitems*{07f0eb97-f511-498a-ac37-314c84befe9d}*SharedItemsImports = 4
 		Timer\Timer.vcxitems*{2464fce5-cdfc-485a-9e64-ed3d95808ab7}*SharedItemsImports = 4
 		AdvancedStepper\AdvancedStepper.vcxitems*{893a4046-8112-4d9c-a69c-c1d11554760f}*SharedItemsImports = 9
 		Timer\Timer.vcxitems*{a7498378-97ab-4f1d-af51-37412422ef0f}*SharedItemsImports = 9
@@ -92,12 +87,6 @@ Global
 		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|Any CPU.ActiveCfg = Release|Win32
 		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|x86.ActiveCfg = Release|Win32
 		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|x86.Build.0 = Release|Win32
-		{07F0EB97-F511-498A-AC37-314C84BEFE9D}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{07F0EB97-F511-498A-AC37-314C84BEFE9D}.Debug|x86.ActiveCfg = Debug|Win32
-		{07F0EB97-F511-498A-AC37-314C84BEFE9D}.Debug|x86.Build.0 = Debug|Win32
-		{07F0EB97-F511-498A-AC37-314C84BEFE9D}.Release|Any CPU.ActiveCfg = Release|Win32
-		{07F0EB97-F511-498A-AC37-314C84BEFE9D}.Release|x86.ActiveCfg = Release|Win32
-		{07F0EB97-F511-498A-AC37-314C84BEFE9D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

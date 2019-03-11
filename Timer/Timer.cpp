@@ -19,21 +19,23 @@ Timer::Timer()
 void Timer::SetDuration(unsigned long duration)
 	{
 	startedAt = millis();
-	interval = duration;
+	interval = setInterval = duration;
 	}
+
+void Timer::Repeat()
+{
+	auto now = millis();
+	auto elapsed = now - startedAt;
+	auto remainder = setInterval - elapsed;
+	interval = remainder;
+	startedAt = now;
+}
 
 unsigned long Timer::Elapsed()
 	{
 	if (!Enabled())
 		return 0UL;
 	unsigned long elapsed = millis() - startedAt;
-	//Serial.print(startedAt);
-	//Serial.print(',');
-	//Serial.print(interval);
-	//Serial.print(',');
-	//Serial.print(millis());
-	//Serial.print(',');
-	//Serial.println(elapsed);
 	return elapsed;
 	}
 
@@ -56,6 +58,7 @@ bool Timer::Enabled()
 void Timer::Stop()
 {
 	interval = 0;
+	setInterval = 0;
 }
 
 

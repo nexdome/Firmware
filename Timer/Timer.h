@@ -54,6 +54,7 @@ class Timer
 public:
 	Timer();
 	void SetDuration(unsigned long duration);
+	void Repeat();
 	bool Expired();
 	unsigned long Elapsed();
 	unsigned long Remaining();
@@ -62,6 +63,7 @@ public:
 private:
 	unsigned long startedAt;
 	unsigned long interval;
+	unsigned long setInterval;
 	};
 
 
