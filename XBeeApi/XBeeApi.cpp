@@ -51,9 +51,9 @@ uint64_t XBeeApi::GetRemoteAddress(std::vector<byte>& payload)
 	return address;
 }
 
-ModemStatus XBeeApi::GetModemStatus(std::vector<byte>& payload)
+ModemStatus XBeeApi::GetModemStatus()
 {
-	return ModemStatus(payload[0]);
+	return ModemStatus(buffer[0]);
 }
 
 /*

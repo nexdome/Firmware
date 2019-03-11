@@ -63,6 +63,7 @@ public:
 	{
 		if (timer.Enabled() && timer.Expired())
 		{
+			Serial.println("Timeout");
 			OnTimerExpired();
 		}
 	}
@@ -76,7 +77,7 @@ public:
 
 protected:
 	XBeeStateMachine& machine;
-	Timer timer;
+	static Timer timer;
 };
 
 #endif

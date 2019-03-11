@@ -57,7 +57,6 @@ public:
 	bool Expired();
 	unsigned long Elapsed();
 	unsigned long Remaining();
-	void Repeat();
 	bool Enabled();
 	void Stop();
 private:

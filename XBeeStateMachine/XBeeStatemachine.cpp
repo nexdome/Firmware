@@ -1,5 +1,8 @@
+#include <XBeeApi.h>
 #include "XBeeStateMachine.h"
 //#include <Printers.h>
+
+Timer IXBeeState::timer = Timer();
 
 XBeeStateMachine::XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort, XBeeApi& xbee) 
 	: xbeeSerial(xBeePort), debug(debugPort), xbeeApi(xbee)
@@ -30,8 +33,10 @@ void XBeeStateMachine::ChangeState(IXBeeState* newState)
 	{
 	debug.println(newState->name());
 	if (currentState != NULL)
+	{
 		currentState->OnExit();
-	delete currentState;
+		delete currentState;
+	}
 	currentState = newState;
 	newState->OnEnter();
 	}
@@ -46,6 +51,7 @@ void XBeeStateMachine::ListenInApiMode()
 	{
 	ApiModeEnabled = true;
 	xbeeApi.reset();
+	xbeeSerial.begin(9600);
 	}
 
 /*
@@ -107,7 +113,7 @@ void XBeeStateMachine::OnXbeeFrameReceived(FrameType type, std::vector<byte>& pa
 	{
 	case ModemStatusResponse:
 	{
-		auto status = XBeeApi::GetModemStatus(payload);
+		auto status = xbeeApi.GetModemStatus();
 		XBeeApi::printModemStatus(status);
 		currentState->OnModemStatusReceived(status);
 		break;

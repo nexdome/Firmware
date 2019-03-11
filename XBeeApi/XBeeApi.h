@@ -83,7 +83,7 @@ public:
 	void loop();
 	void reset();
 	static uint64_t GetRemoteAddress(std::vector<byte>& payload);
-	static ModemStatus GetModemStatus(std::vector<byte>& payload);
+	ModemStatus GetModemStatus();
 	static void printModemStatus(ModemStatus status);
 
 

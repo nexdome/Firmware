@@ -6,7 +6,6 @@
 */
 
 #include "Timer.h"
-extern unsigned long millis();	// VMicro doesn't correctly detect this, so manually declare it.
 
 Timer::Timer()
 	{
@@ -26,7 +25,7 @@ void Timer::SetDuration(unsigned long duration)
 unsigned long Timer::Elapsed()
 	{
 	if (!Enabled())
-		return 0;
+		return 0UL;
 	unsigned long elapsed = millis() - startedAt;
 	//Serial.print(startedAt);
 	//Serial.print(',');
@@ -48,15 +47,6 @@ bool Timer::Expired()
 	return Enabled() ? Elapsed() >= interval : false;
 	}
 
-/*
- * Repeats the timer interval but does not reset the reference datum.
- * This should be used when repeatedly timing the same interval, and it is
- * intended that the intervals be consistent _on average_.
- */
-void Timer::Repeat()
-	{
-	startedAt += interval;
-	}
 
 bool Timer::Enabled()
 {
