@@ -1,5 +1,4 @@
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "XBeeOnlineState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -7,14 +6,13 @@
 
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
-#include <XBee.h>
+#include <XBeeApi.h>
 #include "NexDome.h"
 #include "XBeeStateMachine.h"
 #include "XBeeStartupState.h"
+#include "XBeeOnlineState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
-
-
 
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
@@ -22,8 +20,16 @@ auto stepper = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, 
 auto commandProcessor = CommandProcessor(stepper, settings);
 auto& xbeeSerial = Serial1;
 auto& host = Serial;
-XBee xbeeApi = XBee();
-auto machine = XBeeStateMachine(xbeeSerial, host);
+std::vector<byte> receiveBuffer;
+void HandleFrameReceived(FrameType type, std::vector<byte> payload);	// forward reference
+
+auto xbee = XBeeApi(xbeeSerial, receiveBuffer, (ReceiveHandler) HandleFrameReceived);
+auto machine = XBeeStateMachine(xbeeSerial, host, xbee);
+
+void HandleFrameReceived(FrameType type, std::vector<byte> payload)
+{
+	machine.OnXbeeFrameReceived(type, payload);
+}
 
 void HandleSerialCommunications()
 {
@@ -106,20 +112,20 @@ Response DispatchCommand(char* buffer, unsigned int charCount)
 
 // the setup function runs once when you press reset or power the board
 void setup() {
+	receiveBuffer.reserve(API_MAX_FRAME_LENGTH);
 	stepper.ReleaseMotor();
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	xbeeApi.setSerial(xbeeSerial);
-
 	interrupts();
+
 	machine.ChangeState(new XBeeStartupState(machine));
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	if (millis() % 1000 != 0) return;
-	stepper.Loop();
-	HandleSerialCommunications();
+	if (millis() % 1 != 0) return;
+	//stepper.Loop();
+	//HandleSerialCommunications();
 	machine.Loop();
-	while (millis() % 1000 == 0);
+	//while (millis() % 200 == 0);
 }

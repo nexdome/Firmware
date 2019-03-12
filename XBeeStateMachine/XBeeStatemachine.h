@@ -1,4 +1,4 @@
-// XbeeState.h
+// XbeeStateMachine.h
 
 #ifndef _XBEESTATE_h
 #define _XBEESTATE_h
@@ -9,8 +9,9 @@
 #include "WProgram.h"
 #endif
 
-#include "Timer.h"
-#include <XBee.h>
+#include <XBeeApi.h>
+#include <Timer.h>
+
 
 #define XBEE_BOOT_TIME_MILLIS (5000UL)			// Time for XBEE to become ready from cold reset
 #define XBEE_AT_GUARD_TIME (1000UL)				// Wait time before sending "+++" and receiving "OK"
@@ -26,29 +27,29 @@ class IXBeeState;
 class XBeeStateMachine
 {
 public:
-	XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort);
+	XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort, XBeeApi& xbee);
 	void Loop();
 	void SendToXbee(String message) const;
 	void ChangeState(IXBeeState* newState);
 	void ListenInAtCommandMode();
 	void ListenInApiMode();
 	unsigned int GetNextFrameId();
-	void SendXbeeApiFrame(XBeeRequest& request);
+	//void SendXbeeApiFrame(XBeeRequest& request);
 	void SetDestinationAddress(uint64_t address);
 	void XBeeApiSendMessage(const String& message);
-
+	void OnXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
 private:
 	void xbee_serial_receive();
 	void xbee_api_receive();
 	HardwareSerial& xbeeSerial;
-	XBee xbeeApi;
-	XBeeAddress64 remoteAddress;
+	XBeeApi& xbeeApi;
+	//XBeeWithCallbacks xbeeApi;
+	uint64_t remoteAddress;
 	IXBeeState* currentState;
 	unsigned long startTime;
 	bool ApiModeEnabled = false;
 	unsigned int frameId = 1;
 	Stream& debug;
-	Tx64Request tx64Frame;
 };
 
 class IXBeeState
@@ -62,6 +63,7 @@ public:
 	{
 		if (timer.Enabled() && timer.Expired())
 		{
+			Serial.println("Timeout");
 			OnTimerExpired();
 		}
 	}
@@ -70,13 +72,12 @@ public:
 	// State machine triggers
 	virtual void OnTimerExpired() {}
 	virtual void OnSerialLineReceived(String& rxData) {}
-	virtual void OnApiRx64FrameReceived(Rx64Response& frame) {}
-	virtual void SendMessage(Tx64Request& message) {}
-	virtual void OnModemStatusReceived(uint8_t state) {}
+	virtual void OnApiRx64FrameReceived(std::vector<byte>& payload) {}
+	virtual void OnModemStatusReceived(ModemStatus state) {}
 
 protected:
 	XBeeStateMachine& machine;
-	Timer timer;
+	static Timer timer;
 };
 
 #endif

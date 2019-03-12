@@ -28,9 +28,9 @@ void XBeeApiDetectShutterState::OnTimerExpired()
  * We configure the state machine to use that address for future transmissions.
  * This allows as to talk directly and specifically to the shutter.
  */
-void XBeeApiDetectShutterState::OnApiRx64FrameReceived(Rx64Response & frame)
-	{
-	const auto remote = frame.getRemoteAddress64().get();
-	machine.SetDestinationAddress(remote);
-	machine.ChangeState(new XBeeShutterOnlineState(machine));
-	}
+//void XBeeApiDetectShutterState::OnApiRx64FrameReceived(Rx64Response & frame)
+//	{
+//	const auto remote = frame.getRemoteAddress64().get();
+//	machine.SetDestinationAddress(remote);
+//	machine.ChangeState(new XBeeShutterOnlineState(machine));
+//	}

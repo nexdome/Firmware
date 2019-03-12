@@ -22,16 +22,14 @@ void XBeeAssociatedState::OnEnter()
  * It will come in the payload of an Rx response with 64-bit address.
  * All other frame types are ignored at this point.
  */
-void XBeeAssociatedState::OnApiRx64FrameReceived(Rx64Response& frame)
+void XBeeAssociatedState::OnApiRx64FrameReceived(std::vector<byte>& payload)
 	{
-	auto sender = frame.getRemoteAddress64();
-	auto payload = frame.getData();
-	if( memcmp(xbeeHelloAckMessage.begin(), payload, xbeeHelloAckMessage.length())==0)
-		{
-		// Showtime
-		machine.SetDestinationAddress(sender);
-		machine.ChangeState(new XBeeOnlineState(machine));
-		}
+	//if( memcmp(xbeeHelloAckMessage.begin(), payload, xbeeHelloAckMessage.length())==0)
+	//	{
+	//	// Showtime
+	//	machine.SetDestinationAddress(sender);
+	//	machine.ChangeState(new XBeeOnlineState(machine));
+	//	}
 	}
 
 /*
