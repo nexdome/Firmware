@@ -104,3 +104,16 @@ private:
 
 #endif
 
+/*
+Rx frames vs address length (bits)
+0x8A Modem Status				16
+0x88 AT Command Response		0
+0x97 Remote AT Command Response	64
+0x89 TX Status					0
+0x80 RX64 packet				64
+0x81 RX16 packet				16
+0x82 RX64 IO data				64
+0x83 RX16 IO data				16
+
+*/
+

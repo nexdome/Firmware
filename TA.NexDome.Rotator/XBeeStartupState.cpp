@@ -12,7 +12,7 @@ void XBeeStartupState::OnEnter()
 
 void XBeeStartupState::OnTimerExpired()
 {
-	machine.SendToXbee("+++");
+	machine.SendToLocalXbee("+++");
 	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 }
 

@@ -9,6 +9,7 @@
 #include "WProgram.h"
 #endif
 
+#include <ArduinoSTL.h>
 #include <XBeeApi.h>
 #include <Timer.h>
 
@@ -29,26 +30,27 @@ class XBeeStateMachine
 public:
 	XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort, XBeeApi& xbee);
 	void Loop();
-	void SendToXbee(String message) const;
+	void SendToLocalXbee(String message) const;
+	void SendToRemoteXbee(String message);
 	void ChangeState(IXBeeState* newState);
 	void ListenInAtCommandMode();
 	void ListenInApiMode();
-	unsigned int GetNextFrameId();
 	//void SendXbeeApiFrame(XBeeRequest& request);
-	void SetDestinationAddress(uint64_t address);
+	void SetDestinationAddress(std::vector<byte>& payload);
 	void XBeeApiSendMessage(const String& message);
 	void OnXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
 private:
 	void xbee_serial_receive();
 	void xbee_api_receive();
+	void printEscaped(byte data);
+	byte getNextFrameId();
 	HardwareSerial& xbeeSerial;
 	XBeeApi& xbeeApi;
-	//XBeeWithCallbacks xbeeApi;
-	uint64_t remoteAddress;
+	std::vector<byte> remoteAddress;
 	IXBeeState* currentState;
 	unsigned long startTime;
 	bool ApiModeEnabled = false;
-	unsigned int frameId = 1;
+	byte frameId = 0;
 	Stream& debug;
 };
 

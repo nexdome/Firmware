@@ -15,7 +15,7 @@ void XBeeStartupState::OnEnter()
 void XBeeStartupState::OnTimerExpired()
 {
 	// XBee should have booted by now, so try to put it into command mode.
-	machine.SendToXbee("+++");
+	machine.SendToLocalXbee("+++");
 	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 }
 

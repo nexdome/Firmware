@@ -17,7 +17,7 @@ void XBeeWaitForCommandModeState::OnSerialLineReceived(String& rxData)
 	if (rxData != "OK")
 		return;
 	// Send configuration string to XBee
-	machine.SendToXbee(rotatorInitString);	// Enter API2 mode.
+	machine.SendToLocalXbee(rotatorInitString);	// Enter API2 mode.
 	machine.ChangeState(new XBeeApiDetectShutterState(machine));
 	}
 

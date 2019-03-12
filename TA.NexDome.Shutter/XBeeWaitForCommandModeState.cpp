@@ -21,7 +21,7 @@ void XBeeWaitForCommandModeState::OnSerialLineReceived(String& rxData)
 	if (rxData != "OK")
 		return;
 	// Set serial comms parameters and API mode 2
-	machine.SendToXbee(XBeeInitString);	// Enter API mode.
+	machine.SendToLocalXbee(XBeeInitString);	// Enter API mode.
 	machine.ChangeState(new XBeeWaitForAssociationState(machine));
 	}
 
