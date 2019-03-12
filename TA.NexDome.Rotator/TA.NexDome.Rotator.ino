@@ -7,7 +7,7 @@
 #include "NexDome.h"
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
-#include <XBee.h>
+#include <XBeeApi.h>
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "XBeeStartupState.h"
@@ -22,8 +22,10 @@ auto commandProcessor = CommandProcessor(stepper, settings);
 auto &xbeeSerial = Serial1;
 auto& host = Serial;
 const std::vector<String> xbeeInitSequence = { "CE1","ID6FBF","CH0C","MYD0","DH0","DHFFFF","A25","SM0","AP2" };
-XBee xbeeApi = XBee();
-auto machine = XBeeStateMachine(xbeeSerial, host);
+std::vector<byte> xbeeApiRxBuffer;
+void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
+auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler)onXbeeFrameReceived);
+auto machine = XBeeStateMachine(xbeeSerial, host, xbeeApi);
 
 void HandleSerialCommunications()
 {
@@ -109,7 +111,8 @@ void setup() {
 	stepper.ReleaseMotor();
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	xbeeApi.setSerial(xbeeSerial);
+	xbeeApi.reset();
+	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 
 	interrupts();
 	machine.ChangeState(new XBeeStartupState(machine));
@@ -120,4 +123,10 @@ void loop() {
 	stepper.Loop();
 	HandleSerialCommunications();
 	machine.Loop();
+}
+
+// Handle the received XBee API frame by passing it to the XBee state machine.
+void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
+{
+	machine.OnXbeeFrameReceived(type, payload);
 }

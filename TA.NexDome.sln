@@ -42,6 +42,7 @@ Global
 		AdvancedStepper\AdvancedStepper.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		Timer\Timer.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		XBeeApi\XBeeApi.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		XBeeStatemachine\XBeeStatemachine.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		XBeeStatemachine\XBeeStatemachine.vcxitems*{c7bef4c6-f140-4d54-9c00-c333bdc513b6}*SharedItemsImports = 9
 		XBeeApi\XBeeApi.vcxitems*{d566cdcc-f634-4ba0-93e6-0aa2c0d80ad0}*SharedItemsImports = 9
