@@ -18,6 +18,8 @@ protected:
 public:
 	String name() override { return "Online"; };
 	explicit XBeeShutterOnlineState(XBeeStateMachine& machine) : IXBeeState(machine) {}
+	void OnEnter() override;
+	void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;
 	};
 
 

@@ -16,12 +16,15 @@
 
 #define XBEE_BOOT_TIME_MILLIS (5000UL)			// Time for XBEE to become ready from cold reset
 #define XBEE_AT_GUARD_TIME (1000UL)				// Wait time before sending "+++" and receiving "OK"
-#define XBEE_REMOTE_HANDSHAKE_TIMEOUT (20000UL)	// Maximum time to wait for remote device to say hello.
+#define XBEE_REMOTE_HANDSHAKE_TIMEOUT (5000UL)	// Maximum time to wait for rotator to acknowledge the hello message.
+#define XBEE_DETECT_SHUTTER_TIMEOUT (30000UL)	// Maximum time to wait for the shutter to say hello.
+#define XBEE_NO_ACTIVITY_TIMEOUT (300000UL)		// Time before we assume that the remote link is down
 #define XBEE_HELLO_MESSAGE "Yoohoo"				// A retro shout-out to FidoNet era mailer called dBridge.
 #define XBEE_HELLO_ACK "Yoohoo2U2"				// (yes I am old enough to remember FidoNet).
 
 //ToDo: The following defs are project specific and need to be moved into the projects.
 #define XBEE_ROTATOR_INIT_STRING "ATCE1,ID6FBF,CHC,MYFFFF,DH0,DLFFFF,A27,AP2,SM0,WR,AC,FR,CN\x0D"
+#define XBEE_SHUTTER_INIT_STRING "ATCE0,ID6FBF,CHC,MYFFFF,DH0,DLFFFE,A15,AP2,SM0,AC,FR,CN\0xD"
 
 class IXBeeState;
 
@@ -31,17 +34,18 @@ public:
 	XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort, XBeeApi& xbee);
 	void Loop();
 	void SendToLocalXbee(String message) const;
-	void SendToRemoteXbee(String message);
+	void SendToRemoteXbee(const std::string& message);
 	void ChangeState(IXBeeState* newState);
 	void ListenInAtCommandMode();
 	void ListenInApiMode();
 	//void SendXbeeApiFrame(XBeeRequest& request);
-	void SetDestinationAddress(std::vector<byte>& payload);
-	void XBeeApiSendMessage(const String& message);
-	void OnXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
+	void SetDestinationAddress(const std::vector<byte>& payload);
+	void useCoordinatorAddress();
+	void OnXbeeFrameReceived(FrameType type, const std::vector<byte>& payload);
 private:
 	void xbee_serial_receive();
 	void xbee_api_receive();
+	void copyAddress(const byte* start);
 	void printEscaped(byte data);
 	byte getNextFrameId();
 	HardwareSerial& xbeeSerial;
@@ -74,7 +78,7 @@ public:
 	// State machine triggers
 	virtual void OnTimerExpired() {}
 	virtual void OnSerialLineReceived(String& rxData) {}
-	virtual void OnApiRx64FrameReceived(std::vector<byte>& payload) {}
+	virtual void OnApiRx64FrameReceived(const std::vector<byte>& payload) {}
 	virtual void OnModemStatusReceived(ModemStatus state) {}
 
 protected:

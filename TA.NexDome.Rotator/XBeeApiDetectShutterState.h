@@ -18,7 +18,7 @@ public:
 	String name() override { return "DetectShutter"; }
 	void OnEnter() override;
 	void OnTimerExpired() override;
-	//void OnApiRx64FrameReceived(Rx64Response& frame) override;
+	void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;
 	};
 
 #endif

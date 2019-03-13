@@ -30,53 +30,70 @@ void XBeeStateMachine::SendToLocalXbee(String message) const
 	debug.println(message + " to X");
 	}
 
-void XBeeStateMachine::SendToRemoteXbee(String message)
+/*
+Sample TX64 frame for Hello message
+7E 00 7D 31 00 01 00 00 00 00 00 00 FF FF 00 59 6F 6F 68 6F 6F 83
+
+*/
+
+void XBeeStateMachine::SendToRemoteXbee(const std::string& message)
 {
+	std::cout << "Send: " << message << std::endl;
 	auto destinationAddress = remoteAddress;
-	// Length = API-ID + FrameId + Dest-Address + Options + message + checksum
-	uint16_t length = 1 + 1 + 8 + 1 + message.length() + 1;
-	xbeeSerial.print((byte)API_FRAME_START);
-	xbeeSerial.print((byte)(length >> 8));	// Length MSB
-	xbeeSerial.print((byte)(length));		// Length LSB
-	xbeeSerial.print(Tx64Request);
+	/* Length = 
+	API-ID		1
+	FrameId		1
+	DestAddr	8
+	Options		1
+	Message		n
+	Checksum	0 (doesn't count towards frame length)
+	Total = 11 + message.length()
+	*/
+	uint16_t length = 11 + message.length();
+	xbeeSerial.print((char)API_FRAME_START);
+	printEscaped((byte)(length >> 8));	// Length MSB
+	printEscaped((byte)(length));		// Length LSB
+	printEscaped(Tx64Request);
 	auto frameId = getNextFrameId();
-	xbeeSerial.print(frameId);
+	printEscaped(frameId);
 	byte checksum = Tx64Request + frameId;
 	// send the address bytes.
 	for (auto index = remoteAddress.begin(); index < remoteAddress.end(); ++index)
 	{
 		byte addressByte = *index;
-		xbeeSerial.print(addressByte);
+		printEscaped(addressByte);
 		checksum += addressByte;
 	}
-	xbeeSerial.print((byte)0);	// No options
+	printEscaped((byte)0);	// No options
 	// Now comes the data, up to 100 bytes
 	for (auto data = message.begin(); data < message.end(); ++data)
 	{
 		byte dataByte = *data;
-		xbeeSerial.print(dataByte);
+		printEscaped(dataByte);
 		checksum += dataByte;
 	}
 	// And finally, the checksum.
-	xbeeSerial.print((byte)0xFF - checksum);
+	printEscaped((char)((byte)0xFF - checksum));
 }
 
 // Send a data byte to the local XBee, inserting an escape sequence if needed.
 void XBeeStateMachine::printEscaped(byte data)
 {
-	static const std::vector<byte> escapableBytes = { '\x7E', '\x7D', '\x11', '\x13' };
+	static const std::vector<byte> escapableBytes = { 0x7E, 0x7D, 0x11, 0x13 };
 	for (auto ptr = escapableBytes.begin(); ptr < escapableBytes.end(); ++ptr)
 	{
 		if (data == *ptr)
 		{
 			// Need to escape
-			xbeeSerial.print((byte)API_ESCAPE);
-			xbeeSerial.print(data ^ 0x20);
-			return;
+			byte escaped = data ^ 0x20;
+			data ^= 0x20;
+			xbeeSerial.print((char)API_ESCAPE);
+			std::cout << std::hex << (int)API_ESCAPE << " " ;
+			break;
 		}
-		// Non-escapable
-		xbeeSerial.print(data);
 	}
+	xbeeSerial.print((char)data);
+	std::cout << std::hex << (int)data << " ";
 }
 
 void XBeeStateMachine::ChangeState(IXBeeState* newState)
@@ -116,15 +133,40 @@ byte XBeeStateMachine::getNextFrameId()
 	return next;
 	}
 
-// Extract and save a 64-bit destination address from a frame payload
-void XBeeStateMachine::SetDestinationAddress(std::vector<byte>& payload)
+//ToDo: diagnostics - delete me
+void printAddress(const std::vector<byte>& address)
 {
-	// vectors are gauranteed to be in contiguous storage
-	byte* source = payload.begin();
-	byte* dest = remoteAddress.begin();
+	std::cout << "Set address ";
+	for (auto index = address.begin(); index < address.end(); ++index)
+	{
+		std::cout << std::hex << (int)* index << " ";
+	}
+	std::cout << std::endl;
+}
+
+// Extract and save a 64-bit destination address from a frame payload
+void XBeeStateMachine::SetDestinationAddress(const std::vector<byte>& payload)
+{
+	// The source address starts at byte 11 in a payload.
+	const byte* source = payload.begin() + 10;
+	copyAddress(source);
+	printAddress(remoteAddress);
+}
+
+// Copy 8 bytes (64 bits) of address data starting at (source)
+void XBeeStateMachine::copyAddress(const byte* source)
+{
+	remoteAddress.clear();
 	byte count = 8;	// 64-bit address requires 8 bytes.
 	while (count-- > 0)
-		* dest++ = *source++;
+		remoteAddress.push_back(*source++);
+}
+
+void XBeeStateMachine::useCoordinatorAddress()
+{
+	const std::vector<byte> coordinator({ 0,0,0,0,0,0,0xFF,0xFF });
+	copyAddress(coordinator.begin());
+	printAddress(remoteAddress);
 }
 
 void XBeeStateMachine::xbee_serial_receive()
@@ -152,18 +194,9 @@ void XBeeStateMachine::xbee_api_receive()
 	xbeeApi.loop();
 	}
 
-void XBeeStateMachine::XBeeApiSendMessage(const String& message)
-	{
-	debug.print("Tx: ");
-	debug.println(message);
-	//tx64Frame.setAddress64(remoteAddress);
-	//tx64Frame.setFrameId(GetNextFrameId());
-	//tx64Frame.setPayload((uint8_t*)message.begin());
-	//SendXbeeApiFrame(tx64Frame);
-	}
-
-void XBeeStateMachine::OnXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
+void XBeeStateMachine::OnXbeeFrameReceived(FrameType type, const std::vector<byte>& payload)
 {
+	//std::cout << "API ID " << (int)type << " frame " << (int)payload[0] << std::endl;
 	switch (type)
 	{
 	case ModemStatusResponse:
@@ -173,6 +206,12 @@ void XBeeStateMachine::OnXbeeFrameReceived(FrameType type, std::vector<byte>& pa
 		currentState->OnModemStatusReceived(status);
 		break;
 	}
+	case Rx64Response:
+		currentState->OnApiRx64FrameReceived(payload);
+		break;
+	case TxStatusResponse:
+		//std::cout << "Frame " << payload[1] << " status " << payload[2] << std::endl;
+		break;
 	default:
 		break;
 	}

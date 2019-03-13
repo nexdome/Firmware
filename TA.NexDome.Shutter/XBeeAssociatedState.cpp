@@ -14,23 +14,34 @@
 void XBeeAssociatedState::OnEnter()
 	{
 	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
-	machine.XBeeApiSendMessage(XBEE_HELLO_MESSAGE);
+	sendHello();
 	}
+
+inline void XBeeAssociatedState::sendHello()
+{
+	static const std::string hello(XBEE_HELLO_MESSAGE);
+	machine.SendToRemoteXbee(hello);
+}
 
 /*
  * We are expecting the Rotator to acknowledge our hello message.
  * It will come in the payload of an Rx response with 64-bit address.
  * All other frame types are ignored at this point.
  */
-void XBeeAssociatedState::OnApiRx64FrameReceived(std::vector<byte>& payload)
+void XBeeAssociatedState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
+{
+	// If it's the ACK message, save the remote address, and go online.
+	// Check whether the message is correct, otherwise ignore frame
+	// Skip first 10 bytes of payload, look for string in bytes 11 onward.
+	auto msgStart = payload.begin() + 10;
+	auto msgEnd = payload.end();
+	std::string rxMessage(msgStart, msgEnd);
+	if (rxMessage.compare(XBEE_HELLO_ACK) == 0)
 	{
-	//if( memcmp(xbeeHelloAckMessage.begin(), payload, xbeeHelloAckMessage.length())==0)
-	//	{
-	//	// Showtime
-	//	machine.SetDestinationAddress(sender);
-	//	machine.ChangeState(new XBeeOnlineState(machine));
-	//	}
+		machine.SetDestinationAddress(payload);
+		machine.ChangeState(new XBeeOnlineState(machine));
 	}
+}
 
 /*
  * No acknowledgement from the rotator means something is wrong. Go right back to scratch,
@@ -38,5 +49,6 @@ void XBeeAssociatedState::OnApiRx64FrameReceived(std::vector<byte>& payload)
  */
 void XBeeAssociatedState::OnTimerExpired()
 	{
-	machine.ChangeState(new XBeeStartupState(machine));
+	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
+	sendHello();
 	}
