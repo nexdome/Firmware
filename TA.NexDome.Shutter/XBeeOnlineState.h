@@ -15,6 +15,8 @@ class XBeeOnlineState : public IXBeeState
 public:
 	explicit XBeeOnlineState(XBeeStateMachine& machine) : IXBeeState(machine) {  }
 	String name() override { return "online"; }
+	void OnEnter() override;
+	void OnTimerExpired() override;
 	};
 
 #endif

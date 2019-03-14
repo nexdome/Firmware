@@ -147,9 +147,7 @@ void printAddress(const std::vector<byte>& address)
 // Extract and save a 64-bit destination address from a frame payload
 void XBeeStateMachine::SetDestinationAddress(const std::vector<byte>& payload)
 {
-	// The source address starts at byte 11 in a payload.
-	const byte* source = payload.begin() + 10;
-	copyAddress(source);
+	copyAddress(payload.begin());
 	printAddress(remoteAddress);
 }
 
