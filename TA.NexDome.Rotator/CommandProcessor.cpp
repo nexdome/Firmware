@@ -28,9 +28,7 @@ Response CommandProcessor::HandleCommand(Command& command)
 	{
 	if (command.IsMotorCommand())
 		{
-		if (command.Verb == "MI") return HandleMI(command);	// Move motor in
-		if (command.Verb == "MO") return HandleMO(command);	// Move motor out
-		if (command.Verb == "AW") return HandleAW(command);	// Set limit of travel
+		if (command.Verb == "GA") return HandleGA(command);
 		if (command.Verb == "SW") return HandleSW(command);	// Stop motor
 		if (command.Verb == "PR") return HandlePR(command);	// Position read
 		if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
@@ -51,29 +49,38 @@ Response CommandProcessor::HandleCommand(Command& command)
 	return Response::Error();
 	}
 
-Response CommandProcessor::HandleMI(Command& command)
-	{
-	// Commands are in whole steps, motors operate in microsteps, so we must convert.
+Response CommandProcessor::HandleGA(Command& command)
+{
+	//ToDo: This is temporary code for testing and needs to be re-done
+	auto microsteps = command.StepPosition * 66.6666;
 	auto motor = GetMotor(command);
-	auto microStepsToMove = StepsToMicrosteps(command.StepPosition);
-	auto targetPosition = motor->CurrentPosition() - microStepsToMove;
-	if (targetPosition < 0)
-		return Response::Error();
-	motor->MoveToPosition(targetPosition);
+	motor->MoveToPosition(microsteps);
 	return Response::FromSuccessfulCommand(command);
-	}
+}
 
-Response CommandProcessor::HandleMO(Command& command)
-	{
-	// Commands are in whole steps, motors operate in microsteps, so we must convert.
-	auto motor = GetMotor(command);
-	auto microStepsToMove = StepsToMicrosteps(command.StepPosition);
-	auto targetPosition = motor->CurrentPosition() + microStepsToMove;
-	if (targetPosition > motor->LimitOfTravel())
-		return Response::Error();
-	motor->MoveToPosition(targetPosition);
-	return Response::FromSuccessfulCommand(command);
-	}
+//Response CommandProcessor::HandleMI(Command& command)
+//	{
+//	// Commands are in whole steps, motors operate in microsteps, so we must convert.
+//	auto motor = GetMotor(command);
+//	auto microStepsToMove = StepsToMicrosteps(command.StepPosition);
+//	auto targetPosition = motor->CurrentPosition() - microStepsToMove;
+//	if (targetPosition < 0)
+//		return Response::Error();
+//	motor->MoveToPosition(targetPosition);
+//	return Response::FromSuccessfulCommand(command);
+//	}
+//
+//Response CommandProcessor::HandleMO(Command& command)
+//	{
+//	// Commands are in whole steps, motors operate in microsteps, so we must convert.
+//	auto motor = GetMotor(command);
+//	auto microStepsToMove = StepsToMicrosteps(command.StepPosition);
+//	auto targetPosition = motor->CurrentPosition() + microStepsToMove;
+//	if (targetPosition > motor->LimitOfTravel())
+//		return Response::Error();
+//	motor->MoveToPosition(targetPosition);
+//	return Response::FromSuccessfulCommand(command);
+//	}
 
 Response CommandProcessor::HandleAW(Command & command)
 	{

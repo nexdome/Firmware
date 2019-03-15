@@ -24,10 +24,9 @@ class CommandProcessor
 
 	private:
 		MicrosteppingMotor * GetMotor(Command& command);		// Gets the motor addressed by the command
+		Response HandleGA(Command& command);	// GA - GoTo Azimuth (in degrees).
 		Response HandleAW(Command & command);	// AW - Acceleration ramp time write
 		Response HandleFR(Command & command);	// Firmware version read
-		Response HandleMI(Command & command);	// Move motor in
-		Response HandleMO(Command & command);	// Move motor out
 		Response HandlePR(Command & command);	// Step position read
 		Response HandlePW(Command & command);	// Step position write (sync)
 		Response HandleRR(Command & command);	// Range (limit of travel) read
