@@ -84,7 +84,9 @@ public:
 	void reset();
 	static uint64_t GetRemoteAddress(std::vector<byte>& payload);
 	ModemStatus GetModemStatus();
+#ifdef DEBUG_XBEE_API
 	static void printModemStatus(ModemStatus status);
+#endif
 
 
 private:
@@ -97,9 +99,11 @@ private:
 	uint16_t frameLength;
 	FrameType frameType;
 	ReceiveHandler onFrameReceived;
+#ifdef DEBUG_XBEE_API
 	void printFrame();
 	void printChecksum();
 	void printRxChar(byte rxb);
+#endif
 	};
 
 #endif

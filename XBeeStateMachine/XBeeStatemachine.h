@@ -33,16 +33,17 @@ class XBeeStateMachine
 public:
 	XBeeStateMachine(HardwareSerial& xBeePort, Stream& debugPort, XBeeApi& xbee);
 	void Loop();
-	void SendToLocalXbee(String message) const;
-	void SendToRemoteXbee(const std::string& message);
 	void ChangeState(IXBeeState* newState);
 	void ListenInAtCommandMode();
 	void ListenInApiMode();
-	//void SendXbeeApiFrame(XBeeRequest& request);
+	void SendToLocalXbee(String message) const;
+	void SendToRemoteXbee(const std::string& message);
 	void SetDestinationAddress(const std::vector<byte>& payload);
 	void useCoordinatorAddress();
 	void OnXbeeFrameReceived(FrameType type, const std::vector<byte>& payload);
+	void TriggerSendCommand(std::string& command);
 private:
+	friend class IXBeeState;
 	void xbee_serial_receive();
 	void xbee_api_receive();
 	void copyAddress(const byte* start);
@@ -80,6 +81,7 @@ public:
 	virtual void OnSerialLineReceived(String& rxData) {}
 	virtual void OnApiRx64FrameReceived(const std::vector<byte>& payload) {}
 	virtual void OnModemStatusReceived(ModemStatus state) {}
+	virtual void SendCommand(std::string& command) {}
 
 protected:
 	XBeeStateMachine& machine;

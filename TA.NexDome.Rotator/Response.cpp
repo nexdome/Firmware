@@ -9,20 +9,27 @@ Response Response::Error()
 
 Response Response::FromSuccessfulCommand(Command& command)
 	{
-	auto message = command.Verb + Response::Terminator;
+	std::string message;
+	message.append(command.Verb);
+	message.append(Response::Terminator);
 	return Response{ message };
 	}
 
 Response Response::FromPosition(Command& command, uint32_t position)
 	{
-	String message = command.Verb + (String)position + Response::Terminator;
+	std::string message;
+	String positionString = (String)position;
+	message.append(command.Verb);
+	message.append(positionString.begin(), positionString.length());
+	message.append(Response::Terminator);
 	return Response{ message };
 	}
 
 Response Response::FromInteger(Command& command, int i)
 	{
-	return Response{ command.Verb + (String)i + Response::Terminator };
+	return Response::FromPosition(command, i);
 	}
 
-const String Response::Terminator = "#";
+const std::string Response::Terminator = "#";
+std::string Response::messageBuffer;
 

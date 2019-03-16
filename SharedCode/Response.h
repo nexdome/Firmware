@@ -11,8 +11,9 @@
 
 struct Response
 {
-	static const String Terminator;
-	String Message;
+	static const std::string Terminator;
+	static std::string messageBuffer;
+	std::string Message;
 	bool success;
 
 	/*

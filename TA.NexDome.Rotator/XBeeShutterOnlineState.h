@@ -20,6 +20,7 @@ public:
 	explicit XBeeShutterOnlineState(XBeeStateMachine& machine) : IXBeeState(machine) {}
 	void OnEnter() override;
 	void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;
+	void SendCommand(std::string& command) override;
 	};
 
 

@@ -1,10 +1,14 @@
-
 #include "CommandProcessor.h"
 #include "NexDome.h"
 
-bool Command::IsMotorCommand()
+bool Command::IsRotatorCommand()
 	{
-	return TargetDevice == 'R' || TargetDevice == 'S';
+	return TargetDevice == 'R';
+	}
+
+bool Command::IsShutterCommand()
+	{
+	return TargetDevice == 'S';
 	}
 
 bool Command::IsSystemCommand()
@@ -12,21 +16,32 @@ bool Command::IsSystemCommand()
 	return TargetDevice == '0';
 	}
 
-CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings)
+CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
+	: rotator(rotator), settings(settings), machine(machine)
 	{
-	this->rotator = &rotator;
-	this->settings = &settings;
 	}
 
-MicrosteppingMotor* CommandProcessor::GetMotor(Command& command)
+inline MicrosteppingMotor& CommandProcessor::GetMotor(Command& command)
 	{
-	auto address = command.TargetDevice;
-	return address == 'R' ? rotator : rotator;
+	return rotator;
 	}
+
+Response CommandProcessor::ForwardToShutter(Command& command)
+{
+	machine.SendToRemoteXbee(command.RawCommand);
+	//ToDo: should the response always be successful?
+	return Response::FromSuccessfulCommand(command);
+}
 
 Response CommandProcessor::HandleCommand(Command& command)
 	{
-	if (command.IsMotorCommand())
+	if (command.IsShutterCommand())
+	{
+		ForwardToShutter(command);
+		return Response::FromSuccessfulCommand(command);	// ToDo - maybe return a result from the shutter?
+	}
+
+	if (command.IsRotatorCommand())
 		{
 		if (command.Verb == "GA") return HandleGA(command);
 		if (command.Verb == "SW") return HandleSW(command);	// Stop motor
@@ -52,9 +67,11 @@ Response CommandProcessor::HandleCommand(Command& command)
 Response CommandProcessor::HandleGA(Command& command)
 {
 	//ToDo: This is temporary code for testing and needs to be re-done
-	auto microsteps = command.StepPosition * 66.6666;
-	auto motor = GetMotor(command);
-	motor->MoveToPosition(microsteps);
+	const double degreesPerStep = 1.2 / 15.0 / 100.0;
+	const double stepsPerDegree = 1 / degreesPerStep;
+	auto wholeSteps = command.StepPosition * stepsPerDegree;
+	auto microsteps = StepsToMicrosteps(wholeSteps);
+	rotator.MoveToPosition(microsteps);
 	return Response::FromSuccessfulCommand(command);
 }
 
@@ -89,40 +106,40 @@ Response CommandProcessor::HandleAW(Command & command)
 	// The minimum ramp time is 100ms, fail if the user tries to set it lower.
 	if (rampTime < MIN_RAMP_TIME)
 		return Response::Error();
-	motor->SetRampTime(rampTime);
+	motor.SetRampTime(rampTime);
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleSW(Command & command)
 	{
 	auto motor = GetMotor(command);
-	motor->HardStop();
+	motor.HardStop();
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleZW(Command & command)
 	{
-	settings->Save();
+	settings.Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleZR(Command & command)
 {
-	*settings = PersistentSettings::Load();
+	settings = PersistentSettings::Load();
 	return Response::FromSuccessfulCommand(command);
 }
 
 Response CommandProcessor::HandleZD(Command & command)
 	{
-	*settings = PersistentSettings();
-	settings->Save();
+	settings = PersistentSettings();
+	settings.Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandlePR(Command & command)
 	{
 	auto motor = GetMotor(command);
-	auto position = MicrostepsToSteps(motor->CurrentPosition());
+	auto position = MicrostepsToSteps(motor.CurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
@@ -131,7 +148,7 @@ Response CommandProcessor::HandlePW(Command & command)
 {
 	auto microsteps = StepsToMicrosteps(command.StepPosition);
 	auto motor = GetMotor(command);
-	motor->SetCurrentPosition(microsteps);
+	motor.SetCurrentPosition(microsteps);
 	return Response::FromSuccessfulCommand(command);
 }
 
@@ -139,26 +156,32 @@ Response CommandProcessor::HandleRW(Command & command)
 {
 	auto microsteps = StepsToMicrosteps(command.StepPosition);
 	auto motor = GetMotor(command);
-	motor->SetLimitOfTravel(microsteps);
+	motor.SetLimitOfTravel(microsteps);
 	return Response::FromSuccessfulCommand(command);
 }
 
 Response CommandProcessor::HandleRR(Command & command)
 	{
 	auto motor = GetMotor(command);
-	auto range = MicrostepsToSteps(motor->LimitOfTravel());
+	auto range = MicrostepsToSteps(motor.LimitOfTravel());
 	return Response::FromPosition(command, range);
 	}
 
 Response CommandProcessor::HandleFR(Command & command)
 	{
-	return Response{ "FR"+(String)FIRMWARE_MAJOR_VERSION + "." + (String)FIRMWARE_MINOR_VERSION + "#" };
+	std::string message;
+	message.append("FR");
+	message.append(FIRMWARE_MAJOR_VERSION);
+	message.push_back('.');
+	message.append(FIRMWARE_MINOR_VERSION);
+	message.append(Response::Terminator);
+	return Response{ message };
 	}
 
 Response CommandProcessor::HandleVR(Command & command)
 {
 	auto motor = GetMotor(command);
-	auto maxSpeed = motor->MaximumSpeed();
+	auto maxSpeed = motor.MaximumSpeed();
 	return Response::FromPosition(command, MicrostepsToSteps(maxSpeed));
 }
 
@@ -166,16 +189,16 @@ Response CommandProcessor::HandleVW(Command & command)
 {
 	auto motor = GetMotor(command);
 	uint16_t speed = StepsToMicrosteps(command.StepPosition);
-	if (speed < motor->MinimumSpeed())
+	if (speed < motor.MinimumSpeed())
 		return Response::Error();
-	motor->SetMaximumSpeed(speed);
+	motor.SetMaximumSpeed(speed);
 	return Response::FromSuccessfulCommand(command);
 }
 
 
 Response CommandProcessor::HandleX(Command & command)
 	{
-	if (rotator->IsMoving())
+	if (rotator.IsMoving())
 		return Response::FromInteger(command, 2);
 	return Response::FromInteger(command, 0);
 	}

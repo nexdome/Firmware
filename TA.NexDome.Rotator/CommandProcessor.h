@@ -10,6 +10,7 @@
 
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
+#include <XBeeStateMachine.h>
 #include "PersistentSettings.h"
 #include "Command.h"
 #include "Response.h"
@@ -17,13 +18,14 @@
 class CommandProcessor
 	{
 	public:
-		CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings);
+		CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine);
 		Response HandleCommand(Command& command);
 		static int32_t MicrostepsToSteps(int32_t microsteps);
 		static int32_t StepsToMicrosteps(int32_t wholesteps);
 
 	private:
-		MicrosteppingMotor * GetMotor(Command& command);		// Gets the motor addressed by the command
+		MicrosteppingMotor & GetMotor(Command& command);		// Gets the motor addressed by the command
+		Response ForwardToShutter(Command& command);
 		Response HandleGA(Command& command);	// GA - GoTo Azimuth (in degrees).
 		Response HandleAW(Command & command);	// AW - Acceleration ramp time write
 		Response HandleFR(Command & command);	// Firmware version read
@@ -38,12 +40,8 @@ class CommandProcessor
 		Response HandleZW(Command & command);	// EEPROM write (save settings)
 		Response HandleZR(Command & command);	// EEPROM read (load settings)
 		Response HandleZD(Command & command);	// Reset to factory settings (clears both EEPROM and working settings)
-		MicrosteppingMotor *rotator;
-		PersistentSettings *settings;
+		MicrosteppingMotor& rotator;
+		PersistentSettings& settings;
+		XBeeStateMachine& machine;
 	};
-
-
-extern Response DispatchCommand(Command& command);
-extern Response DispatchCommand(char *buffer, unsigned int charCount);
-
 #endif

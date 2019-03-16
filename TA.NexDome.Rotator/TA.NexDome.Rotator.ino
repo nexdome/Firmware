@@ -18,7 +18,6 @@
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, stepGenerator, settings.motor);
-auto commandProcessor = CommandProcessor(stepper, settings);
 auto &xbeeSerial = Serial1;
 auto& host = Serial;
 const std::vector<String> xbeeInitSequence = { "CE1","ID6FBF","CH0C","MYD0","DH0","DHFFFF","A25","SM0","AP2" };
@@ -26,94 +25,82 @@ std::vector<byte> xbeeApiRxBuffer;
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler)onXbeeFrameReceived);
 auto machine = XBeeStateMachine(xbeeSerial, host, xbeeApi);
+auto commandProcessor = CommandProcessor(stepper, settings, machine);
+std::string hostReceiveBuffer;
+Timer oneSecondTasks;
 
-void HandleSerialCommunications()
+
+Response DispatchCommand(const std::string& buffer)
 {
-	static char rxBuffer[SERIAL_RX_BUFFER_SIZE];
-	static unsigned int rxIndex = 0;
-
-	if (host.available() <= 0)
-		return;	// No data available.
-	auto rx = host.read();
-	if (rx < 0)
-		return;	// No data available.
-	char rxChar = (char)rx;
-	switch (rx)
-	{
-	case '@':	// Start of new command
-		rxIndex = 0;
-		break;
-	case '\n':	// newline - dispatch the command
-	case '\r':	// carriage return - dispatch the command
-		if (rxIndex > 0)
-		{
-			auto response = DispatchCommand(rxBuffer, rxIndex);
-			host.println(response.Message);
-		}
-		rxIndex = 0;
-		break;
-	default:	// collect received characters into the command buffer
-		if (rxIndex < (SERIAL_RX_BUFFER_SIZE - 1))	// Allow room for null terminator
-		{
-			rxBuffer[rxIndex++] = rxChar;
-			rxBuffer[rxIndex] = '\0';	// Ensure that the buffer is always null-terminated.
-		}
-		break;
-	}
-}
-
-Response DispatchCommand(Command& command)
-{
-	auto response = commandProcessor.HandleCommand(command);
-	return response;
-}
-
-Response DispatchCommand(String verb, char targetDevice, int32_t stepPosition)
-{
-	//BUG: suspected faulty initializer, copy the ovserload below.
-	//auto command = Command{ verb,targetDevice,stepPosition };
-	Command command;
-	command.StepPosition = stepPosition;
-	command.TargetDevice = targetDevice;
-	command.Verb = verb;
-	return commandProcessor.HandleCommand(command);
-}
-
-Response DispatchCommand(char *buffer, unsigned int charCount)
-{
-	if (charCount < 1)
+	auto charCount = buffer.length();
+	if (charCount < 2)
 		return Response::Error();
 	Command command;
+	command.RawCommand = buffer;
 	command.StepPosition = 0;
-	command.Verb.concat(buffer[0]);
-	if (charCount > 1)
-		command.Verb.concat(buffer[1]);
+	command.Verb.push_back(buffer[1]);
+	if (charCount > 2)
+		command.Verb.push_back(buffer[2]);
 	// If there is no device address then use '0', the default device.
-	if (charCount < 3)
+	if (charCount < 4)
 	{
 		command.TargetDevice = '0';
 		return commandProcessor.HandleCommand(command);
 	}
 	// Use the device address from the command
-	command.TargetDevice = buffer[2];
+	command.TargetDevice = buffer[3];
 	// If the parameter was present, then parse it as an integer; otherwise use 0.
-	if (charCount > 4 && buffer[3] == ',')
+	if (charCount > 5 && buffer[4] == ',')
 	{
-		auto wholeSteps = std::strtoul(buffer + 4, NULL, 10);
+		auto position = buffer.substr(5);
+		auto wholeSteps = std::strtoul(position.begin(), NULL, 10);
 		command.StepPosition = wholeSteps;
 	}
 	auto response = commandProcessor.HandleCommand(command);
 	return response;
 }
 
+void HandleSerialCommunications()
+{
+	if (host.available() <= 0)
+		return;	// No data available.
+	auto rx = host.read();
+	if (rx < 0)
+		return;	// No data available.
+	char rxChar = (char)rx;
+	switch (rxChar)
+	{
+	case '\n':	// newline - dispatch the command
+	case '\r':	// carriage return - dispatch the command
+		if (hostReceiveBuffer.length() > 1)
+		{
+			hostReceiveBuffer.push_back(rxChar);	// include the EOL in the receive buffer.
+			auto response = DispatchCommand(hostReceiveBuffer);
+			std::cout << response.Message << std::endl;
+			hostReceiveBuffer.clear();
+		}
+		break;
+	case '@':	// Start of new command
+		hostReceiveBuffer.clear();
+	default:
+		if (hostReceiveBuffer.length() < SERIAL_RX_BUFFER_SIZE)
+		{
+			hostReceiveBuffer.push_back(rxChar);
+		}
+		break;
+	}
+}
+
+
 // the setup function runs once when you press reset or power the board
 void setup() {
 	stepper.ReleaseMotor();
+	hostReceiveBuffer.reserve(SERIAL_RX_BUFFER_SIZE);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
 	xbeeApi.reset();
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
-
+	oneSecondTasks.SetDuration(1000);
 	interrupts();
 	machine.ChangeState(new XBeeStartupState(machine));
 }
@@ -123,6 +110,12 @@ void loop() {
 	stepper.Loop();
 	HandleSerialCommunications();
 	machine.Loop();
+	if (oneSecondTasks.Expired())
+	{
+		oneSecondTasks.SetDuration(1000);
+		if (stepper.CurrentVelocity() > 0.0)
+			std::cout << "P" << stepper.CurrentPosition() << std::endl;
+	}
 }
 
 // Handle the received XBee API frame by passing it to the XBee state machine.

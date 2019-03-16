@@ -62,7 +62,9 @@ Handles escaped data bytes and checksum validation.
 */
 void XBeeApi::handleReceivedByte(byte rxb)
 {
+#ifdef DEBUG_XBEE_API
 	printRxChar(rxb);
+#endif
 	// Unescaped frame start character always causes a reset.
 	if (rxb == API_FRAME_START)
 		reset();
@@ -105,7 +107,9 @@ void XBeeApi::handleReceivedByte(byte rxb)
 		frameType = FrameType(rxb);
 		checksum = rxb;
 		rxState = ReceivePayload;
+#ifdef DEBUG_XBEE_API
 		printFrame();
+#endif
 		break;
 	case ReceivePayload:
 		buffer.push_back(rxb);
@@ -115,7 +119,9 @@ void XBeeApi::handleReceivedByte(byte rxb)
 		break;
 	case ReceiveChecksum:
 		checksum += rxb;
+#ifdef DEBUG_XBEE_API
 		printChecksum();
+#endif
 		if (checksum == 0xFFu)
 		{
 			rxState = Complete;
@@ -129,6 +135,7 @@ void XBeeApi::handleReceivedByte(byte rxb)
 	}
 }
 
+#ifdef DEBUG_XBEE_API
 void XBeeApi::printFrame()
 {
 	Serial.print(F("Type: "));
@@ -157,4 +164,4 @@ void XBeeApi::printRxChar(byte rxb)
 	Serial.print(" Rx: ");
 	Serial.println(rxb, HEX);
 }
-
+#endif

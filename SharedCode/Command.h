@@ -9,10 +9,12 @@
 
 struct Command
 {
-	String Verb;
+	std::string RawCommand;
+	std::string Verb;
 	char TargetDevice;
 	int32_t StepPosition;	// Target step position for a move command
-	bool IsMotorCommand();
+	bool IsRotatorCommand();
+	bool IsShutterCommand();
 	bool IsSystemCommand();
 };
 

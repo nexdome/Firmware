@@ -9,10 +9,10 @@ PersistentSettings::PersistentSettings()
 {
 	motor = MotorSettings
 	{ 
-		M1_MAX_POSITION,	// Maximum position in microsteps
-		0,					// Current position in microsteps
-		M1_RAMP_TIME,		// Ramp time to full speed in milliseconds
-		M1_MAX_SPEED		// Maximum speed in microsteps per second
+		M1_MAX_POSITION,		// Maximum position in microsteps
+		0,						// Current position in microsteps
+		MOTOR_RAMP_TIME,		// Ramp time to full speed in milliseconds
+		MOTOR_DEFAULT_SPEED		// Maximum speed in microsteps per second
 	};
 }
 

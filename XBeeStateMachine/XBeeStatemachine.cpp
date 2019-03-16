@@ -1,6 +1,5 @@
 #include <XBeeApi.h>
 #include "XBeeStateMachine.h"
-//#include <Printers.h>
 
 Timer IXBeeState::timer = Timer();
 
@@ -27,7 +26,7 @@ void XBeeStateMachine::SendToLocalXbee(String message) const
 	{
 	xbeeSerial.print(message);
 	xbeeSerial.flush();
-	debug.println(message + " to X");
+	//debug.println(message + " to X");
 	}
 
 /*
@@ -88,12 +87,12 @@ void XBeeStateMachine::printEscaped(byte data)
 			byte escaped = data ^ 0x20;
 			data ^= 0x20;
 			xbeeSerial.print((char)API_ESCAPE);
-			std::cout << std::hex << (int)API_ESCAPE << " " ;
+			//std::cout << std::hex << (int)API_ESCAPE << " " ;
 			break;
 		}
 	}
 	xbeeSerial.print((char)data);
-	std::cout << std::hex << (int)data << " ";
+	//std::cout << std::hex << (int)data << " ";
 }
 
 void XBeeStateMachine::ChangeState(IXBeeState* newState)
@@ -200,7 +199,6 @@ void XBeeStateMachine::OnXbeeFrameReceived(FrameType type, const std::vector<byt
 	case ModemStatusResponse:
 	{
 		auto status = xbeeApi.GetModemStatus();
-		XBeeApi::printModemStatus(status);
 		currentState->OnModemStatusReceived(status);
 		break;
 	}
@@ -213,6 +211,11 @@ void XBeeStateMachine::OnXbeeFrameReceived(FrameType type, const std::vector<byt
 	default:
 		break;
 	}
+}
+
+void XBeeStateMachine::TriggerSendCommand(std::string& command)
+{
+	currentState->SendCommand(command);
 }
 
 
