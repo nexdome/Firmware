@@ -59,9 +59,6 @@
     <ClCompile Include="PersistentSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Response.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="XBeeWaitForCommandModeState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

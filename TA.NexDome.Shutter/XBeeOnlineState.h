@@ -17,7 +17,8 @@ public:
 	String name() override { return "online"; }
 	void OnEnter() override;
 	void OnTimerExpired() override;
-	};
+	virtual void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;
+};
 
 #endif
 

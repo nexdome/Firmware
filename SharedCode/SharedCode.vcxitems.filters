@@ -8,4 +8,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Command.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Response.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Response.cpp" />
+  </ItemGroup>
 </Project>

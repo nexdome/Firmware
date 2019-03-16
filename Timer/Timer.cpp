@@ -22,15 +22,6 @@ void Timer::SetDuration(unsigned long duration)
 	interval = setInterval = duration;
 	}
 
-void Timer::Repeat()
-{
-	auto now = millis();
-	auto elapsed = now - startedAt;
-	auto remainder = setInterval - elapsed;
-	interval = remainder;
-	startedAt = now;
-}
-
 unsigned long Timer::Elapsed()
 	{
 	if (!Enabled())

@@ -23,11 +23,13 @@ class CommandProcessor
 		static int32_t StepsToMicrosteps(int32_t wholesteps);
 
 	private:
-		MicrosteppingMotor * GetMotor(Command& command);		// Gets the motor addressed by the command
+		MicrosteppingMotor& GetMotor(Command& command);		// Gets the motor addressed by the command
+		Response HandleOP(Command& command);	// Open shutter
+		Response HandleCL(Command& command);	// Close shutter
 		Response HandleAW(Command & command);	// AW - Acceleration ramp time write
 		Response HandleFR(Command & command);	// Firmware version read
-		Response HandleMI(Command & command);	// Move motor in
-		Response HandleMO(Command & command);	// Move motor out
+		//Response HandleMI(Command & command);	// Move motor in
+		//Response HandleMO(Command & command);	// Move motor out
 		Response HandlePR(Command & command);	// Step position read
 		Response HandlePW(Command & command);	// Step position write (sync)
 		Response HandleRR(Command & command);	// Range (limit of travel) read
@@ -39,12 +41,8 @@ class CommandProcessor
 		Response HandleZW(Command & command);	// EEPROM write (save settings)
 		Response HandleZR(Command & command);	// EEPROM read (load settings)
 		Response HandleZD(Command & command);	// Reset to factory settings (clears both EEPROM and working settings)
-		MicrosteppingMotor *rotator;
-		PersistentSettings *settings;
+		MicrosteppingMotor &motor;
+		PersistentSettings &settings;
 	};
-
-
-extern Response DispatchCommand(Command& command);
-extern Response DispatchCommand(char *buffer, unsigned int charCount);
 
 #endif

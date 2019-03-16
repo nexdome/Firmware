@@ -17,16 +17,16 @@
 
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
-auto stepper = MicrosteppingMotor(M1_STEP_PIN, M1_ENABLE_PIN, M1_DIRECTION_PIN, stepGenerator, settings.motor);
+auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
 auto &xbeeSerial = Serial1;
 auto& host = Serial;
 const std::vector<String> xbeeInitSequence = { "CE1","ID6FBF","CH0C","MYD0","DH0","DHFFFF","A25","SM0","AP2" };
+std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler)onXbeeFrameReceived);
 auto machine = XBeeStateMachine(xbeeSerial, host, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
-std::string hostReceiveBuffer;
 Timer oneSecondTasks;
 
 
@@ -96,10 +96,10 @@ void HandleSerialCommunications()
 void setup() {
 	stepper.ReleaseMotor();
 	hostReceiveBuffer.reserve(SERIAL_RX_BUFFER_SIZE);
+	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
 	xbeeApi.reset();
-	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	oneSecondTasks.SetDuration(1000);
 	interrupts();
 	machine.ChangeState(new XBeeStartupState(machine));

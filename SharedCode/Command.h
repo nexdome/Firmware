@@ -13,9 +13,9 @@ struct Command
 	std::string Verb;
 	char TargetDevice;
 	int32_t StepPosition;	// Target step position for a move command
-	bool IsRotatorCommand();
-	bool IsShutterCommand();
-	bool IsSystemCommand();
+	inline bool IsRotatorCommand() { return TargetDevice == 'R'; }
+	inline bool IsShutterCommand() { return TargetDevice == 'S'; }
+	inline bool IsSystemCommand() { return TargetDevice == '0'; }
 };
 
 #endif

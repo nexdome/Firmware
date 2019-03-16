@@ -1,21 +1,6 @@
 #include "CommandProcessor.h"
 #include "NexDome.h"
 
-bool Command::IsRotatorCommand()
-	{
-	return TargetDevice == 'R';
-	}
-
-bool Command::IsShutterCommand()
-	{
-	return TargetDevice == 'S';
-	}
-
-bool Command::IsSystemCommand()
-	{
-	return TargetDevice == '0';
-	}
-
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
 	: rotator(rotator), settings(settings), machine(machine)
 	{
