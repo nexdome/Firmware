@@ -14,7 +14,7 @@
 class XBeeShutterOnlineState : public IXBeeState
 	{
 protected:
-
+	void OnTimerExpired() override;
 public:
 	const std::string name() override { return "Online"; };
 	explicit XBeeShutterOnlineState(XBeeStateMachine& machine) : IXBeeState(machine) {}

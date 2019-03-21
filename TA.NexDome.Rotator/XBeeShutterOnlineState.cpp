@@ -3,13 +3,26 @@
 // 
 
 #include "XBeeShutterOnlineState.h"
+#include "XBeeApiDetectShutterState.h"
 
 void XBeeShutterOnlineState::OnEnter()
 {
 	static const std::string ack(XBEE_HELLO_ACK);
 	machine.SendToRemoteXbee(ack);
-	timer.SetDuration(XBEE_NO_ACTIVITY_TIMEOUT);
+	timer.SetDuration(XBEE_NO_HEARTBEAT_TIMEOUT);
 }
+
+/*
+Timer will expire when we haven't received anything from the shutter
+for a while, which means the link may be down and we have to re-detect
+the shutter. No shutter commands will be possible until the link is
+re-established and confirmed.
+*/
+void XBeeShutterOnlineState::OnTimerExpired()
+{
+	machine.ChangeState(new XBeeApiDetectShutterState(machine));
+}
+
 
 void XBeeShutterOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
 {
