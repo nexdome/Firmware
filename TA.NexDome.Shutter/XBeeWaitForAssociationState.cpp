@@ -16,7 +16,7 @@ void XBeeWaitForAssociationState::OnEnter()
 void XBeeWaitForAssociationState::OnModemStatusReceived(ModemStatus status)
 	{
 	// Any change of status resets the timer.
-	timer.Repeat();
+	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
 	if (status == Associated)
 		{
 		//machine.XBeeApiSendMessage(XBEE_HELLO_MESSAGE);

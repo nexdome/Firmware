@@ -15,7 +15,7 @@ Response CommandProcessor::HandleCommand(Command& command)
 	if (command.IsShutterCommand())
 		{
 		if (command.Verb == "OP") return HandleOP(command);		// Open shutter
-		if (command.Verb == "CL") return HandleOP(command);		// Close shutter
+		if (command.Verb == "CL") return HandleCL(command);		// Close shutter
 		//if (command.Verb == "MI") return HandleMI(command);	// Move motor in
 		//if (command.Verb == "MO") return HandleMO(command);	// Move motor out
 		//if (command.Verb == "AW") return HandleAW(command);	// Set limit of travel
