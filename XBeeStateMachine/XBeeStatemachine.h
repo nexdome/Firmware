@@ -65,12 +65,13 @@ public:
 	// State machine "plumbing"
 	explicit IXBeeState(XBeeStateMachine& machine) : machine(machine) {}
 	virtual ~IXBeeState() = default;
-	virtual String name() = 0;
+	virtual const std::string name() = 0;
 	virtual void Loop()
 	{
 		if (timer.Enabled() && timer.Expired())
 		{
-			Serial.println("Timeout");
+			//Serial.println("Timeout");
+			timer.Stop();
 			OnTimerExpired();
 		}
 	}

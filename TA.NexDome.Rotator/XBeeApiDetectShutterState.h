@@ -15,7 +15,7 @@ class XBeeApiDetectShutterState : public IXBeeState
 	{
 public:
 	explicit XBeeApiDetectShutterState(XBeeStateMachine& machine) : IXBeeState(machine) {}
-	String name() override { return "DetectShutter"; }
+	const std::string name() override { return "Detect"; }
 	void OnEnter() override;
 	void OnTimerExpired() override;
 	void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;

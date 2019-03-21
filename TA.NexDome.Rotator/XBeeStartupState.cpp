@@ -2,8 +2,6 @@
 #include "XBeeStartupState.h"
 #include "XBeeWaitForCommandModeState.h"
 
-String XBeeStartupState::name() { return "Start"; }
-
 void XBeeStartupState::OnEnter()
 {
 	machine.ListenInAtCommandMode();
@@ -12,7 +10,6 @@ void XBeeStartupState::OnEnter()
 
 void XBeeStartupState::OnTimerExpired()
 {
-	machine.SendToLocalXbee("+++");
 	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 }
 

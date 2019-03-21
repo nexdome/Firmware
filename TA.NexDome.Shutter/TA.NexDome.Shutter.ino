@@ -5,6 +5,7 @@
 #endif
 
 #include <ArduinoSTL.h>
+#include <sstream>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
 #include "NexDome.h"
@@ -13,8 +14,9 @@
 #include "XBeeOnlineState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
+#include "LimitSwitch.h"
 
-Timer oneSecondTasks;
+Timer periodicTasks;
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
@@ -27,6 +29,7 @@ void HandleFrameReceived(FrameType type, std::vector<byte> payload);	// forward 
 
 auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler) HandleFrameReceived);
 auto machine = XBeeStateMachine(xbeeSerial, host, xbee);
+auto limitSwitches = LimitSwitch(&stepper, OPEN_LIMIT_SWITCH_PIN, CLOSED_LIMIT_SWITCH_PIN);
 
 void HandleFrameReceived(FrameType type, std::vector<byte> payload)
 {
@@ -103,21 +106,31 @@ void setup() {
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	oneSecondTasks.SetDuration(1000);
+	while (!Serial) ;	// Wait for Leonardo software USB stack to become active
+	delay(1000);		// Let the USB/serial stack warm up.
+	periodicTasks.SetDuration(1000);
 	interrupts();
+	std::cout << "Init" << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
+	limitSwitches.init();	// attaches interrupt vectors
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
+	static std::ostringstream converter;
 	stepper.Loop();
 	HandleSerialCommunications();
 	machine.Loop();
-	if (oneSecondTasks.Expired())
+	if (periodicTasks.Expired())
 	{
-		oneSecondTasks.SetDuration(1000);
-		if (stepper.CurrentVelocity() > 0.0)
-			std::cout << "P" << stepper.CurrentPosition() << std::endl;
+		periodicTasks.SetDuration(250);
+		if (stepper.CurrentVelocity() != 0.0)
+		{
+			converter.clear();
+			converter.str("");
+			converter << "S" << stepper.CurrentPosition();
+			std::cout << converter.str() << std::endl;
+			machine.SendToRemoteXbee(converter.str());
+		}
 	}
-
 }

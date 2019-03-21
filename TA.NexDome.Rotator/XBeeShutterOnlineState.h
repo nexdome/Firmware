@@ -16,7 +16,7 @@ class XBeeShutterOnlineState : public IXBeeState
 protected:
 
 public:
-	String name() override { return "Online"; };
+	const std::string name() override { return "Online"; };
 	explicit XBeeShutterOnlineState(XBeeStateMachine& machine) : IXBeeState(machine) {}
 	void OnEnter() override;
 	void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;

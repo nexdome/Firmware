@@ -13,7 +13,7 @@
 class XBeeStartupState : public IXBeeState
 {
 public:
-	String name() override;;
+	const std::string name() override { return "Start"; }
 	void OnEnter() override;
 	void OnTimerExpired() override;
 	explicit XBeeStartupState(XBeeStateMachine& machine) : IXBeeState(machine) {}

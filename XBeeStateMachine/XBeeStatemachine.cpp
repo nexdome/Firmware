@@ -37,7 +37,7 @@ Sample TX64 frame for Hello message
 
 void XBeeStateMachine::SendToRemoteXbee(const std::string& message)
 {
-	std::cout << "Send: " << message << std::endl;
+	//std::cout << "Send: " << message << std::endl;
 	auto destinationAddress = remoteAddress;
 	/* Length = 
 	API-ID		1
@@ -97,7 +97,7 @@ void XBeeStateMachine::printEscaped(byte data)
 
 void XBeeStateMachine::ChangeState(IXBeeState* newState)
 	{
-	debug.println(newState->name());
+	std::cout << "XB->" << newState->name() << std::endl;
 	if (currentState != NULL)
 	{
 		currentState->OnExit();
@@ -135,12 +135,12 @@ byte XBeeStateMachine::getNextFrameId()
 //ToDo: diagnostics - delete me
 void printAddress(const std::vector<byte>& address)
 {
-	std::cout << "Set address ";
-	for (auto index = address.begin(); index < address.end(); ++index)
-	{
-		std::cout << std::hex << (int)* index << " ";
-	}
-	std::cout << std::endl;
+	//std::cout << "Set address ";
+	//for (auto index = address.begin(); index < address.end(); ++index)
+	//{
+	//	std::cout << std::hex << (int)* index << " ";
+	//}
+	//std::cout << std::endl;
 }
 
 // Extract and save a 64-bit destination address from a frame payload
@@ -175,10 +175,10 @@ void XBeeStateMachine::xbee_serial_receive()
 	if (rx < 0)
 		return; // Nothing read.
 	char ch = static_cast<char>(rx);
-	debug.println(ch);
+	//debug.println(ch);
 	if (ch == 0x0D)
 		{
-		debug.println(rxBuffer + " from X");
+		//debug.println(rxBuffer + " from X");
 		currentState->OnSerialLineReceived(rxBuffer);
 		rxBuffer.remove(0);	// Truncate to empty string
 		}

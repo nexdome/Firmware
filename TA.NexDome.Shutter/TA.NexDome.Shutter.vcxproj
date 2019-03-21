@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandProcessor.h" />
+    <ClInclude Include="LimitSwitch.h" />
     <ClInclude Include="PersistentSettings.h" />
     <ClInclude Include="XBeeAssociatedState.h" />
     <ClInclude Include="XBeeOnlineState.h" />
@@ -132,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandProcessor.cpp" />
+    <ClCompile Include="LimitSwitch.cpp" />
     <ClCompile Include="PersistentSettings.cpp" />
     <ClCompile Include="XBeeAssociatedState.cpp" />
     <ClCompile Include="XBeeOnlineState.cpp" />

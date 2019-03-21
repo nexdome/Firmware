@@ -27,7 +27,7 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler)onXbeeFrameReceived);
 auto machine = XBeeStateMachine(xbeeSerial, host, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
-Timer oneSecondTasks;
+Timer periodicTasks;
 
 
 Response DispatchCommand(const std::string& buffer)
@@ -99,9 +99,12 @@ void setup() {
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
+	while (!Serial);	// Wait for Leonardo software USB stack to become active
+	delay(1000);		// Let the USB/serial stack warm up a bit longer.
 	xbeeApi.reset();
-	oneSecondTasks.SetDuration(1000);
+	periodicTasks.SetDuration(1000);
 	interrupts();
+	std::cout << "Init" << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 }
 
@@ -110,10 +113,10 @@ void loop() {
 	stepper.Loop();
 	HandleSerialCommunications();
 	machine.Loop();
-	if (oneSecondTasks.Expired())
+	if (periodicTasks.Expired())
 	{
-		oneSecondTasks.SetDuration(1000);
-		if (stepper.CurrentVelocity() > 0.0)
+		periodicTasks.SetDuration(250);
+		if (stepper.CurrentVelocity() != 0.0)
 			std::cout << "P" << stepper.CurrentPosition() << std::endl;
 	}
 }

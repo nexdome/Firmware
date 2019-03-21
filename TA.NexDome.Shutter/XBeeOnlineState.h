@@ -14,7 +14,7 @@ class XBeeOnlineState : public IXBeeState
 	{
 public:
 	explicit XBeeOnlineState(XBeeStateMachine& machine) : IXBeeState(machine) {  }
-	String name() override { return "online"; }
+	const std::string name() override { return ("Online"); }
 	void OnEnter() override;
 	void OnTimerExpired() override;
 	virtual void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;

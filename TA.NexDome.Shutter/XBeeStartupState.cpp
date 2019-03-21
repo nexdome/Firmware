@@ -3,8 +3,6 @@
 #include "XBeeWaitForCommandModeState.h"
 #include "NexDome.h"
 
-String XBeeStartupState::name() { return "Start"; }
-
 void XBeeStartupState::OnEnter()
 {
 	machine.useCoordinatorAddress();			// Coordinator address is default destination
