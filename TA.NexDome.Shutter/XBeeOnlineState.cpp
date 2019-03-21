@@ -10,7 +10,7 @@ extern Response DispatchCommand(const std::string& command);	// defined in globa
 
 void XBeeOnlineState::OnEnter()
 {
-	timer.SetDuration(XBEE_NO_ACTIVITY_TIMEOUT);
+	timer.SetDuration(XBEE_HEARTBEAT_TIMEOUT);
 }
 
 void XBeeOnlineState::OnTimerExpired()

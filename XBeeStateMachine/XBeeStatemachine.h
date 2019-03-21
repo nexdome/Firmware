@@ -18,7 +18,7 @@
 #define XBEE_AT_GUARD_TIME (1000UL)				// Wait time before sending "+++" and receiving "OK"
 #define XBEE_REMOTE_HANDSHAKE_TIMEOUT (5000UL)	// Maximum time to wait for rotator to acknowledge the hello message.
 #define XBEE_DETECT_SHUTTER_TIMEOUT (30000UL)	// Maximum time to wait for the shutter to say hello.
-#define XBEE_NO_ACTIVITY_TIMEOUT (300000UL)		// Time before we assume that the remote link is down
+#define XBEE_HEARTBEAT_TIMEOUT (10000UL)		// Time before we assume that the remote link is down
 #define XBEE_HELLO_MESSAGE "Yoohoo"				// A retro shout-out to FidoNet era mailer called dBridge.
 #define XBEE_HELLO_ACK "Yoohoo2U2"				// (yes I am old enough to remember FidoNet).
 
