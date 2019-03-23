@@ -24,8 +24,9 @@
 #define XBEE_HELLO_ACK "Yoohoo2U2"				// (yes I am old enough to remember FidoNet).
 
 //ToDo: The following defs are project specific and need to be moved into the projects.
-#define XBEE_ROTATOR_INIT_STRING "ATCE1,ID6FBF,CHC,MYFFFF,DH0,DLFFFF,A27,AP2,SM0,WR,AC,FR,CN\x0D"
+#define XBEE_ROTATOR_INIT_STRING "ATCE1,ID6FBF,CHC,MYFFFF,DH0,DLFFFF,A27,AP2,SM0,AC,FR,CN\x0D"
 #define XBEE_SHUTTER_INIT_STRING "ATCE0,ID6FBF,CHC,MYFFFF,DH0,DLFFFE,A15,AP2,SM0,AC,FR,CN\0xD"
+#define XBEE_FACTORY_INIT_STRING "ATRE,WR,FR,CN\0xD"
 
 class IXBeeState;
 
