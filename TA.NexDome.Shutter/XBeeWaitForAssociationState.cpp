@@ -9,17 +9,17 @@
 
 void XBeeWaitForAssociationState::OnEnter()
 	{
-	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
+	machine.useCoordinatorAddress();
 	machine.ListenInApiMode();
+	timer.SetDuration(XBEE_ASSOCIATE_TIMEOUT);
 	}
 
 void XBeeWaitForAssociationState::OnModemStatusReceived(ModemStatus status)
 	{
 	// Any change of status resets the timer.
-	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
+	timer.SetDuration(XBEE_ASSOCIATE_TIMEOUT);
 	if (status == Associated)
 		{
-		//machine.XBeeApiSendMessage(XBEE_HELLO_MESSAGE);
 		machine.ChangeState(new XBeeAssociatedState(machine));
 		}
 	}

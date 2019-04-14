@@ -36,6 +36,10 @@ void XBeeAssociatedState::OnApiRx64FrameReceived(const std::vector<byte>& payloa
 	auto msgStart = payload.begin() + 10;
 	auto msgEnd = payload.end();
 	std::string rxMessage(msgStart, msgEnd);
+
+	//ToDo: delete
+	std::cout << "Rx64: " << rxMessage << std::endl;
+
 	if (rxMessage.compare(XBEE_HELLO_ACK) == 0)
 	{
 		machine.SetDestinationAddress(payload);

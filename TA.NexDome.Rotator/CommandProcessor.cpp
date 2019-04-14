@@ -23,12 +23,13 @@ Response CommandProcessor::HandleCommand(Command& command)
 	if (command.IsShutterCommand())
 	{
 		ForwardToShutter(command);
-		return Response::FromSuccessfulCommand(command);	// ToDo - maybe return a result from the shutter?
+		return Response::NoResponse(command);
 	}
 
 	if (command.IsRotatorCommand())
 		{
-		if (command.Verb == "GA") return HandleGA(command);
+		if (command.Verb == "FR") return HandleFR(command);	// Read firmware version
+		if (command.Verb == "GA") return HandleGA(command);	// Goto Azimuth (rotator only)
 		if (command.Verb == "SW") return HandleSW(command);	// Stop motor
 		if (command.Verb == "PR") return HandlePR(command);	// Position read
 		if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
@@ -36,15 +37,13 @@ Response CommandProcessor::HandleCommand(Command& command)
 		if (command.Verb == "RW") return HandleRW(command);	// Range Write (set limit of travel)
 		if (command.Verb == "VR") return HandleVR(command);	// Read maximum motor speed
 		if (command.Verb == "VW") return HandleVW(command);	// Read maximum motor speed
-
-		}
-	if (command.IsSystemCommand())
-		{
-		if (command.Verb == "FR") return HandleFR(command);	// Read firmware version
-		if (command.Verb == "X") return HandleX(command);	// Get movement status
 		if (command.Verb == "ZD") return HandleZD(command);	// Reset to factory settings (load defaults).
 		if (command.Verb == "ZR") return HandleZR(command);	// Load settings from persistent storage
 		if (command.Verb == "ZW") return HandleZW(command);	// Write settings to persistent storage
+		}
+	if (command.IsSystemCommand())
+		{
+		// There are currently no system commands
 		}
 	return Response::Error();
 	}
@@ -159,7 +158,6 @@ Response CommandProcessor::HandleFR(Command & command)
 	message.append(FIRMWARE_MAJOR_VERSION);
 	message.push_back('.');
 	message.append(FIRMWARE_MINOR_VERSION);
-	message.append(Response::Terminator);
 	return Response{ message };
 	}
 

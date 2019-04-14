@@ -31,7 +31,8 @@ void XBeeOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
 	if (length > 10 && payload[10] == '@')
 	{
 		// treat as a valid remote command
-		auto commandString = std::string(payload.begin() + 10, payload.end());
-		auto response = DispatchCommand(commandString);
+		const auto commandString = std::string(payload.begin() + 10, payload.end());
+		const auto response = DispatchCommand(commandString);
+		machine.SendToRemoteXbee(response.Message);
 	}
 }

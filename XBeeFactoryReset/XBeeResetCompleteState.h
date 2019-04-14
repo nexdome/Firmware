@@ -13,7 +13,7 @@
 class XBeeResetCompleteState : public IXBeeState
 {
 public:
-	const std::string name() override { return "Factory Reset Complete"; }
+	std::string name() override { return "Factory Reset Complete"; }
 	void OnEnter() override;
 	void OnTimerExpired() override;
 	explicit XBeeResetCompleteState(XBeeStateMachine& machine) : IXBeeState(machine) {}

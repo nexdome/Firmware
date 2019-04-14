@@ -19,15 +19,14 @@ Timer::Timer()
 void Timer::SetDuration(unsigned long duration)
 	{
 	startedAt = millis();
-	interval = setInterval = duration;
+	interval = duration;
 	}
 
-unsigned long Timer::Elapsed()
+unsigned long Timer::Elapsed() const
 	{
 	if (!Enabled())
 		return 0UL;
-	unsigned long elapsed = millis() - startedAt;
-	return elapsed;
+	return millis() - startedAt;
 	}
 
 unsigned long Timer::Remaining()
@@ -41,15 +40,14 @@ bool Timer::Expired()
 	}
 
 
-bool Timer::Enabled()
-{
+bool Timer::Enabled() const
+	{
 	return interval > 0;
 }
 
 void Timer::Stop()
 {
 	interval = 0;
-	setInterval = 0;
 }
 
 

@@ -12,10 +12,8 @@ class XBeeWaitForCommandModeState : public IXBeeState
 	{
 public:
 	explicit XBeeWaitForCommandModeState(XBeeStateMachine& machine):IXBeeState(machine){};
-	const std::string name() override { return "WaitOk"; };
+	std::string name() override { return "WaitAT"; };
 	void OnTimerExpired() override;
 	void OnEnter() override;
-	void OnSerialLineReceived(String& rxData) override;
-private:
-	const String XBeeInitString = XBEE_SHUTTER_INIT_STRING;
+	void OnSerialLineReceived(const std::string& rxData) override;
 	};

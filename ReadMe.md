@@ -527,11 +527,11 @@ implemented directly in each sketch.
 
 ## Rotator XBee State Machine
 
-@import "markdown\RotatorXBeeStateMachine.md"
+![Rotator XBee State Machine](/assets/Rotator-XBee-State-Machine.PNG)
 
 ## Shutter XBee State Machine
 
-@import "markdown\ShutterXBeeStateMachine.md"
+![Shutter XBee State Machine](/assets/Shutter-XBee-State-Machine.PNG)
 
 ## Revision Notes
 
@@ -540,3 +540,4 @@ implemented directly in each sketch.
 First version by Tigra Astronomy.
 
 NexDome: https://www.nexdome.com/ "NexDome home page"
+

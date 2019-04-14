@@ -15,7 +15,7 @@ class XBeeAssociatedState : public IXBeeState
 	{
 public:
 	explicit XBeeAssociatedState(XBeeStateMachine& machine) : IXBeeState(machine){}
-	const std::string name() override { return "Associated"; }
+	std::string name() override { return "Associated"; }
 	void OnEnter() override;
 	void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;
 	void OnTimerExpired() override;

@@ -8,8 +8,8 @@
  */
 void XBeeApiDetectShutterState::OnEnter()
 	{
-	timer.SetDuration(XBEE_DETECT_SHUTTER_TIMEOUT);
 	machine.ListenInApiMode();
+	timer.SetDuration(XBEE_DETECT_SHUTTER_TIMEOUT);
 	}
 
 /*
@@ -30,13 +30,16 @@ void XBeeApiDetectShutterState::OnTimerExpired()
  */
 void XBeeApiDetectShutterState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
 {
-	static const std::string ShutterHelloMessage(XBEE_HELLO_MESSAGE);
 	// Check whether the message is correct, otherwise ignore frame
 	// Skip first 10 bytes of payload, look for string in bytes 11 onward.
-	auto msgStart = payload.begin() + 10;
-	auto msgEnd = payload.end();
-	std::string rxMessage(msgStart, msgEnd);
-	if (rxMessage.compare(XBEE_HELLO_MESSAGE) == 0)
+	const auto msgStart = payload.begin() + 10;
+	const auto msgEnd = payload.end();
+	const std::string rxMessage(msgStart, msgEnd);
+
+	//ToDo: delete
+	std::cout << "Rx64: " << rxMessage << std::endl;
+
+	if (rxMessage == XBEE_HELLO_MESSAGE)
 	{
 		machine.SetDestinationAddress(payload);
 		machine.ChangeState(new XBeeShutterOnlineState(machine));

@@ -45,6 +45,9 @@
     <ClInclude Include="LimitSwitch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="XBeeConfigureState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XBeeStartupState.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LimitSwitch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeConfigureState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

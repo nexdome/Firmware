@@ -1,4 +1,5 @@
 #if defined(ARDUINO) && ARDUINO >= 100
+#include "XBeeConfigureState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -11,21 +12,17 @@
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "XBeeStartupState.h"
-#include "XBeeShutterOnlineState.h"
-#include "XBeeApiDetectShutterState.h"
-
 
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
 auto &xbeeSerial = Serial1;
 auto& host = Serial;
-const std::vector<String> xbeeInitSequence = { "CE1","ID6FBF","CH0C","MYD0","DH0","DHFFFF","A25","SM0","AP2" };
 std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
-auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler)onXbeeFrameReceived);
-auto machine = XBeeStateMachine(xbeeSerial, host, xbeeApi);
+auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
+auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
 Timer periodicTasks;
 
@@ -75,8 +72,8 @@ void HandleSerialCommunications()
 		if (hostReceiveBuffer.length() > 1)
 		{
 			hostReceiveBuffer.push_back(rxChar);	// include the EOL in the receive buffer.
-			auto response = DispatchCommand(hostReceiveBuffer);
-			std::cout << response.Message << std::endl;
+			const auto response = DispatchCommand(hostReceiveBuffer);
+			std::cout << response;	// send a fully formatted response, or nothing if there is no response.
 			hostReceiveBuffer.clear();
 		}
 		break;
@@ -91,7 +88,6 @@ void HandleSerialCommunications()
 	}
 }
 
-
 // the setup function runs once when you press reset or power the board
 void setup() {
 	stepper.ReleaseMotor();
@@ -104,7 +100,7 @@ void setup() {
 	xbeeApi.reset();
 	periodicTasks.SetDuration(1000);
 	interrupts();
-	std::cout << "Init" << std::endl;
+	std::cout << F("Init") << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 }
 
@@ -124,5 +120,5 @@ void loop() {
 // Handle the received XBee API frame by passing it to the XBee state machine.
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 {
-	machine.OnXbeeFrameReceived(type, payload);
+	machine.onXbeeFrameReceived(type, payload);
 }

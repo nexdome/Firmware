@@ -11,10 +11,11 @@
 
 struct Response
 {
-	static const std::string Terminator;
-	static std::string messageBuffer;
+	static const std::string terminator;
 	std::string Message;
 	bool success;
+
+	friend std::ostream& operator<<(std::ostream&, const Response&);
 
 	/*
 		Creates an error response.
@@ -37,6 +38,7 @@ struct Response
 		Creates a response consisting of just an integer and the terminator.
 	*/
 	static Response FromInteger(Command& command, int i);
+	static Response NoResponse(Command& command);
 };
 
 #endif

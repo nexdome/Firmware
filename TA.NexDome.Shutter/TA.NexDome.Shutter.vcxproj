@@ -98,10 +98,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\TA.NexDome.Shutter;F:\OneDrive\Documents\Arduino\libraries\ArduinoSTL\src;$(ProjectDir)..\XBeeApi;$(ProjectDir)..\XBeeStatemachine;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries\EEPROM\src;$(ProjectDir)..\Timer;$(ProjectDir)..\AdvancedStepper;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries;F:\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\cores\arduino;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\variants\leonardo;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include\avr;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\TA.NexDome.Shutter;F:\OneDrive\Documents\Arduino\libraries\ArduinoSTL\src;$(ProjectDir)..\XBeeApi;$(ProjectDir)..\XBeeStatemachine;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries\EEPROM\src;$(ProjectDir)..\Timer;$(ProjectDir)..\AdvancedStepper;F:\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries;F:\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\cores\arduino;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\variants\leonardo;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include\avr;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ProjectDir)__vm\.TA.NexDome.Shutter.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>__AVR_ATmega32u4__;__AVR_ATmega32U4__;F_CPU=16000000L;ARDUINO=10808;ARDUINO_AVR_LEONARDO;ARDUINO_ARCH_AVR;USB_VID=0x2341;USB_PID=0x8036;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__AVR_atmega32u4__;__AVR_ATmega32U4__;F_CPU=16000000L;ARDUINO=10809;ARDUINO_AVR_LEONARDO;ARDUINO_ARCH_AVR;USB_VID=0x2341;USB_PID=0x8036;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -125,6 +125,7 @@
     <ClInclude Include="LimitSwitch.h" />
     <ClInclude Include="PersistentSettings.h" />
     <ClInclude Include="XBeeAssociatedState.h" />
+    <ClInclude Include="XBeeConfigureState.h" />
     <ClInclude Include="XBeeOnlineState.h" />
     <ClInclude Include="XBeeStartupState.h" />
     <ClInclude Include="XBeeWaitForAssociationState.h" />
@@ -136,6 +137,7 @@
     <ClCompile Include="LimitSwitch.cpp" />
     <ClCompile Include="PersistentSettings.cpp" />
     <ClCompile Include="XBeeAssociatedState.cpp" />
+    <ClCompile Include="XBeeConfigureState.cpp" />
     <ClCompile Include="XBeeOnlineState.cpp" />
     <ClCompile Include="XBeeStartupState.cpp" />
     <ClCompile Include="XBeeWaitForAssociationState.cpp" />
@@ -146,7 +148,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties debug.view.FreeMemory="" arduino.upload.port="COM10" />
+      <UserProperties debug.view.FreeMemory="" arduino.upload.port="COM12" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

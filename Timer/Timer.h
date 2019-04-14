@@ -52,17 +52,17 @@
 class Timer
 	{
 public:
-	Timer();
+	explicit Timer();
 	void SetDuration(unsigned long duration);
 	bool Expired();
-	unsigned long Elapsed();
+	unsigned long Elapsed() const;
 	unsigned long Remaining();
-	bool Enabled();
+	bool Enabled() const;
 	void Stop();
 private:
 	unsigned long startedAt;
 	unsigned long interval;
-	unsigned long setInterval;
+	unsigned long setInterval{};
 	};
 
 

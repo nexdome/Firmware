@@ -14,10 +14,10 @@
 class XBeeWaitForAssociationState : public IXBeeState
 	{
 public:
-	const std::string name() override { return "WaitAssociate"; }
+	std::string name() override { return "WaitAssociate"; }
 	explicit XBeeWaitForAssociationState(XBeeStateMachine& machine) : IXBeeState(machine) { }
 	void OnEnter() override;
-	void OnModemStatusReceived(ModemStatus state) override;
+	void OnModemStatusReceived(ModemStatus status) override;
 	void OnTimerExpired() override;
 	};
 

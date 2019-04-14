@@ -11,7 +11,6 @@
 #include "NexDome.h"
 #include "XBeeStateMachine.h"
 #include "XBeeStartupState.h"
-#include "XBeeOnlineState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "LimitSwitch.h"
@@ -25,15 +24,15 @@ auto& xbeeSerial = Serial1;
 auto& host = Serial;
 std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
-void HandleFrameReceived(FrameType type, std::vector<byte> payload);	// forward reference
+void HandleFrameReceived(FrameType type, const std::vector<byte>& payload);	// forward reference
 
-auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler) HandleFrameReceived);
-auto machine = XBeeStateMachine(xbeeSerial, host, xbee);
+auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(HandleFrameReceived));
+auto machine = XBeeStateMachine(xbeeSerial, xbee);
 auto limitSwitches = LimitSwitch(&stepper, OPEN_LIMIT_SWITCH_PIN, CLOSED_LIMIT_SWITCH_PIN);
 
-void HandleFrameReceived(FrameType type, std::vector<byte> payload)
+void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 {
-	machine.OnXbeeFrameReceived(type, payload);
+	machine.onXbeeFrameReceived(type, payload);
 }
 
 
@@ -84,7 +83,7 @@ void HandleSerialCommunications()
 		{
 			hostReceiveBuffer.push_back(rxChar);	// include the EOL in the receive buffer.
 			auto response = DispatchCommand(hostReceiveBuffer);
-			std::cout << response.Message << std::endl;
+			std::cout << response;	// send a fully formatted response, or nothing if there is no response.
 			hostReceiveBuffer.clear();
 		}
 		break;
