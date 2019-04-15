@@ -19,8 +19,8 @@ class CommandProcessor
 	public:
 		CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings);
 		Response HandleCommand(Command& command);
-		static int32_t MicrostepsToSteps(int32_t microsteps);
-		static int32_t StepsToMicrosteps(int32_t wholesteps);
+		static int32_t microstepsToSteps(int32_t microsteps);
+		static int32_t stepsToMicrosteps(int32_t wholeSteps);
 
 	private:
 		MicrosteppingMotor& GetMotor(Command& command);		// Gets the motor addressed by the command

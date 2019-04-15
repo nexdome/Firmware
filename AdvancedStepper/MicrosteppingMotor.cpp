@@ -12,6 +12,7 @@
 */
 
 #include "MicrosteppingMotor.h"
+#include <climits>
 
 // Configures the I/O pins and sets a safe starting state.
 void MicrosteppingMotor::InitializeHardware()
@@ -23,21 +24,18 @@ void MicrosteppingMotor::InitializeHardware()
 	}
 
 // Creates a new motor instance with the specified I/O pins and step generator.
-MicrosteppingMotor::MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8_t directionPin)
+
+MicrosteppingMotor::MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8_t directionPin, IStepGenerator& stepper, MotorSettings& settings)
 	{
+	configuration = &settings;
+	stepGenerator = &stepper;
+	currentVelocity = 0;
 	this->stepPin = stepPin;
 	this->enablePin = enablePin;
 	this->directionPin = directionPin;
 	minSpeed = MIN_SPEED;
 	InitializeHardware();
-	}
-
-MicrosteppingMotor::MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8_t directionPin, IStepGenerator& stepper, MotorSettings& settings)
-	: MicrosteppingMotor(stepPin,enablePin,directionPin)
-	{
-	configuration = &settings;
-	stepGenerator = &stepper;
-	currentVelocity = 0;
+	stopHandler = nullptr;
 	}
 
 /*
@@ -66,23 +64,30 @@ void MicrosteppingMotor::Step(bool state)
 void MicrosteppingMotor::MoveAtVelocity(float stepsPerSecond)
 	{
 	auto absoluteStepsPerSecond = abs(stepsPerSecond);
-	direction = sgn(stepsPerSecond);
-	targetPosition = direction > 0 ? configuration->maxPosition : 0;
+	auto newDirection = sgn(stepsPerSecond);
+	targetPosition = newDirection > 0 ? INT_MAX : INT_MIN;
 	targetVelocity = stepsPerSecond;
-	currentAcceleration = AccelerationFromRampTime() * direction;
+	currentAcceleration = AccelerationFromRampTime() * newDirection;
 	EnergizeMotor();
 	startTime = millis();
-	if (currentVelocity == 0)
-		stepGenerator->Start(absoluteStepsPerSecond, this);
+	if (abs(currentVelocity) < minSpeed)	// Starting from rest
+		{
+		startVelocity = minSpeed * direction;
+		currentVelocity = startVelocity;
+		stepGenerator->Start(minSpeed, this);
+		}
 	else
-		stepGenerator->SetStepRate(absoluteStepsPerSecond);
+		startVelocity = currentVelocity;
 	}
 
 // Energizes the motor coils (applies holding torque) and prepares for stepping.
+// Takes account of direction reversal.
 void MicrosteppingMotor::EnergizeMotor()
 	{
+	uint8_t forward = configuration->directionReversed ? HIGH : LOW;
+	uint8_t backward = configuration->directionReversed ? LOW : HIGH;
 	digitalWrite(stepPin, LOW);		// active high, so ensure we are not commanding a step.
-	digitalWrite(directionPin, direction >= 0 ? LOW : HIGH);
+	digitalWrite(directionPin, direction >= 0 ? forward : backward);
 	digitalWrite(enablePin, LOW);	// Active low, so energize the coils.
 	}
 
@@ -91,6 +96,14 @@ void MicrosteppingMotor::ReleaseMotor()
 	{
 	digitalWrite(enablePin, HIGH);	// active low, so de-energize the coils
 	digitalWrite(stepPin, LOW);		// active high, so ensure we are not commanding a step.
+	}
+
+/*
+ * Registers a method to be called whenever the motor stops.
+ */
+void MicrosteppingMotor::registerStopHandler(StopHandler handler)
+	{
+	this->stopHandler = handler;
 	}
 
 void MicrosteppingMotor::SetRampTime(uint16_t milliseconds)
@@ -250,6 +263,8 @@ void MicrosteppingMotor::HardStop()
 	currentVelocity = 0;
 	direction = 0;
 	ReleaseMotor();
+	if (stopHandler != nullptr)
+		stopHandler();
 	}
 
 void MicrosteppingMotor::Loop()

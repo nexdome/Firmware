@@ -129,12 +129,12 @@ Response CommandProcessor::HandleFR(Command& command)
 Response CommandProcessor::HandleVR(Command & command)
 {
 	auto maxSpeed = motor.MaximumSpeed();
-	return Response::FromPosition(command, MicrostepsToSteps(maxSpeed));
+	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
 }
 
 Response CommandProcessor::HandleVW(Command & command)
 {
-	uint16_t speed = StepsToMicrosteps(command.StepPosition);
+	uint16_t speed = stepsToMicrosteps(command.StepPosition);
 	if (speed < motor.MinimumSpeed())
 		return Response::Error();
 	motor.SetMaximumSpeed(speed);
@@ -149,12 +149,12 @@ Response CommandProcessor::HandleX(Command & command)
 	return Response::FromInteger(command, 0);
 	}
 
-int32_t CommandProcessor::MicrostepsToSteps(int32_t microsteps)
+int32_t CommandProcessor::microstepsToSteps(int32_t microsteps)
 	{
 	return microsteps / MICROSTEPS_PER_STEP;
 	}
 
-int32_t CommandProcessor::StepsToMicrosteps(int32_t wholesteps)
+int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
 	{
-	return wholesteps * MICROSTEPS_PER_STEP;
+	return wholeSteps * MICROSTEPS_PER_STEP;
 	}

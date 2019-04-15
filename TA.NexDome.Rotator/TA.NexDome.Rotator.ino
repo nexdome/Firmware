@@ -13,6 +13,11 @@
 #include "PersistentSettings.h"
 #include "XBeeStartupState.h"
 
+// Forward declarations
+void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
+void onMotorStopped();
+
+// Global scope data
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
@@ -20,11 +25,11 @@ auto &xbeeSerial = Serial1;
 auto& host = Serial;
 std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
-void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
 Timer periodicTasks;
+
 
 
 Response DispatchCommand(const std::string& buffer)
@@ -91,11 +96,14 @@ void HandleSerialCommunications()
 // the setup function runs once when you press reset or power the board
 void setup() {
 	stepper.ReleaseMotor();
+	stepper.registerStopHandler(onMotorStopped);
+	pinMode(CLOCKWISE_BUTTON_PIN, INPUT_PULLUP);
+	pinMode(COUNTERCLOCKWISE_BUTTON_PIN, INPUT_PULLUP);
 	hostReceiveBuffer.reserve(SERIAL_RX_BUFFER_SIZE);
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	while (!Serial);	// Wait for Leonardo software USB stack to become active
+	//while (!Serial);	// Wait for Leonardo software USB stack to become active
 	delay(1000);		// Let the USB/serial stack warm up a bit longer.
 	xbeeApi.reset();
 	periodicTasks.SetDuration(1000);
@@ -103,6 +111,20 @@ void setup() {
 	std::cout << F("Init") << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 }
+
+void ProcessManualControls()
+	{
+	static bool clockwiseButtonLastState = false;
+	static bool counterclockwiseButtonLastState = false;
+	const bool clockwiseButtonPressed = digitalRead(CLOCKWISE_BUTTON_PIN) == 0;
+	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
+	if (clockwiseButtonChanged) stepper.MoveAtVelocity(settings.motor.maxSpeed * (clockwiseButtonPressed ? 1 : 0));
+	clockwiseButtonLastState = clockwiseButtonPressed;
+	const bool counterclockwiseButtonPressed = digitalRead(COUNTERCLOCKWISE_BUTTON_PIN) == 0;
+	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
+	if (counterclockwiseButtonChanged) stepper.MoveAtVelocity(settings.motor.maxSpeed * (counterclockwiseButtonPressed ? -1 : 0));
+	counterclockwiseButtonLastState = counterclockwiseButtonPressed;
+	}
 
 // the loop function runs over and over again until power down or reset
 void loop() {
@@ -112,8 +134,9 @@ void loop() {
 	if (periodicTasks.Expired())
 	{
 		periodicTasks.SetDuration(250);
-		if (stepper.CurrentVelocity() != 0.0)
-			std::cout << "P" << stepper.CurrentPosition() << std::endl;
+		if (stepper.IsMoving())
+			std::cout << "P" << std::dec <<  commandProcessor.getPositionInWholeSteps() << std::endl;
+		ProcessManualControls();
 	}
 }
 
@@ -122,3 +145,9 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 {
 	machine.onXbeeFrameReceived(type, payload);
 }
+
+// Handle the motor stop event from the stepper driver.
+void onMotorStopped()
+	{
+	settings.motor.currentPosition %= settings.microstepsPerRotation;
+	}

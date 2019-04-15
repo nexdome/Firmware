@@ -105,7 +105,7 @@ void setup() {
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	while (!Serial) ;	// Wait for Leonardo software USB stack to become active
+	//while (!Serial) ;	// Wait for Leonardo software USB stack to become active
 	delay(1000);		// Let the USB/serial stack warm up.
 	periodicTasks.SetDuration(1000);
 	interrupts();
@@ -128,7 +128,7 @@ void loop() {
 			converter.clear();
 			converter.str("");
 			converter << "S" << stepper.CurrentPosition();
-			std::cout << converter.str() << std::endl;
+			std::cout << "S" << std::dec << CommandProcessor::microstepsToSteps(stepper.CurrentPosition()) << std::endl;
 			machine.SendToRemoteXbee(converter.str());
 		}
 	}

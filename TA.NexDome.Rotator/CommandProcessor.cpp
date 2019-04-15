@@ -1,5 +1,6 @@
 #include "CommandProcessor.h"
 #include "NexDome.h"
+#include "../TA.NexDome.Shutter/CommandProcessor.h"
 
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
 	: rotator(rotator), settings(settings), machine(machine)
@@ -48,14 +49,12 @@ Response CommandProcessor::HandleCommand(Command& command)
 	return Response::Error();
 	}
 
-Response CommandProcessor::HandleGA(Command& command)
-{
+Response CommandProcessor::HandleGA(Command& command) const
+	{
 	//ToDo: This is temporary code for testing and needs to be re-done
-	const double degreesPerStep = 1.2 / 15.0 / 100.0;
-	const double stepsPerDegree = 1 / degreesPerStep;
-	auto wholeSteps = command.StepPosition * stepsPerDegree;
-	auto microsteps = StepsToMicrosteps(wholeSteps);
-	rotator.MoveToPosition(microsteps);
+	const auto microstepsPerDegree = ROTATOR_FULL_REVOLUTION_MICROSTEPS / 360.0;
+	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
+	rotator.MoveToPosition(target);
 	return Response::FromSuccessfulCommand(command);
 }
 
@@ -123,14 +122,14 @@ Response CommandProcessor::HandleZD(Command & command)
 Response CommandProcessor::HandlePR(Command & command)
 	{
 	auto motor = GetMotor(command);
-	auto position = MicrostepsToSteps(motor.CurrentPosition());
+	auto position = microstepsToSteps(motor.CurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
 
 Response CommandProcessor::HandlePW(Command & command)
 {
-	auto microsteps = StepsToMicrosteps(command.StepPosition);
+	auto microsteps = stepsToMicrosteps(command.StepPosition);
 	auto motor = GetMotor(command);
 	motor.SetCurrentPosition(microsteps);
 	return Response::FromSuccessfulCommand(command);
@@ -138,7 +137,7 @@ Response CommandProcessor::HandlePW(Command & command)
 
 Response CommandProcessor::HandleRW(Command & command)
 {
-	auto microsteps = StepsToMicrosteps(command.StepPosition);
+	auto microsteps = stepsToMicrosteps(command.StepPosition);
 	auto motor = GetMotor(command);
 	motor.SetLimitOfTravel(microsteps);
 	return Response::FromSuccessfulCommand(command);
@@ -147,7 +146,7 @@ Response CommandProcessor::HandleRW(Command & command)
 Response CommandProcessor::HandleRR(Command & command)
 	{
 	auto motor = GetMotor(command);
-	auto range = MicrostepsToSteps(motor.LimitOfTravel());
+	auto range = microstepsToSteps(motor.LimitOfTravel());
 	return Response::FromPosition(command, range);
 	}
 
@@ -165,13 +164,13 @@ Response CommandProcessor::HandleVR(Command & command)
 {
 	auto motor = GetMotor(command);
 	auto maxSpeed = motor.MaximumSpeed();
-	return Response::FromPosition(command, MicrostepsToSteps(maxSpeed));
+	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
 }
 
 Response CommandProcessor::HandleVW(Command & command)
 {
 	auto motor = GetMotor(command);
-	uint16_t speed = StepsToMicrosteps(command.StepPosition);
+	uint16_t speed = stepsToMicrosteps(command.StepPosition);
 	if (speed < motor.MinimumSpeed())
 		return Response::Error();
 	motor.SetMaximumSpeed(speed);
@@ -179,19 +178,53 @@ Response CommandProcessor::HandleVW(Command & command)
 }
 
 
-Response CommandProcessor::HandleX(Command & command)
+Response CommandProcessor::HandleX(Command & command) const
 	{
 	if (rotator.IsMoving())
 		return Response::FromInteger(command, 2);
 	return Response::FromInteger(command, 0);
 	}
 
-int32_t CommandProcessor::MicrostepsToSteps(int32_t microsteps)
+// Computes the target step position taking into account the shortest movement direction.
+int32_t CommandProcessor::targetStepPosition(const uint32_t toMicrostepPosition) const
+	{
+	const int32_t halfway = settings.microstepsPerRotation / 2;
+	const uint32_t fromMicrostepPosition = getNormalizedPositionInMicrosteps();
+	int32_t delta = toMicrostepPosition - fromMicrostepPosition;
+	if (delta == 0)
+		return 0;
+	if (delta > halfway)
+		delta -= settings.microstepsPerRotation;
+	if (delta < -halfway)
+		delta += settings.microstepsPerRotation;
+	return delta;
+	}
+
+inline int32_t CommandProcessor::microstepsToSteps(int32_t microsteps)
 	{
 	return microsteps / MICROSTEPS_PER_STEP;
 	}
 
-int32_t CommandProcessor::StepsToMicrosteps(int32_t wholesteps)
+inline int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
 	{
-	return wholesteps * MICROSTEPS_PER_STEP;
+	return wholeSteps * MICROSTEPS_PER_STEP;
+	}
+
+uint32_t CommandProcessor::getNormalizedPositionInMicrosteps() const
+{
+	auto position = rotator.CurrentPosition();
+	while (position < 0)
+		position += ROTATOR_FULL_REVOLUTION_MICROSTEPS;
+	return position;
+}
+
+inline int32_t CommandProcessor::getPositionInWholeSteps() const
+	{
+	return CommandProcessor::microstepsToSteps(getNormalizedPositionInMicrosteps());
+	}
+
+float CommandProcessor::getAzimuth() const
+	{
+	const auto degreesPerStep = 360.0 / settings.microstepsPerRotation;
+	return getPositionInWholeSteps() * degreesPerStep;
 	}

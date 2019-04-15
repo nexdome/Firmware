@@ -18,8 +18,8 @@ struct PersistentSettings
 	uint8_t majorVersion = FIRMWARE_MAJOR_VERSION;
 	uint8_t minorVersion = FIRMWARE_MINOR_VERSION;
 
-	struct MotorSettings motor;
-
+	struct MotorSettings motor{};
+	unsigned long microstepsPerRotation;
 	PersistentSettings();
 	static PersistentSettings Load();
 	void Save();

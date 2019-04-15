@@ -18,17 +18,21 @@ struct MotorSettings
 	volatile int32_t currentPosition;	// the current position (potentially updated by ISR)
 	uint16_t rampTimeMilliseconds;		// milliseconds to ramp from minSpeed to maxSpeed
 	uint16_t maxSpeed;					// maximum number of steps per second
+	bool directionReversed;				// If true, reverses the rotation direction with respect to the step position
 	};
+
+typedef void (*StopHandler) ();
+
 
 class MicrosteppingMotor : public IStepSequencer
 	{
 	public:
-		MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8_t directionPin);
 		MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8_t directionPin, IStepGenerator& stepper, MotorSettings& settings);
 		virtual void Step(bool state) final;
 		void MoveAtVelocity(float stepsPerSecond);
 		void EnergizeMotor();
 		void ReleaseMotor();
+		void registerStopHandler(StopHandler handler);
 		void SetRampTime(uint16_t milliseconds);
 		virtual void HardStop();
 		virtual void Loop();
@@ -50,16 +54,18 @@ class MicrosteppingMotor : public IStepSequencer
 
 	private:
 		uint8_t stepPin, enablePin, directionPin;
+		bool directionReversed;
 		IStepGenerator *stepGenerator;
 		int8_t direction = +1;
-		int32_t targetPosition;
-		unsigned long startTime;
-		float startVelocity, currentVelocity, targetVelocity, currentAcceleration;
+		int32_t targetPosition{};
+		unsigned long startTime{};
+		float startVelocity{}, currentVelocity, targetVelocity{}, currentAcceleration{};
 		float minSpeed;
 		void InitializeHardware();
 		float AcceleratedVelocity();
 		float DeceleratedVelocity();
 		float AccelerationFromRampTime();
+		StopHandler stopHandler;
 	};
 
 // Motor Parameters (defaults)

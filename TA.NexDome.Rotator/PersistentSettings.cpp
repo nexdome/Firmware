@@ -3,18 +3,20 @@
 // 
 
 #include "PersistentSettings.h"
-#include <eeprom.h>
+#include <EEPROM.h>
 
-PersistentSettings::PersistentSettings()
-{
-	motor = MotorSettings
-	{ 
-		ROTATOR_MAX_POSITION,	// Maximum position in microsteps
-		ROTATOR_HOME_POSITION,	// Current position in microsteps
-		MOTOR_RAMP_TIME,		// Ramp time to full speed in milliseconds
-		MOTOR_DEFAULT_SPEED		// Maximum speed in microsteps per second
-	};
-}
+PersistentSettings::PersistentSettings() :
+	motor(MotorSettings
+			{ 
+				ROTATOR_MAX_POSITION,	// Maximum position in microsteps
+				ROTATOR_HOME_POSITION,	// Current position in microsteps
+				MOTOR_RAMP_TIME,		// Ramp time to full speed in milliseconds
+				MOTOR_DEFAULT_SPEED,	// Maximum speed in microsteps per second
+				false					// Direction sense reversed?
+			}),
+	microstepsPerRotation(ROTATOR_FULL_REVOLUTION_MICROSTEPS)
+	{
+	}
 
 /*
 	Saves persistent settings to EEPROM.

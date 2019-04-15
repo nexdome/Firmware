@@ -24,7 +24,7 @@ private:
 bool sendNextAtCommand();
 	unsigned short index;
 	const char * initSequence __ATTR_PROGMEM__
-		= "RE,WR,AC,ID6FBF,CHC,A15,AP2,SM0,CE0,WR,FR";
+		= "RE,WR,AC,MYFFF,ID6FBF,CHC,A15,AP2,SM0,CE0,WR,FR,FR";
 };
 
 #endif
