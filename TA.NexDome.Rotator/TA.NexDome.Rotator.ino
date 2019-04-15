@@ -12,6 +12,7 @@
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "XBeeStartupState.h"
+#include <climits>
 
 // Forward declarations
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
@@ -118,11 +119,15 @@ void ProcessManualControls()
 	static bool counterclockwiseButtonLastState = false;
 	const bool clockwiseButtonPressed = digitalRead(CLOCKWISE_BUTTON_PIN) == 0;
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
-	if (clockwiseButtonChanged) stepper.MoveAtVelocity(settings.motor.maxSpeed * (clockwiseButtonPressed ? 1 : 0));
+	auto currentPosition = stepper.CurrentPosition();
+	auto halfWay = settings.microstepsPerRotation / 2 - 10;
+	if (clockwiseButtonChanged && clockwiseButtonPressed) stepper.MoveToPosition(currentPosition + halfWay);
+	if (clockwiseButtonChanged && !clockwiseButtonPressed) stepper.HardStop();
 	clockwiseButtonLastState = clockwiseButtonPressed;
 	const bool counterclockwiseButtonPressed = digitalRead(COUNTERCLOCKWISE_BUTTON_PIN) == 0;
 	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
-	if (counterclockwiseButtonChanged) stepper.MoveAtVelocity(settings.motor.maxSpeed * (counterclockwiseButtonPressed ? -1 : 0));
+	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed) stepper.MoveToPosition(currentPosition-halfWay);
+	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed) stepper.HardStop();
 	counterclockwiseButtonLastState = counterclockwiseButtonPressed;
 	}
 
