@@ -30,6 +30,15 @@
     <ClInclude Include="XBeeResetCompleteState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="XBeeConfigureState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XBeeWaitForPostConfigureCommandModeState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XBeeReadFirmwareVersionState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XBeeStartupState.cpp">
@@ -39,6 +48,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XBeeResetCompleteState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeConfigureState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeWaitForPostConfigureCommandModeState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBeeReadFirmwareVersionState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

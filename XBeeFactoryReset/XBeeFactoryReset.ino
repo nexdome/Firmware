@@ -5,6 +5,8 @@
 */
 
 #if defined(ARDUINO) && ARDUINO >= 100
+#include "XBeeReadFirmwareVersionState.h"
+#include "XBeeWaitForPostConfigureCommandModeState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -22,7 +24,7 @@ std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler)onXbeeFrameReceived);
-auto machine = XBeeStateMachine(xbeeSerial, host, xbeeApi);
+auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 
 // Placeholder method - does nothing.
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
