@@ -180,6 +180,10 @@ BundleArtifacts/
 Package.StoreAssociation.xml
 _pkginfo.txt
 
+# Visual Studio Code cache files
+
+.vscode/
+
 # Visual Studio cache files
 # files ending in .cache can be ignored
 *.[Cc]ache
