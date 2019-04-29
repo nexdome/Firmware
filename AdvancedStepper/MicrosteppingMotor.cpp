@@ -60,24 +60,51 @@ void MicrosteppingMotor::Step(bool state)
 		}
 	}
 
-// Moves the motor with the specified velocity. Movement continues until stopped or a hard limit is reached.
-void MicrosteppingMotor::MoveAtVelocity(float stepsPerSecond)
+//// Moves the motor with the specified velocity. Movement continues until stopped or a hard limit is reached.
+//void MicrosteppingMotor::MoveAtVelocity(float stepsPerSecond)
+//{
+//	auto absoluteStepsPerSecond = abs(stepsPerSecond);
+//	auto newDirection = abs(currentVelocity) < minSpeed ? sgn(stepsPerSecond) : direction;
+//	targetVelocity = stepsPerSecond;
+//	currentAcceleration = AccelerationFromRampTime() * newDirection;
+//	startTime = millis();
+//	if (abs(currentVelocity) < minSpeed)	// Starting from rest
+//	{
+//		targetPosition = newDirection > 0 ? INT_MAX : INT_MIN;
+//		direction = newDirection;
+//		startVelocity = minSpeed * direction;
+//		currentVelocity = startVelocity;
+//		EnergizeMotor();
+//		stepGenerator->Start(minSpeed, this);
+//	}
+//	else // already moving
+//	{
+//		startVelocity = currentVelocity;
+//		if (absoluteStepsPerSecond < minSpeed) // Stopping
+//			{
+//			auto distance = distanceToStop();
+//			targetPosition
+//			}
+//	}
+//}
+
+/*
+ * Compute the distance (in steps) needed to decelerate to stop (minimum speed),
+ * given the current velocity and acceleration in steps per second.
+ */
+int32_t MicrosteppingMotor::distanceToStop() const
 	{
-	auto absoluteStepsPerSecond = abs(stepsPerSecond);
-	auto newDirection = sgn(stepsPerSecond);
-	targetPosition = newDirection > 0 ? INT_MAX : INT_MIN;
-	targetVelocity = stepsPerSecond;
-	currentAcceleration = AccelerationFromRampTime() * newDirection;
-	EnergizeMotor();
-	startTime = millis();
-	if (abs(currentVelocity) < minSpeed)	// Starting from rest
-		{
-		startVelocity = minSpeed * direction;
-		currentVelocity = startVelocity;
-		stepGenerator->Start(minSpeed, this);
-		}
-	else
-		startVelocity = currentVelocity;
+	// v² = u² + 2as ∴ s = (v² - u²) / 2a	
+	// v is final velocity
+	// u is initial (current) velocity
+	// a is acceleration
+	// v, u, a are in steps per second
+	// Use all positive values because we want a positive distance.
+	const auto v = minSpeed * direction;
+	const auto u = currentVelocity;
+	const auto a = currentAcceleration;
+	const auto s = (v * v - u * u) / (2 * a);
+	return int(s);
 	}
 
 // Energizes the motor coils (applies holding torque) and prepares for stepping.
@@ -125,7 +152,6 @@ void MicrosteppingMotor::MoveToPosition(int32_t position)
 	direction = sgn(deltaPosition);
 	targetVelocity = configuration->maxSpeed * direction;
 	currentAcceleration = AccelerationFromRampTime() * direction;
-	EnergizeMotor();
 	startTime = millis();
 
 	if (abs(currentVelocity) < minSpeed)
@@ -133,13 +159,14 @@ void MicrosteppingMotor::MoveToPosition(int32_t position)
 		// Starting from rest
 		startVelocity = minSpeed * direction;
 		currentVelocity = startVelocity;
+		EnergizeMotor();
 		stepGenerator->Start(minSpeed, this);
 		}
 	else
 		{
 		// Starting with the motor already in motion
 		startVelocity = currentVelocity;
-		stepGenerator->SetStepRate(abs(startVelocity));
+		//stepGenerator->SetStepRate(abs(startVelocity));
 		}
 	}
 
@@ -265,6 +292,13 @@ void MicrosteppingMotor::HardStop()
 	ReleaseMotor();
 	if (stopHandler != nullptr)
 		stopHandler();
+	}
+
+void MicrosteppingMotor::SoftStop()
+	{
+	const auto current = CurrentPosition();
+	const auto distance = distanceToStop();
+	targetPosition += distance;
 	}
 
 void MicrosteppingMotor::Loop()

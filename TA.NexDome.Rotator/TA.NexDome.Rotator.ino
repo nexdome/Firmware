@@ -119,15 +119,13 @@ void ProcessManualControls()
 	static bool counterclockwiseButtonLastState = false;
 	const bool clockwiseButtonPressed = digitalRead(CLOCKWISE_BUTTON_PIN) == 0;
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
-	auto currentPosition = stepper.CurrentPosition();
-	auto halfWay = settings.microstepsPerRotation / 2 - 10;
-	if (clockwiseButtonChanged && clockwiseButtonPressed) stepper.MoveToPosition(currentPosition + halfWay);
-	if (clockwiseButtonChanged && !clockwiseButtonPressed) stepper.HardStop();
+	if (clockwiseButtonChanged && clockwiseButtonPressed) stepper.MoveToPosition(INT_MAX);
+	if (clockwiseButtonChanged && !clockwiseButtonPressed) stepper.SoftStop();
 	clockwiseButtonLastState = clockwiseButtonPressed;
 	const bool counterclockwiseButtonPressed = digitalRead(COUNTERCLOCKWISE_BUTTON_PIN) == 0;
 	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
-	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed) stepper.MoveToPosition(currentPosition-halfWay);
-	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed) stepper.HardStop();
+	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed) stepper.MoveToPosition(INT_MIN);
+	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed) stepper.SoftStop();
 	counterclockwiseButtonLastState = counterclockwiseButtonPressed;
 	}
 
