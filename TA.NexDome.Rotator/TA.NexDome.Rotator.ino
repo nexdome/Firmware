@@ -114,22 +114,38 @@ void setup() {
 }
 
 void ProcessManualControls()
-	{
+{
 	static bool clockwiseButtonLastState = false;
 	static bool counterclockwiseButtonLastState = false;
 	const bool clockwiseButtonPressed = digitalRead(CLOCKWISE_BUTTON_PIN) == 0;
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
-	auto currentPosition = stepper.CurrentPosition();
-	auto halfWay = settings.microstepsPerRotation / 2 - 10;
-	if (clockwiseButtonChanged && clockwiseButtonPressed) stepper.MoveToPosition(currentPosition + halfWay);
-	if (clockwiseButtonChanged && !clockwiseButtonPressed) stepper.HardStop();
+	if (clockwiseButtonChanged && clockwiseButtonPressed)
+	{
+		auto target = settings.motor.maxPosition;
+		std::cout << "CW to " << std::dec << target << std::endl;
+		stepper.MoveToPosition(target);
+	}
+	if (clockwiseButtonChanged && !clockwiseButtonPressed)
+	{
+		std::cout << "CW STOP" << std::endl;
+		stepper.SoftStop();
+	}
 	clockwiseButtonLastState = clockwiseButtonPressed;
 	const bool counterclockwiseButtonPressed = digitalRead(COUNTERCLOCKWISE_BUTTON_PIN) == 0;
 	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
-	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed) stepper.MoveToPosition(currentPosition-halfWay);
-	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed) stepper.HardStop();
-	counterclockwiseButtonLastState = counterclockwiseButtonPressed;
+	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed)
+	{
+		auto target = INT_MIN;
+		std::cout << "CCW to " << std::dec << target << std::endl;
+		stepper.MoveToPosition(target);
 	}
+	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed)
+	{
+		std::cout << "CCW STOP" << std::endl;
+		stepper.SoftStop();
+	}
+	counterclockwiseButtonLastState = counterclockwiseButtonPressed;
+}
 
 // the loop function runs over and over again until power down or reset
 void loop() {

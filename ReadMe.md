@@ -203,264 +203,59 @@ Any unrecognised or invalid command responds with the text `Err`.
 
 ### Command Protocol Details
 
-<table>
-<thead>
-<tr class="header">
-<th>
-Command
-</th>
-<th>
-Reply
-</th>
-<th style="text-align: right;">
-Min
-</th>
-<th style="text-align: right;">
-Max
-</th>
-<th style="text-align: right;">
-Default
-</th>
-<th>
-Notes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>
-</td>
-<td>
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-<strong>Motor configuration: 1 step = 8 microsteps</strong>
-</td>
-</tr>
-<tr class="even">
-<td>
-RWm,n
-</td>
-<td>
-AW\#
-</td>
-<td style="text-align: right;">
-1
-</td>
-<td style="text-align: right;">
-65535
-</td>
-<td style="text-align: right;">
-500
-</td>
-<td>
-Set the acceleration ramp time in milliseconds
-</td>
-</tr>
-<tr class="odd">
-<td>
-VRm
-</td>
-<td>
-VRnnnn\#
-</td>
-<td style="text-align: right;">
-16
-</td>
-<td style="text-align: right;">
-65535
-</td>
-<td style="text-align: right;">
-1000
-</td>
-<td>
-Read maximum motor speed in steps/second
-</td>
-</tr>
-<tr class="even">
-<td>
-VWm,n
-</td>
-<td>
-VW\#
-</td>
-<td style="text-align: right;">
-250
-</td>
-<td style="text-align: right;">
-65535
-</td>
-<td style="text-align: right;">
-1000
-</td>
-<td>
-Write maximum motor speed in steps/second
-</td>
-</tr>
-<tr class="odd">
-<td>
-</td>
-<td>
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-</td>
-</tr>
-<tr class="even">
-<td>
-</td>
-<td>
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-<strong>Motor movement</strong>
-</td>
-</tr>
-<tr class="odd">
-<td>
-SSm
-</td>
-<td>
-SW\#
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-Emergency stop (no deceleration)
-</td>
-</tr>
-<tr class="even">
-<td>
-</td>
-<td>
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-</td>
-</tr>
-<tr class="odd">
-<td>
-</td>
-<td>
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-<strong>System-wide commands</strong>
-</td>
-</tr>
-<tr class="even">
-<td>
-FRm
-</td>
-<td>
-FRm.n\#
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-Reads the firmware version major.minor
-</td>
-</tr>
-<tr class="odd">
-<td>
-ZR
-</td>
-<td>
-ZR\#
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-Loads settings from persistent storage.
-</td>
-</tr>
-<tr class="even">
-<td>
-ZW
-</td>
-<td>
-ZW\#
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-Writes settings to persistent storage
-</td>
-</tr>
-<tr class="odd">
-<td>
-ZD
-</td>
-<td>
-ZD\#
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-Reset to factory defaults. Erases all saved data.
-</td>
-</tr>
-<tr class="even">
-<td>
-</td>
-<td>
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td style="text-align: right;">
-</td>
-<td>
-</td>
-</tr>
-</tbody>
-</table>
+#### General Command Syntax ####
+
+<kbd>@</kbd>CCT,Param<kbd>CR</kbd><kbd>LF</kbd>
+where:
+ - <kbd>@</kbd> (literal character), command initiator, optional but strongly encouraged when being generated programmatically. It may be omitted for convenience when typing in a terminal emulator.
+ - `CC` is a two letter command code
+ - `T` is the target device, one of: `R` (rotator) or `S` (shutter).
+ - `,Param` optional parameter, command specific. May be omitted if not needed.
+ - <kbd>CR</kbd><kbd>LF</kbd> line terminator. May consist of Carriage Return (ASCII 0x0D), Line feed (ASCII 0x0A), or both, in any order.
+
+ Examples:
+    @FVR<kbd>CR</kbd> - read rotator firmware version
+    @AWS,1000<kbd>CR</kbd><kbd>LF</kbd> - write stepper ramp time of 1000 milliseconds to the shutter
+
+#### Responses ####
+
+Unless otherwise stated in the table below, all commands respond by echoing their command code and target device, in the format:
+
+<kbd>:</kbd>CCT<kbd>#</kbd>
+
+The parameter value (if any) is not echoed. For example, the response to `@GAR,1000` is `:GAR#`. Receipt of this echo response indicates that the command is valid and was successfully received.
+
+Commands that return a value include the value immediately after the target and before the terminating `#`. Example: `:VRR10000#`
+
+Any command that cannot be processed for any reason will respond with `:Err#`
+
+**Other status and debug output may be generated at any time, not necessarily in response to any command.**
+
+#### Commands ####
+
+
+Cmd | Targets | Parameter | Response   | Example    | Description
+----|---------|-----------|------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FR  | RS      | none      | :FRm.n#    | @FRR       | Read firmware version
+GA  | R       | ddd       |            | @GAR,180   | Goto Azimuth (param: integer degrees)
+SW  | RS      | none      |            |            |
+PR  | RS      | none      | :PRt-dddd# | @PRR       | Position Read - get current step position in whole steps (signed integer)
+PW  | RS      | ±dddd     |            | @PWR,-1000 | Position Write (sync) - set step position
+RR  | RS      | none      | :RRtdddd   | @RRS       | Range Read - read the range of travel in whole steps.
+VR | RS | none | :VRtddddd# | @VRR | Velocity read - motor speed in whole steps per second
+VW | RS | ddddd | :VWt# | @VWS,10000 | Velocity Write - motor speed in whole steps per second
+
+		if (command.Verb == "PR") return HandlePR(command);	// Position read
+		if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
+		if (command.Verb == "RR") return HandleRR(command);	// Range Read (get limit of travel)
+		if (command.Verb == "RW") return HandleRW(command);	// Range Write (set limit of travel)
+		if (command.Verb == "VR") return HandleVR(command);	// Read maximum motor speed
+		if (command.Verb == "VW") return HandleVW(command);	// Read maximum motor speed
+		if (command.Verb == "ZD") return HandleZD(command);	// Reset to factory settings (load defaults).
+		if (command.Verb == "ZR") return HandleZR(command);	// Load settings from persistent storage
+		if (command.Verb == "ZW") return HandleZW(command);	// Write settings to persistent storage
+
+
 
 Note that omitting all of the optional parts of each command gives a more convenient syntax when
 entering commands manually in a terminal emulator. The table above gives the shortest possible form

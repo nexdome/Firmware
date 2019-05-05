@@ -11,6 +11,7 @@
 	Acceleration - measured in steps per second per second
 */
 
+#include <ArduinoSTL.h>
 #include "MicrosteppingMotor.h"
 #include <climits>
 
@@ -58,26 +59,6 @@ void MicrosteppingMotor::Step(bool state)
 			HardStop();
 			}
 		}
-	}
-
-// Moves the motor with the specified velocity. Movement continues until stopped or a hard limit is reached.
-void MicrosteppingMotor::MoveAtVelocity(float stepsPerSecond)
-	{
-	auto absoluteStepsPerSecond = abs(stepsPerSecond);
-	auto newDirection = sgn(stepsPerSecond);
-	targetPosition = newDirection > 0 ? INT_MAX : INT_MIN;
-	targetVelocity = stepsPerSecond;
-	currentAcceleration = AccelerationFromRampTime() * newDirection;
-	EnergizeMotor();
-	startTime = millis();
-	if (abs(currentVelocity) < minSpeed)	// Starting from rest
-		{
-		startVelocity = minSpeed * direction;
-		currentVelocity = startVelocity;
-		stepGenerator->Start(minSpeed, this);
-		}
-	else
-		startVelocity = currentVelocity;
 	}
 
 // Energizes the motor coils (applies holding torque) and prepares for stepping.
@@ -206,6 +187,24 @@ const bool MicrosteppingMotor::IsMoving()
 	}
 
 /*
+ * Compute the distance (in steps) needed to decelerate to stop (minimum speed),
+ * given the current velocity and acceleration in steps per second.
+ */
+int32_t MicrosteppingMotor::distanceToStop() const
+{
+	// v² = u² + 2as ∴ s = (v² - u²) / 2a	
+	// v is final velocity
+	// u is initial (current) velocity
+	// a is acceleration
+	// v, u, a are in steps per second
+	const auto v = 0; //minSpeed * direction;
+	const auto u = currentVelocity;
+	const auto a = -currentAcceleration;
+	const auto s = (v * v - u * u) / (2 * a);
+	return int(s);
+}
+
+/*
 	Computes the linear acceleration required to accelerate from rest to the maximum
 	speed in the ramp time. The returned value is always positive.
 	From v = u + at; since u is 0, v = at where t is the ramp time. Therefore, a = v/t.
@@ -266,6 +265,18 @@ void MicrosteppingMotor::HardStop()
 	if (stopHandler != nullptr)
 		stopHandler();
 	}
+
+/*
+ * Decelerate to a stop in the shortest distance allowed by the current acceleration.
+ */
+void MicrosteppingMotor::SoftStop()
+{
+	if (!IsMoving()) return;
+	const auto current = CurrentPosition();
+	const auto distance = distanceToStop();
+	targetPosition = current + distance;
+	std::cout << std::dec << "current " << current << " dist " << distance << " target " << targetPosition << std::endl;
+}
 
 void MicrosteppingMotor::Loop()
 	{

@@ -29,12 +29,13 @@ class MicrosteppingMotor : public IStepSequencer
 	public:
 		MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8_t directionPin, IStepGenerator& stepper, MotorSettings& settings);
 		virtual void Step(bool state) final;
-		void MoveAtVelocity(float stepsPerSecond);
+		//void MoveAtVelocity(float stepsPerSecond);
 		void EnergizeMotor();
 		void ReleaseMotor();
 		void registerStopHandler(StopHandler handler);
 		void SetRampTime(uint16_t milliseconds);
 		virtual void HardStop();
+		virtual void SoftStop();
 		virtual void Loop();
 		void ComputeAcceleratedVelocity();
 		virtual void MoveToPosition(int32_t position);
@@ -50,6 +51,7 @@ class MicrosteppingMotor : public IStepSequencer
 		virtual const bool IsMoving();
 
 	protected:
+		int32_t distanceToStop() const;
 		MotorSettings *configuration;
 
 	private:
