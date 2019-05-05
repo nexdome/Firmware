@@ -35,6 +35,40 @@ void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 	machine.onXbeeFrameReceived(type, payload);
 }
 
+void ProcessManualControls()
+{
+	static bool openButtonLastState = false;
+	static bool closeButtonLastState = false;
+	const bool openButtonPressed = digitalRead(OPEN_BUTTON_PIN) == 0;
+	const bool openButtonChanged = openButtonPressed != openButtonLastState;
+	if (openButtonChanged && openButtonPressed)
+	{
+		auto target = settings.motor.maxPosition;
+		std::cout << "Open to " << std::dec << target << std::endl;
+		stepper.MoveToPosition(target);
+	}
+	if (openButtonChanged && !openButtonPressed)
+	{
+		std::cout << "Open STOP" << std::endl;
+		stepper.SoftStop();
+	}
+	openButtonLastState = openButtonPressed;
+	const bool closedButtonPressed = digitalRead(CLOSE_BUTTON_PIN) == 0;
+	const bool closedButtonChanged = closedButtonPressed != closeButtonLastState;
+	if (closedButtonChanged && closedButtonPressed)
+	{
+		auto target = 0;
+		std::cout << "Close to " << std::dec << target << std::endl;
+		stepper.MoveToPosition(target);
+	}
+	if (closedButtonChanged && !closedButtonPressed)
+	{
+		std::cout << "Close STOP" << std::endl;
+		stepper.SoftStop();
+	}
+	closeButtonLastState = closedButtonPressed;
+}
+
 
 Response DispatchCommand(const std::string& buffer)
 {
@@ -101,6 +135,8 @@ void HandleSerialCommunications()
 // the setup function runs once when you press reset or power the board
 void setup() {
 	stepper.ReleaseMotor();
+	pinMode(CLOCKWISE_BUTTON_PIN, INPUT_PULLUP);
+	pinMode(COUNTERCLOCKWISE_BUTTON_PIN, INPUT_PULLUP);
 	hostReceiveBuffer.reserve(SERIAL_RX_BUFFER_SIZE);
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
@@ -123,7 +159,8 @@ void loop() {
 	if (periodicTasks.Expired())
 	{
 		periodicTasks.SetDuration(250);
-		if (stepper.CurrentVelocity() != 0.0)
+		ProcessManualControls();
+		if (stepper.IsMoving())
 		{
 			converter.clear();
 			converter.str("");

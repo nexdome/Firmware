@@ -271,6 +271,7 @@ void MicrosteppingMotor::HardStop()
  */
 void MicrosteppingMotor::SoftStop()
 {
+	if (!IsMoving()) return;
 	const auto current = CurrentPosition();
 	const auto distance = distanceToStop();
 	targetPosition = current + distance;
