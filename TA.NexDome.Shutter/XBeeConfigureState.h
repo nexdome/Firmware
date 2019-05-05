@@ -23,8 +23,7 @@ public:
 private:
 bool sendNextAtCommand();
 	unsigned short index;
-	const char * initSequence __ATTR_PROGMEM__
-		= "RE,WR,AC,MYFFF,ID6FBF,CHC,A15,AP2,SM0,CE0,WR,FR,FR";
+	const char * initSequence __ATTR_PROGMEM__ = "RE,WR,AC,MYFFFF,ID6FBF,CH0B,A17,A27,RR6,RN2,CA30,RO10,PL4,RO10,SM0,CE0,AP2,WR,FR,FR";
 };
 
 #endif

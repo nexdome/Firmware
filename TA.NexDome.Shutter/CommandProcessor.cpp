@@ -10,6 +10,16 @@ MicrosteppingMotor& CommandProcessor::GetMotor(Command& command)
 	return motor;
 	}
 
+int32_t CommandProcessor::microstepsToSteps(int32_t microsteps)
+{
+	return microsteps / MICROSTEPS_PER_STEP;
+}
+
+int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
+{
+	return wholeSteps * MICROSTEPS_PER_STEP;
+}
+
 Response CommandProcessor::HandleCommand(Command& command)
 	{
 	if (command.IsShutterCommand())
@@ -21,10 +31,10 @@ Response CommandProcessor::HandleCommand(Command& command)
 		//if (command.Verb == "MI") return HandleMI(command);	// Move motor in
 		//if (command.Verb == "MO") return HandleMO(command);	// Move motor out
 		if (command.Verb == "SW") return HandleSW(command);		// Stop motor (hard stop)
-		//if (command.Verb == "PR") return HandlePR(command);	// Position read
-		//if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
-		//if (command.Verb == "RR") return HandleRR(command);	// Range Read (get limit of travel)
-		//if (command.Verb == "RW") return HandleRW(command);	// Range Write (set limit of travel)
+		if (command.Verb == "PR") return HandlePR(command);	// Position read
+		if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
+		if (command.Verb == "RR") return HandleRR(command);	// Range Read (get limit of travel)
+		if (command.Verb == "RW") return HandleRW(command);	// Range Write (set limit of travel)
 		if (command.Verb == "VR") return HandleVR(command);		// Read maximum motor speed
 		if (command.Verb == "VW") return HandleVW(command);		// Read maximum motor speed
 		if (command.Verb == "ZD") return HandleZD(command);		// Reset to factory settings (load defaults).
@@ -85,36 +95,32 @@ Response CommandProcessor::HandleZD(Command & command)
 	return Response::FromSuccessfulCommand(command);
 	}
 
-//Response CommandProcessor::HandlePR(Command & command)
-//	{
-//	auto motor = GetMotor(command);
-//	auto position = MicrostepsToSteps(motor->CurrentPosition());
-//	auto response = Response::FromPosition(command, position);
-//	return response;
-//	}
-//
-//Response CommandProcessor::HandlePW(Command & command)
-//{
-//	auto microsteps = StepsToMicrosteps(command.StepPosition);
-//	auto motor = GetMotor(command);
-//	motor->SetCurrentPosition(microsteps);
-//	return Response::FromSuccessfulCommand(command);
-//}
-//
-//Response CommandProcessor::HandleRW(Command & command)
-//{
-//	auto microsteps = StepsToMicrosteps(command.StepPosition);
-//	auto motor = GetMotor(command);
-//	motor->SetLimitOfTravel(microsteps);
-//	return Response::FromSuccessfulCommand(command);
-//}
-//
-//Response CommandProcessor::HandleRR(Command & command)
-//	{
-//	auto motor = GetMotor(command);
-//	auto range = MicrostepsToSteps(motor->LimitOfTravel());
-//	return Response::FromPosition(command, range);
-//	}
+Response CommandProcessor::HandlePR(Command & command)
+	{
+	auto position = microstepsToSteps(motor.CurrentPosition());
+	auto response = Response::FromPosition(command, position);
+	return response;
+	}
+
+Response CommandProcessor::HandlePW(Command & command)
+{
+	auto microsteps = stepsToMicrosteps(command.StepPosition);
+	motor.SetCurrentPosition(microsteps);
+	return Response::FromSuccessfulCommand(command);
+}
+
+Response CommandProcessor::HandleRW(Command & command)
+{
+	auto microsteps = stepsToMicrosteps(command.StepPosition);
+	motor.SetLimitOfTravel(microsteps);
+	return Response::FromSuccessfulCommand(command);
+}
+
+Response CommandProcessor::HandleRR(Command & command)
+	{
+	auto range = microstepsToSteps(motor.LimitOfTravel());
+	return Response::FromPosition(command, range);
+	}
 
 Response CommandProcessor::HandleFR(Command& command)
 {
@@ -147,14 +153,4 @@ Response CommandProcessor::HandleX(Command & command)
 	if (motor.IsMoving())
 		return Response::FromInteger(command, 2);
 	return Response::FromInteger(command, 0);
-	}
-
-int32_t CommandProcessor::microstepsToSteps(int32_t microsteps)
-	{
-	return microsteps / MICROSTEPS_PER_STEP;
-	}
-
-int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
-	{
-	return wholeSteps * MICROSTEPS_PER_STEP;
 	}
