@@ -11,12 +11,13 @@
 
 #include "NexDome.h"
 #include "AdvancedStepper.h"
+#include "Version.h"
 
 struct PersistentSettings
 {
 	static const uint16_t fingerprint = 0x4AFB;
-	char majorVersion = FIRMWARE_MAJOR_VERSION[0];
-	char minorVersion = FIRMWARE_MINOR_VERSION[0];
+	char majorVersion = MajorVersion;
+	char minorVersion = MinorVersion;
 
 	struct MotorSettings motor;
 

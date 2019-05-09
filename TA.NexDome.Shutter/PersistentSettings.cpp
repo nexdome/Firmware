@@ -53,7 +53,7 @@ PersistentSettings PersistentSettings::Load()
 	if (eepromFingerprint != fingerprint)
 		return defaultSettings;	// use defaults if fingerprint is invalid
 	// Ensure that the firmware major version is the same as when the settings were saved.
-	if (loadedSettings.majorVersion != FIRMWARE_MAJOR_VERSION)
+	if (loadedSettings.majorVersion != MajorVersion)
 		return defaultSettings;
 	// All is well, we can return the loaded settings.
 	return loadedSettings;
