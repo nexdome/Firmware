@@ -7,16 +7,16 @@
 
 PersistentSettings::PersistentSettings() :
 	motor(MotorSettings
-			{ 
-				ROTATOR_MAX_POSITION,	// Maximum position in microsteps
-				ROTATOR_HOME_POSITION,	// Current position in microsteps
-				MOTOR_RAMP_TIME,		// Ramp time to full speed in milliseconds
-				MOTOR_DEFAULT_SPEED,	// Maximum speed in microsteps per second
-				true					// Direction sense reversed?
-			}),
-	microstepsPerRotation(ROTATOR_FULL_REVOLUTION_MICROSTEPS)
-	{
-	}
+		{
+			ROTATOR_MAX_POSITION,	// Maximum position in microsteps
+			ROTATOR_HOME_POSITION,	// Current position in microsteps
+			MOTOR_RAMP_TIME,		// Ramp time to full speed in milliseconds
+			MOTOR_DEFAULT_SPEED,	// Maximum speed in microsteps per second
+			true					// Direction sense reversed?
+		}),
+	microstepsPerRotation(ROTATOR_FULL_REVOLUTION_MICROSTEPS),
+	home(0, 500)
+{}
 
 /*
 	Saves persistent settings to EEPROM.
@@ -54,7 +54,7 @@ PersistentSettings PersistentSettings::Load()
 	if (eepromFingerprint != fingerprint)
 		return defaultSettings;	// use defaults if fingerprint is invalid
 	// Ensure that the firmware major version is the same as when the settings were saved.
-	if (loadedSettings.majorVersion != FIRMWARE_MAJOR_VERSION)
+	if (loadedSettings.majorVersion != MajorVersion)
 		return defaultSettings;
 	// All is well, we can return the loaded settings.
 	return loadedSettings;

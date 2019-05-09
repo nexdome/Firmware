@@ -48,6 +48,9 @@
     <ClInclude Include="XBeeConfigureState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XBeeStartupState.cpp">
@@ -77,5 +80,8 @@
     <ClCompile Include="XBeeConfigureState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="board.txt" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 
 #include "CommandProcessor.h"
 #include "NexDome.h"
+#include "Version.h"
 
 CommandProcessor::CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings)
 	: motor(motor), settings(settings) 	{}
@@ -126,9 +127,7 @@ Response CommandProcessor::HandleFR(Command& command)
 {
 	std::string message;
 	message.append("FR");
-	message.append(FIRMWARE_MAJOR_VERSION);
-	message.push_back('.');
-	message.append(FIRMWARE_MINOR_VERSION);
+	message.append(SemanticVersion);
 	return Response{ message };
 }
 

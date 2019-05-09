@@ -1,7 +1,5 @@
 #pragma once
-#include <climits>
-#define FIRMWARE_MAJOR_VERSION "0"
-#define FIRMWARE_MINOR_VERSION "0"
+#include <limits.h>
 
 // Motor Parameters
 #define MICROSTEPS_PER_STEP (8) // Should match DIP switches on stepper driver
@@ -23,6 +21,7 @@
 #define SERIAL_RX_BUFFER_SIZE (16) // Receive buffer for PC/USB communications
 
 // Other hardware assignments
+#define HOME_INDEX_PIN (PIN2)
 #define OPEN_LIMIT_SWITCH_PIN (PIN3)
 #define CLOSED_LIMIT_SWITCH_PIN (PIN2)
 #define OPEN_BUTTON_PIN (PIN5)

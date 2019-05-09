@@ -8,8 +8,10 @@
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CppFormatting/NAMESPACE_DECLARATION_BRACES/@EntryValue">NEXT_LINE_SHIFTED</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CppFormatting/OTHER_BRACES/@EntryValue">NEXT_LINE_SHIFTED</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CppFormatting/TYPE_DECLARATION_BRACES/@EntryValue">NEXT_LINE_SHIFTED</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Rules/=Class_0020and_0020struct_0020fields/@EntryIndexedValue">&lt;NamingElement Priority="10"&gt;&lt;Descriptor Static="Indeterminate" Constexpr="Indeterminate" Const="Indeterminate" Volatile="Indeterminate" Accessibility="NOT_APPLICABLE"&gt;&lt;type Name="class field" /&gt;&lt;type Name="struct field" /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect="True" Prefix="" Suffix="" Style="aaBb"&gt;&lt;ExtraRule Prefix="" Suffix="_" Style="aaBb" /&gt;&lt;/Policy&gt;&lt;/NamingElement&gt;</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/NeverBuildProjects/@EntryValue">c5f80730-f44f-4478-bdae-6634efc2ca88;893a4046-8112-4d9c-a69c-c1d11554760f;f3368067-9881-4ed7-9afe-b31d67dfeead;deb85c95-f303-4660-a4d9-713323ffa19a</s:String>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EFeature_002EServices_002ECpp_002ECodeStyle_002ESettingsUpgrade_002EFunctionReturnStyleSettingsUpgrader/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Arduino/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Microstep/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Microstepping/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Microsteps/@EntryIndexedValue">True</s:Boolean>

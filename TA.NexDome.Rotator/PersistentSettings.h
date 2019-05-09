@@ -11,15 +11,17 @@
 
 #include "NexDome.h"
 #include "AdvancedStepper.h"
+#include "HomeSensor.h"
+#include "Version.h"
 
 struct PersistentSettings
 {
 	static const uint16_t fingerprint = 0x4AFB;
-	uint8_t majorVersion = FIRMWARE_MAJOR_VERSION;
-	uint8_t minorVersion = FIRMWARE_MINOR_VERSION;
-
+	uint8_t majorVersion = MajorVersion;
+	uint8_t minorVersion = MinorVersion;
 	struct MotorSettings motor{};
 	unsigned long microstepsPerRotation;
+	struct Home home;
 	PersistentSettings();
 	static PersistentSettings Load();
 	void Save();

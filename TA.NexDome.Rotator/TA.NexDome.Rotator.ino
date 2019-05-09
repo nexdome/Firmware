@@ -1,5 +1,4 @@
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "XBeeConfigureState.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -9,6 +8,8 @@
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
+#include "HomeSensor.h"
+#include "XBeeConfigureState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "XBeeStartupState.h"
@@ -30,6 +31,7 @@ auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameRe
 auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
 Timer periodicTasks;
+auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN);
 
 
 
@@ -108,6 +110,7 @@ void setup() {
 	delay(1000);		// Let the USB/serial stack warm up a bit longer.
 	xbeeApi.reset();
 	periodicTasks.SetDuration(1000);
+	HomeSensor::init();
 	interrupts();
 	std::cout << F("Init") << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));

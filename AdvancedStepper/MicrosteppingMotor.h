@@ -48,9 +48,10 @@ class MicrosteppingMotor : public IStepSequencer
 		const int32_t LimitOfTravel();
 		const uint16_t MaximumSpeed();
 		const uint16_t MinimumSpeed();
-		virtual const bool IsMoving();
+		virtual bool IsMoving();
+		virtual int8_t currentDirection();
 
-	protected:
+protected:
 		int32_t distanceToStop() const;
 		MotorSettings *configuration;
 

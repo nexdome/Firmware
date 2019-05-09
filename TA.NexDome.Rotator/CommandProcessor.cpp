@@ -1,6 +1,7 @@
 #include "CommandProcessor.h"
 #include "NexDome.h"
 #include "../TA.NexDome.Shutter/CommandProcessor.h"
+#include "Version.h"
 
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
 	: rotator(rotator), settings(settings), machine(machine)
@@ -154,9 +155,7 @@ Response CommandProcessor::HandleFR(Command & command)
 	{
 	std::string message;
 	message.append("FR");
-	message.append(FIRMWARE_MAJOR_VERSION);
-	message.push_back('.');
-	message.append(FIRMWARE_MINOR_VERSION);
+	message.append(SemanticVersion);
 	return Response{ message };
 	}
 

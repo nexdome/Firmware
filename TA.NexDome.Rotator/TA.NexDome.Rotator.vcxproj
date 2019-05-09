@@ -101,7 +101,7 @@
       <ForcedIncludeFiles>$(ProjectDir)__vm\.TA.NexDome.Rotator.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>__AVR_atmega32u4__;__AVR_ATmega32U4__;F_CPU=16000000L;ARDUINO=10809;ARDUINO_AVR_LEONARDO;ARDUINO_ARCH_AVR;USB_VID=0x2341;USB_PID=0x8036;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\TA.NexDome.Rotator;$(ProjectDir)..\XBeeStatemachine;F:\OneDrive\Documents\Arduino\libraries\ArduinoSTL\src;$(ProjectDir)..\XBeeApi;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries\EEPROM\src;$(ProjectDir)..\Timer;$(ProjectDir)..\AdvancedStepper;F:\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries;F:\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\cores\arduino;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\variants\leonardo;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include\avr;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\TA.NexDome.Rotator;F:\OneDrive\Documents\Arduino\libraries\ArduinoSTL\src;$(ProjectDir)..\XBeeApi;$(ProjectDir)..\XBeeStatemachine;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries\EEPROM\src;$(ProjectDir)..\AdvancedStepper;$(ProjectDir)..\Timer;F:\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\libraries;F:\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\cores\arduino;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.209\variants\leonardo;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\avr\include\avr;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\7.3.0-atmel3.6.1-arduino4\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -122,7 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandProcessor.h" />
+    <ClInclude Include="HomeSensor.h" />
     <ClInclude Include="PersistentSettings.h" />
+    <ClInclude Include="Version.h" />
     <ClInclude Include="XBeeApiDetectShutterState.h" />
     <ClInclude Include="XBeeConfigureState.h" />
     <ClInclude Include="XBeeShutterOnlineState.h" />
@@ -132,12 +134,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandProcessor.cpp" />
+    <ClCompile Include="HomeSensor.cpp" />
     <ClCompile Include="PersistentSettings.cpp" />
     <ClCompile Include="XBeeApiDetectShutterState.cpp" />
     <ClCompile Include="XBeeConfigureState.cpp" />
     <ClCompile Include="XBeeShutterOnlineState.cpp" />
     <ClCompile Include="XBeeStartupState.cpp" />
     <ClCompile Include="XBeeWaitForCommandModeState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="board.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

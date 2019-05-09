@@ -181,10 +181,17 @@ const uint16_t MicrosteppingMotor::MinimumSpeed()
 	return minSpeed;
 }
 
-const bool MicrosteppingMotor::IsMoving()
+inline bool MicrosteppingMotor::IsMoving()
 	{
 	return currentVelocity != 0;
 	}
+
+/**
+ * Gets the last direction of travel.
+ * Returns +1 for travel in increasing step position, -1 for decreasing step position.
+ * May return 0 if not moving, but isMoving() is the preferred method to check for motion.
+ */
+inline int8_t MicrosteppingMotor::currentDirection() { return direction; }
 
 /*
  * Compute the distance (in steps) needed to decelerate to stop (minimum speed),
