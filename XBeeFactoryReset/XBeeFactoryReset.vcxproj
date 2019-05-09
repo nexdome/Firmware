@@ -119,6 +119,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Version.h" />
     <ClInclude Include="XBeeConfigureState.h" />
     <ClInclude Include="XBeeReadFirmwareVersionState.h" />
     <ClInclude Include="XBeeResetCompleteState.h" />

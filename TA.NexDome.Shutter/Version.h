@@ -1,1 +1,3 @@
-#define SemanticVersion "0.1.0-alpha.40"
+#define SemanticVersion "unversioned"
+#define MajorVersion (0)
+#define MinorVersion (0)
