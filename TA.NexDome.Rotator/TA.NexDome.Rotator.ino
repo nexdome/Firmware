@@ -124,7 +124,7 @@ void ProcessManualControls()
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
 	if (clockwiseButtonChanged && clockwiseButtonPressed)
 	{
-		auto target = settings.motor.maxPosition;
+		auto target = LONG_MAX;
 		std::cout << "CW to " << std::dec << target << std::endl;
 		stepper.MoveToPosition(target);
 	}
@@ -138,7 +138,7 @@ void ProcessManualControls()
 	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
 	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed)
 	{
-		auto target = INT_MIN;
+		auto target = LONG_MIN;
 		std::cout << "CCW to " << std::dec << target << std::endl;
 		stepper.MoveToPosition(target);
 	}

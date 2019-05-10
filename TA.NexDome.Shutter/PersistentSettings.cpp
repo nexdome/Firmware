@@ -12,7 +12,7 @@ PersistentSettings::PersistentSettings()
 		SHUTTER_FULL_OPEN_DEFAULT,	// Maximum position in microsteps
 		0,							// Current position in microsteps
 		MOTOR_RAMP_TIME,			// Ramp time to full speed in milliseconds
-		MOTOR_DEFAULT_SPEED,		// Maximum speed in microsteps per second
+		SHUTTER_DEFAULT_SPEED,		// Maximum speed in microsteps per second
 		true						// Direction reversed
 	};
 }
