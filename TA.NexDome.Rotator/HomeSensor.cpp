@@ -38,6 +38,8 @@ HomeSensor::HomeSensor(MicrosteppingMotor* stepper, Home* settings, const uint8_
 void HomeSensor::onHomeSensorChanged()
 	{
 	state = digitalRead(HomeSensor::sensorPin);
+	auto position = motor->CurrentPosition();
+	std::cout << "HOME " << state << " at " << position << std::endl;
 	if (!motor->IsMoving()) // Ignore state change if rotator not moving
 		return;
 	const auto direction = motor->currentDirection();

@@ -50,9 +50,9 @@ class MicrosteppingMotor : public IStepSequencer
 		const uint16_t MinimumSpeed();
 		virtual bool IsMoving();
 		virtual int8_t currentDirection();
+		int32_t distanceToStop() const;
 
 protected:
-		int32_t distanceToStop() const;
 		MotorSettings *configuration;
 
 	private:

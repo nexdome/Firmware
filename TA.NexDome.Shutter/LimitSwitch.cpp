@@ -17,7 +17,7 @@ void LimitSwitch::onCloseLimitReached()
 {
 	if (motor->CurrentVelocity() < 0)
 	{
-		motor->HardStop();
+		motor->SoftStop();
 		std::cout << "STOPPED: ";
 	}
 	std::cout << "Closed limit" << std::endl;
@@ -27,14 +27,15 @@ void LimitSwitch::onOpenLimitReached()
 {
 	if (motor->CurrentVelocity() > 0)
 	{
-		motor->HardStop();
+		motor->SoftStop();
+		auto stoppingDistance = motor->distanceToStop();
 		auto position = motor->CurrentPosition();
-		if (position < motor->LimitOfTravel())
-			motor->SetLimitOfTravel(motor->CurrentPosition());
-		std::cout << "STOPPED at: " << position << " ";
+		auto stopPosition = motor->CurrentPosition() + stoppingDistance;
+		if (stopPosition < motor->LimitOfTravel())
+			motor->SetLimitOfTravel(stopPosition);
+		std::cout << "STOPPED at: " << stopPosition << " ";
 	}
 	std::cout << "Open limit" << std::endl;
-	//ToDo: save limit of travel in persistent settings
 }
 
 void LimitSwitch::init()
