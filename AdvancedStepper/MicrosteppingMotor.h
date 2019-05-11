@@ -59,7 +59,7 @@ protected:
 		uint8_t stepPin, enablePin, directionPin;
 		bool directionReversed;
 		IStepGenerator *stepGenerator;
-		int8_t direction = +1;
+		int direction = +1;
 		int32_t targetPosition{};
 		unsigned long startTime{};
 		float startVelocity{}, currentVelocity, targetVelocity{}, currentAcceleration{};

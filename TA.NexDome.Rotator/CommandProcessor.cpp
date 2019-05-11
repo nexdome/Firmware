@@ -3,8 +3,8 @@
 #include "../TA.NexDome.Shutter/CommandProcessor.h"
 #include "Version.h"
 
-CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
-	: rotator(rotator), settings(settings), machine(machine)
+CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine, HomeSensor& homeSensor)
+	: rotator(rotator), settings(settings), machine(machine), homeSensor(homeSensor)
 	{
 	}
 
@@ -32,6 +32,7 @@ Response CommandProcessor::HandleCommand(Command& command)
 		{
 		if (command.Verb == "FR") return HandleFR(command);	// Read firmware version
 		if (command.Verb == "GA") return HandleGA(command);	// Goto Azimuth (rotator only)
+		if (command.Verb == "GH") return HandleGH(command);	// Goto Home Sensor (rotator only)
 		if (command.Verb == "SW") return HandleSW(command);	// Stop motor
 		if (command.Verb == "PR") return HandlePR(command);	// Position read
 		if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
@@ -50,14 +51,23 @@ Response CommandProcessor::HandleCommand(Command& command)
 	return Response::Error();
 	}
 
-Response CommandProcessor::HandleGA(Command& command) const
+Response CommandProcessor::HandleGA(Command& command)
 	{
 	//ToDo: This is temporary code for testing and needs to be re-done
 	const auto microstepsPerDegree = ROTATOR_FULL_REVOLUTION_MICROSTEPS / 360.0;
 	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
+	std::cout << "Target " << target << std::endl;
 	rotator.MoveToPosition(target);
 	return Response::FromSuccessfulCommand(command);
 }
+
+Response CommandProcessor::HandleGH(Command& command)
+	{
+	auto delta = deltaSteps(settings.home.position);
+	if (delta != 0)
+		HomeSensor::findHome(sgn(delta));
+	return Response::FromSuccessfulCommand(command);
+	}
 
 //Response CommandProcessor::HandleMI(Command& command)
 //	{
@@ -177,15 +187,25 @@ Response CommandProcessor::HandleVW(Command & command)
 }
 
 
-Response CommandProcessor::HandleX(Command & command) const
+Response CommandProcessor::HandleX(Command & command)
 	{
 	if (rotator.IsMoving())
 		return Response::FromInteger(command, 2);
 	return Response::FromInteger(command, 0);
 	}
 
-// Computes the target step position taking into account the shortest movement direction.
+/*
+ * Computes the final target step position taking into account the shortest movement direction.
+ */
 int32_t CommandProcessor::targetStepPosition(const uint32_t toMicrostepPosition) const
+	{
+	return getNormalizedPositionInMicrosteps() + deltaSteps(toMicrostepPosition);
+	}
+
+/*
+ * Computes the change in step position to reach a target taking into account the shortest movement direction.
+ */
+int32_t CommandProcessor::deltaSteps(const uint32_t toMicrostepPosition) const
 	{
 	const int32_t halfway = settings.microstepsPerRotation / 2;
 	const uint32_t fromMicrostepPosition = getNormalizedPositionInMicrosteps();

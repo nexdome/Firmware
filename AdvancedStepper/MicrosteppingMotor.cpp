@@ -104,6 +104,7 @@ void MicrosteppingMotor::MoveToPosition(int32_t position)
 	int32_t deltaPosition = position - configuration->currentPosition;
 	targetPosition = position;
 	direction = sgn(deltaPosition);
+	std::cout << "tgt " << targetPosition << " dir " << direction << std::endl;
 	targetVelocity = configuration->maxSpeed * direction;
 	currentAcceleration = AccelerationFromRampTime() * direction;
 	EnergizeMotor();

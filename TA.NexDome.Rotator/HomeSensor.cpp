@@ -9,6 +9,8 @@
  * Note: some fields have to be static because they are used during interrupts
  */
 
+#include <ArduinoSTL.h>
+#include <limits.h>
 #include "HomeSensor.h"
 
 #pragma region static fields used within interrupt service routines
@@ -16,7 +18,8 @@ MicrosteppingMotor* HomeSensor::motor;
 Home* HomeSensor::settings;
 uint8_t HomeSensor::sensorPin;
 volatile bool HomeSensor::state;
-#pragma endregion 
+volatile bool HomeSensor::homingInProgress;
+#pragma endregion
 
 /*
  * Creates a new HomeSensor instance.
@@ -26,10 +29,11 @@ volatile bool HomeSensor::state;
  */
 HomeSensor::HomeSensor(MicrosteppingMotor* stepper, Home* settings, const uint8_t sensorPin)
 	{
-	HomeSensor::motor = stepper;
+	motor = stepper;
 	HomeSensor::settings = settings;
 	HomeSensor::sensorPin = sensorPin;
 	}
+
 
 /*
  * Triggered as an interrupt whenever the home sensor pin changes state.
@@ -37,8 +41,8 @@ HomeSensor::HomeSensor(MicrosteppingMotor* stepper, Home* settings, const uint8_
  */
 void HomeSensor::onHomeSensorChanged()
 	{
-	state = digitalRead(HomeSensor::sensorPin);
-	auto position = motor->CurrentPosition();
+	state = digitalRead(sensorPin);
+	const auto position = motor->CurrentPosition();
 	std::cout << "HOME " << state << " at " << position << std::endl;
 	if (!motor->IsMoving()) // Ignore state change if rotator not moving
 		return;
@@ -47,6 +51,8 @@ void HomeSensor::onHomeSensorChanged()
 		{
 		// sync position on either the rising or falling edge, depending on rotation direction.
 		motor->SetCurrentPosition(settings->position);
+		if (homingInProgress)
+			cancelHoming();
 		}
 	}
 
@@ -60,7 +66,22 @@ void HomeSensor::init()
 	attachInterrupt(digitalPinToInterrupt(sensorPin), onHomeSensorChanged, CHANGE);
 	}
 
+
 bool HomeSensor::atHome()
-{
-	return !HomeSensor::state;
-}
+	{
+	return !state;
+	}
+
+void HomeSensor::findHome(int direction)
+	{
+	std::cout << "Find Home dir " << direction << std::endl;
+	homingInProgress = true;
+	motor->MoveToPosition(direction ? INT_MAX : INT_MIN);
+	}
+
+void HomeSensor::cancelHoming()
+	{
+	homingInProgress = false;
+	if (motor->IsMoving())
+		motor->SoftStop();
+	}

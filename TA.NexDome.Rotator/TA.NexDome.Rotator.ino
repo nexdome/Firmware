@@ -29,11 +29,9 @@ std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
-auto commandProcessor = CommandProcessor(stepper, settings, machine);
-Timer periodicTasks;
 auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN);
-
-
+auto commandProcessor = CommandProcessor(stepper, settings, machine, home);
+Timer periodicTasks;
 
 Response DispatchCommand(const std::string& buffer)
 {
@@ -65,6 +63,11 @@ Response DispatchCommand(const std::string& buffer)
 	return response;
 }
 
+/*
+ * Handles receive data from the host serial interface.
+ * Attempts to receive whole commands delimited by @ and \r and/or \n
+ * and passes the command to DispatchCommand.
+ */
 void HandleSerialCommunications()
 {
 	if (host.available() <= 0)
@@ -124,7 +127,7 @@ void ProcessManualControls()
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
 	if (clockwiseButtonChanged && clockwiseButtonPressed)
 	{
-		auto target = LONG_MAX;
+		auto target = INT_MAX;
 		std::cout << "CW to " << std::dec << target << std::endl;
 		stepper.MoveToPosition(target);
 	}
@@ -138,7 +141,7 @@ void ProcessManualControls()
 	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
 	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed)
 	{
-		auto target = LONG_MIN;
+		auto target = INT_MIN;
 		std::cout << "CCW to " << std::dec << target << std::endl;
 		stepper.MoveToPosition(target);
 	}
@@ -170,8 +173,21 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 	machine.onXbeeFrameReceived(type, payload);
 }
 
+/*
+ * Sends a status packet to the host
+ */
+void sendStatus()
+	{
+	std::cout << std::dec << "SER,"
+	<< commandProcessor.getPositionInWholeSteps() << ','
+	<< HomeSensor::atHome()
+	<< Response::terminator << std::endl;
+	}
+
 // Handle the motor stop event from the stepper driver.
 void onMotorStopped()
 	{
 	settings.motor.currentPosition %= settings.microstepsPerRotation;
+	HomeSensor::cancelHoming();
+	sendStatus();
 	}

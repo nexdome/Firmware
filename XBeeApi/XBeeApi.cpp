@@ -21,7 +21,9 @@ void XBeeApi::loop()
 		if (rxi < 0)
 			continue;
 		byte rxb = (byte)rxi;
+#ifdef DEBUG_XBEE_API
 		std::cout << std::hex << (int)rxb << " ";
+#endif
 		handleReceivedByte(rxb);
 	}
 }

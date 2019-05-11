@@ -1,6 +1,5 @@
 #include <XBeeApi.h>
 #include "XBeeStateMachine.h"
-#include <iomanip>
 
 Timer IXBeeState::timer = Timer();
 
@@ -25,7 +24,9 @@ void XBeeStateMachine::Loop()
 
 void XBeeStateMachine::sendToLocalXbee(const std::string& message) const
 {
+#ifdef DEBUG_XBEE_STATE
 	std::cout << "Tx: " << message << std::endl;
+#endif
 	xbeeSerial.write(message.begin(), message.length());
 }
 
@@ -37,7 +38,9 @@ Sample TX64 frame for Hello message
 
 void XBeeStateMachine::SendToRemoteXbee(const std::string& message)
 {
+#ifdef DEBUG_XBEE_STATE
 	std::cout << "Send: " << message << std::endl;
+#endif
 	auto destinationAddress = remoteAddress;
 	/* Length = 
 	API-ID		1
@@ -92,11 +95,11 @@ void XBeeStateMachine::printEscaped(byte data)
 		}
 	}
 	xbeeSerial.print((char)data);
-	//std::cout << std::hex << (int)data << " ";
 }
 
 void XBeeStateMachine::ChangeState(IXBeeState* newState)
 	{
+	// The following line is not diagnostics, it's part of the protocol and must not be commented out.
 	std::cout << "XB->" << newState->name() << std::endl;
 	if (currentState != nullptr)
 	{
@@ -120,7 +123,6 @@ void XBeeStateMachine::ListenInApiMode()
 	{
 	ApiModeEnabled = true;
 	xbeeApi.reset();
-	//xbeeSerial.begin(9600);
 	}
 
 /*
@@ -135,7 +137,7 @@ byte XBeeStateMachine::getNextFrameId()
 	return next;
 	}
 
-//ToDo: diagnostics - delete me
+#ifdef DEBUG_XBEE_STATE
 void printAddress(const std::vector<byte>& address)
 {
 	std::cout << "Set address ";
@@ -145,12 +147,15 @@ void printAddress(const std::vector<byte>& address)
 	}
 	std::cout << std::endl;
 }
+#endif
 
 // Extract and save a 64-bit destination address from a frame payload
 void XBeeStateMachine::SetDestinationAddress(const std::vector<byte>& payload)
 {
 	copyAddress(payload.begin());
+#ifdef DEBUG_XBEE_STATE
 	printAddress(remoteAddress);
+#endif
 }
 
 // Copy 8 bytes (64 bits) of address data starting at (source)
@@ -166,7 +171,9 @@ void XBeeStateMachine::useCoordinatorAddress()
 {
 	const std::vector<byte> coordinator({ 0,0,0,0,0,0,0xFF,0xFF });
 	copyAddress(coordinator.begin());
+#ifdef DEBUG_XBEE_STATE
 	printAddress(remoteAddress);
+#endif
 }
 
 void XBeeStateMachine::xbee_serial_receive() const
@@ -180,7 +187,9 @@ void XBeeStateMachine::xbee_serial_receive() const
 	const auto ch = char(rx);
 	if (ch == '\r')
 		{
+#ifdef DEBUG_XBEE_STATE
 		std::cout << "XB Rx " << rxBuffer << std::endl;
+#endif
 		currentState->OnSerialLineReceived(rxBuffer);
 		rxBuffer.clear();
 		}
@@ -195,26 +204,35 @@ inline void XBeeStateMachine::xbee_api_receive() const
 
 void XBeeStateMachine::onXbeeFrameReceived(const FrameType type, const std::vector<byte>& payload) const
 	{
+#ifdef DEBUG_XBEE_STATE
 	std::cout << "Rx API ID=" << std::hex << type << ", ";
+#endif
 	switch (type)
 	{
 	case ModemStatusResponse:
 	{
 		auto status = xbeeApi.GetModemStatus();
+#ifdef DEBUG_XBEE_STATE
 		std::cout << "Modem Status = " << status << std::endl;
+#endif
 		currentState->OnModemStatusReceived(status);
 		break;
 	}
 	case Rx64Response:
+#ifdef DEBUG_XBEE_STATE
 		std::cout << "frame=" << (int)payload[0] << ", payload='" << std::string(payload.begin() + 10, payload.end()) << "'" << std::endl;
+#endif
 		currentState->OnApiRx64FrameReceived(payload);
 		break;
+#ifdef DEBUG_XBEE_STATE
 	case TxStatusResponse:
-		//std::cout << "Frame " << payload[1] << " status " << payload[2] << std::endl;
 		std::cout << "frame=" << (int)payload[0] << " TxStatus=" << (int)payload[1] << std::endl;
 		break;
+#endif
 	default:
+#ifdef DEBUG_XBEE_STATE
 		std::cout << "unknown" << std::endl;
+#endif
 		break;
 	}
 }
