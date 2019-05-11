@@ -20,7 +20,8 @@ class CommandProcessor
 public:
 	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine, HomeSensor& homeSensor);
 	Response HandleCommand(Command& command);
-	uint32_t getNormalizedPositionInMicrosteps() const;
+Response HandleAR(Command& command) const;
+uint32_t getNormalizedPositionInMicrosteps() const;
 	int32_t getPositionInWholeSteps() const;
 	float getAzimuth() const;
 	static int32_t microstepsToSteps(int32_t microsteps);

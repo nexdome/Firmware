@@ -25,6 +25,7 @@ Response CommandProcessor::HandleCommand(Command& command)
 	{
 	if (command.IsShutterCommand())
 		{
+		if (command.Verb == "AR") return HandleAR(command);		// Ramp time (acceleration) read (milliseconds)
 		if (command.Verb == "AW") return HandleAW(command);		// Ramp time (acceleration) write (milliseconds)
 		if (command.Verb == "CL") return HandleCL(command);		// Close shutter
 		if (command.Verb == "FR") return HandleFR(command);		// Read firmware version
@@ -70,6 +71,13 @@ Response CommandProcessor::HandleAW(Command & command)
 	motor.SetRampTime(rampTime);
 	return Response::FromSuccessfulCommand(command);
 	}
+
+Response CommandProcessor::HandleAR(Command& command) const
+	{
+	const auto rampTime = settings.motor.rampTimeMilliseconds;
+	return Response::FromInteger(command, rampTime);
+
+}
 
 Response CommandProcessor::HandleSW(Command & command)
 	{

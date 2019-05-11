@@ -162,10 +162,11 @@ void loop() {
 		ProcessManualControls();
 		if (stepper.IsMoving())
 		{
+			auto wholeSteps = CommandProcessor::microstepsToSteps(stepper.CurrentPosition());
 			converter.clear();
 			converter.str("");
-			converter << "S" << stepper.CurrentPosition();
-			std::cout << "S" << std::dec << CommandProcessor::microstepsToSteps(stepper.CurrentPosition()) << std::endl;
+			converter << "S" << wholeSteps;
+			std::cout << "S" << std::dec << wholeSteps << std::endl;
 			machine.SendToRemoteXbee(converter.str());
 		}
 	}

@@ -30,6 +30,8 @@ Response CommandProcessor::HandleCommand(Command& command)
 
 	if (command.IsRotatorCommand())
 		{
+		if (command.Verb == "AR") return HandleAR(command);	// Read firmware version
+		if (command.Verb == "AW") return HandleAW(command);	// Read firmware version
 		if (command.Verb == "FR") return HandleFR(command);	// Read firmware version
 		if (command.Verb == "GA") return HandleGA(command);	// Goto Azimuth (rotator only)
 		if (command.Verb == "GH") return HandleGH(command);	// Goto Home Sensor (rotator only)
@@ -50,6 +52,15 @@ Response CommandProcessor::HandleCommand(Command& command)
 		}
 	return Response::Error();
 	}
+
+
+Response CommandProcessor::HandleAR(Command& command) const
+{
+	const auto rampTime = settings.motor.rampTimeMilliseconds;
+	return Response::FromInteger(command, rampTime);
+
+}
+
 
 Response CommandProcessor::HandleGA(Command& command)
 	{
