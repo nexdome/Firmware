@@ -4,6 +4,8 @@
 
 #include <ArduinoSTL.h>
 #include "LimitSwitch.h"
+#include "NexDome.h"
+
 
 MicrosteppingMotor * LimitSwitch::motor;
 
@@ -12,6 +14,16 @@ LimitSwitch::LimitSwitch(MicrosteppingMotor * stepper, uint8_t openLimit, uint8_
 {
 	LimitSwitch::motor = stepper;
 }
+
+bool LimitSwitch::isOpen() const
+	{
+	return digitalRead(openLimitPin) == 0;
+	}
+
+bool LimitSwitch::isClosed() const
+	{
+	return digitalRead(closedLimitPin) == 0;
+	}
 
 void LimitSwitch::onCloseLimitReached()
 {
@@ -28,10 +40,11 @@ void LimitSwitch::onOpenLimitReached()
 {
 	if (motor->CurrentVelocity() > 0)
 	{
-		motor->SoftStop();
-		auto stoppingDistance = motor->distanceToStop();
+		//motor->SoftStop();
+		//auto stoppingDistance = motor->distanceToStop();
 		auto position = motor->CurrentPosition();
-		auto stopPosition = motor->CurrentPosition();
+		auto stopPosition = motor->CurrentPosition() + SHUTTER_LIMIT_STOPPING_DISTANCE;
+		motor->MoveToPosition(stopPosition);
 		if (stopPosition < motor->LimitOfTravel())
 			motor->SetLimitOfTravel(stopPosition);
 		std::cout << "STOPPED at: " << stopPosition << " ";

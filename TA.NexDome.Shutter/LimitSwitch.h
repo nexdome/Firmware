@@ -15,7 +15,9 @@ class LimitSwitch
 {
 public:
 	LimitSwitch(MicrosteppingMotor* stepper, uint8_t openLimit, uint8_t closeLimit);
-	void loop();
+	bool isOpen() const;
+	bool isClosed() const;
+void loop();
 	void init();
 private:
 	uint8_t openLimitPin;

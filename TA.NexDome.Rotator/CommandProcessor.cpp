@@ -3,48 +3,42 @@
 #include "../TA.NexDome.Shutter/CommandProcessor.h"
 #include "Version.h"
 
-CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine, HomeSensor& homeSensor)
-	: rotator(rotator), settings(settings), machine(machine), homeSensor(homeSensor)
-	{
-	}
-
-inline MicrosteppingMotor& CommandProcessor::GetMotor(Command& command)
-	{
-	return rotator;
-	}
+CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine,
+                                   HomeSensor& homeSensor)
+	: rotator(rotator), settings(settings), machine(machine), homeSensor(homeSensor) { }
 
 Response CommandProcessor::ForwardToShutter(Command& command)
-{
+	{
 	machine.SendToRemoteXbee(command.RawCommand);
 	//ToDo: should the response always be successful?
 	return Response::FromSuccessfulCommand(command);
-}
+	}
 
 Response CommandProcessor::HandleCommand(Command& command)
 	{
 	if (command.IsShutterCommand())
-	{
+		{
 		ForwardToShutter(command);
 		return Response::NoResponse(command);
-	}
+		}
 
 	if (command.IsRotatorCommand())
 		{
-		if (command.Verb == "AR") return HandleAR(command);	// Read firmware version
-		if (command.Verb == "AW") return HandleAW(command);	// Read firmware version
-		if (command.Verb == "FR") return HandleFR(command);	// Read firmware version
-		if (command.Verb == "GA") return HandleGA(command);	// Goto Azimuth (rotator only)
-		if (command.Verb == "GH") return HandleGH(command);	// Goto Home Sensor (rotator only)
-		if (command.Verb == "SW") return HandleSW(command);	// Stop motor
-		if (command.Verb == "PR") return HandlePR(command);	// Position read
-		if (command.Verb == "PW") return HandlePW(command);	// Position write (sync)
-		if (command.Verb == "RR") return HandleRR(command);	// Range Read (get limit of travel)
-		if (command.Verb == "RW") return HandleRW(command);	// Range Write (set limit of travel)
-		if (command.Verb == "VR") return HandleVR(command);	// Read maximum motor speed
-		if (command.Verb == "VW") return HandleVW(command);	// Read maximum motor speed
-		if (command.Verb == "ZD") return HandleZD(command);	// Reset to factory settings (load defaults).
-		if (command.Verb == "ZR") return HandleZR(command);	// Load settings from persistent storage
-		if (command.Verb == "ZW") return HandleZW(command);	// Write settings to persistent storage
+		if (command.Verb == "AR") return HandleAR(command); // Read firmware version
+		if (command.Verb == "AW") return HandleAW(command); // Read firmware version
+		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
+		if (command.Verb == "GA") return HandleGA(command); // Goto Azimuth (rotator only)
+		if (command.Verb == "GH") return HandleGH(command); // Goto Home Sensor (rotator only)
+		if (command.Verb == "SW") return HandleSW(command); // Stop motor
+		if (command.Verb == "PR") return HandlePR(command); // Position read
+		if (command.Verb == "PW") return HandlePW(command); // Position write (sync)
+		if (command.Verb == "RR") return HandleRR(command); // Range Read (get limit of travel)
+		if (command.Verb == "RW") return HandleRW(command); // Range Write (set limit of travel)
+		if (command.Verb == "VR") return HandleVR(command); // Read maximum motor speed
+		if (command.Verb == "VW") return HandleVW(command); // Read maximum motor speed
+		if (command.Verb == "ZD") return HandleZD(command); // Reset to factory settings (load defaults).
+		if (command.Verb == "ZR") return HandleZR(command); // Load settings from persistent storage
+		if (command.Verb == "ZW") return HandleZW(command); // Write settings to persistent storage
 		}
 	if (command.IsSystemCommand())
 		{
@@ -55,11 +49,10 @@ Response CommandProcessor::HandleCommand(Command& command)
 
 
 Response CommandProcessor::HandleAR(Command& command) const
-{
+	{
 	const auto rampTime = settings.motor.rampTimeMilliseconds;
 	return Response::FromInteger(command, rampTime);
-
-}
+	}
 
 
 Response CommandProcessor::HandleGA(Command& command)
@@ -70,7 +63,7 @@ Response CommandProcessor::HandleGA(Command& command)
 	std::cout << "Target " << target << std::endl;
 	rotator.MoveToPosition(target);
 	return Response::FromSuccessfulCommand(command);
-}
+	}
 
 Response CommandProcessor::HandleGH(Command& command)
 	{
@@ -104,101 +97,93 @@ Response CommandProcessor::HandleGH(Command& command)
 //	return Response::FromSuccessfulCommand(command);
 //	}
 
-Response CommandProcessor::HandleAW(Command & command)
+Response CommandProcessor::HandleAW(Command& command)
 	{
-	auto motor = GetMotor(command);
 	auto rampTime = command.StepPosition;
 	// The minimum ramp time is 100ms, fail if the user tries to set it lower.
 	if (rampTime < MIN_RAMP_TIME)
 		return Response::Error();
-	motor.SetRampTime(rampTime);
+	rotator.SetRampTime(rampTime);
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleSW(Command & command)
+Response CommandProcessor::HandleSW(Command& command)
 	{
-	auto motor = GetMotor(command);
-	motor.HardStop();
+	rotator.HardStop();
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZW(Command & command)
+Response CommandProcessor::HandleZW(Command& command)
 	{
 	settings.Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZR(Command & command)
-{
+Response CommandProcessor::HandleZR(Command& command)
+	{
 	settings = PersistentSettings::Load();
 	return Response::FromSuccessfulCommand(command);
-}
+	}
 
-Response CommandProcessor::HandleZD(Command & command)
+Response CommandProcessor::HandleZD(Command& command)
 	{
 	settings = PersistentSettings();
 	settings.Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandlePR(Command & command)
+Response CommandProcessor::HandlePR(Command& command)
 	{
-	auto motor = GetMotor(command);
-	auto position = microstepsToSteps(motor.CurrentPosition());
+	auto position = microstepsToSteps(rotator.CurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
 
-Response CommandProcessor::HandlePW(Command & command)
-{
-	auto microsteps = stepsToMicrosteps(command.StepPosition);
-	auto motor = GetMotor(command);
-	motor.SetCurrentPosition(microsteps);
-	return Response::FromSuccessfulCommand(command);
-}
-
-Response CommandProcessor::HandleRW(Command & command)
-{
-	auto microsteps = stepsToMicrosteps(command.StepPosition);
-	auto motor = GetMotor(command);
-	motor.SetLimitOfTravel(microsteps);
-	return Response::FromSuccessfulCommand(command);
-}
-
-Response CommandProcessor::HandleRR(Command & command)
+Response CommandProcessor::HandlePW(Command& command)
 	{
-	auto motor = GetMotor(command);
-	auto range = microstepsToSteps(motor.LimitOfTravel());
+	auto microsteps = stepsToMicrosteps(command.StepPosition);
+	rotator.SetCurrentPosition(microsteps);
+	return Response::FromSuccessfulCommand(command);
+	}
+
+Response CommandProcessor::HandleRW(Command& command)
+	{
+	auto microsteps = stepsToMicrosteps(command.StepPosition);
+	rotator.SetLimitOfTravel(microsteps);
+	return Response::FromSuccessfulCommand(command);
+	}
+
+Response CommandProcessor::HandleRR(Command& command)
+	{
+	auto range = microstepsToSteps(rotator.LimitOfTravel());
 	return Response::FromPosition(command, range);
 	}
 
-Response CommandProcessor::HandleFR(Command & command)
+Response CommandProcessor::HandleFR(Command& command)
 	{
 	std::string message;
 	message.append("FR");
 	message.append(SemanticVersion);
-	return Response{ message };
+	return Response{message};
 	}
 
-Response CommandProcessor::HandleVR(Command & command)
-{
-	auto motor = GetMotor(command);
-	auto maxSpeed = motor.MaximumSpeed();
+Response CommandProcessor::HandleVR(Command& command)
+	{
+	auto maxSpeed = rotator.MaximumSpeed();
 	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
-}
+	}
 
-Response CommandProcessor::HandleVW(Command & command)
-{
-	auto motor = GetMotor(command);
+Response CommandProcessor::HandleVW(Command& command)
+	{
 	uint16_t speed = stepsToMicrosteps(command.StepPosition);
-	if (speed < motor.MinimumSpeed())
+	if (speed < rotator.MinimumSpeed())
 		return Response::Error();
-	motor.SetMaximumSpeed(speed);
+	rotator.SetMaximumSpeed(speed);
 	return Response::FromSuccessfulCommand(command);
-}
+	}
 
 
-Response CommandProcessor::HandleX(Command & command)
+Response CommandProcessor::HandleX(Command& command)
 	{
 	if (rotator.IsMoving())
 		return Response::FromInteger(command, 2);
@@ -241,16 +226,16 @@ inline int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
 	}
 
 uint32_t CommandProcessor::getNormalizedPositionInMicrosteps() const
-{
+	{
 	auto position = rotator.CurrentPosition();
 	while (position < 0)
 		position += ROTATOR_FULL_REVOLUTION_MICROSTEPS;
 	return position;
-}
+	}
 
 inline int32_t CommandProcessor::getPositionInWholeSteps() const
 	{
-	return CommandProcessor::microstepsToSteps(getNormalizedPositionInMicrosteps());
+	return microstepsToSteps(getNormalizedPositionInMicrosteps());
 	}
 
 float CommandProcessor::getAzimuth() const
