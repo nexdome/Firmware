@@ -29,8 +29,6 @@ Response CommandProcessor::HandleCommand(Command& command)
 		if (command.Verb == "CL") return HandleCL(command); // Close shutter
 		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
 		if (command.Verb == "OP") return HandleOP(command); // Open shutter
-		//if (command.Verb == "MI") return HandleMI(command);	// Move motor in
-		//if (command.Verb == "MO") return HandleMO(command);	// Move motor out
 		if (command.Verb == "SW") return HandleSW(command); // Stop motor (hard stop)
 		if (command.Verb == "PR") return HandlePR(command); // Position read
 		if (command.Verb == "PW") return HandlePW(command); // Position write (sync)
