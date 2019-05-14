@@ -76,7 +76,7 @@ void HomeSensor::findHome(int direction)
 	{
 	std::cout << "Find Home dir " << direction << std::endl;
 	homingInProgress = true;
-	motor->MoveToPosition(direction ? INT_MAX : INT_MIN);
+	motor->MoveToPosition(direction ? INT32_MAX : INT32_MIN);
 	}
 
 void HomeSensor::cancelHoming()

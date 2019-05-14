@@ -1,6 +1,13 @@
 #pragma once
 #include <limits.h>
 
+/*
+ * limits.h appears to have values that are not consistent
+ * with the Arduino compiler.
+ */
+#define INT32_MAX (LONG_MAX)
+#define INT32_MIN (LONG_MIN)
+
 // Motor Parameters
 #define MICROSTEPS_PER_STEP (8) // Should match DIP switches on stepper driver
 #define MIN_SPEED (250)         // Minimum speed that can be timed by the hardware timer
@@ -17,7 +24,7 @@
 #define SHUTTER_FULL_OPEN_DEFAULT (46000UL * MICROSTEPS_PER_STEP)
 #define SHUTTER_LIMIT_STOPPING_DISTANCE (800 * MICROSTEPS_PER_STEP)
 #define ROTATOR_FULL_REVOLUTION_MICROSTEPS (440640)
-#define ROTATOR_MAX_POSITION (INT_MAX)
+#define ROTATOR_MAX_POSITION (INT32_MAX)
 #define ROTATOR_HOME_POSITION (0)
 
 #define SERIAL_RX_BUFFER_SIZE (16) // Receive buffer for PC/USB communications

@@ -4,16 +4,16 @@
 #include "WProgram.h"
 #endif
 
-#include "NexDome.h"
+#include <limits.h>
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
+#include "NexDome.h"
 #include "HomeSensor.h"
 #include "XBeeConfigureState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "XBeeStartupState.h"
-#include <climits>
 
 // Forward declarations
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
@@ -127,7 +127,7 @@ void ProcessManualControls()
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
 	if (clockwiseButtonChanged && clockwiseButtonPressed)
 	{
-		auto target = INT_MAX;
+		int32_t target = INT32_MAX;
 		std::cout << "CW to " << std::dec << target << std::endl;
 		stepper.MoveToPosition(target);
 	}
@@ -141,7 +141,7 @@ void ProcessManualControls()
 	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
 	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed)
 	{
-		auto target = INT_MIN;
+		int32_t target = INT32_MIN;
 		std::cout << "CCW to " << std::dec << target << std::endl;
 		stepper.MoveToPosition(target);
 	}
@@ -187,7 +187,7 @@ void sendStatus()
 // Handle the motor stop event from the stepper driver.
 void onMotorStopped()
 	{
-	settings.motor.currentPosition %= settings.microstepsPerRotation;
+	settings.motor.currentPosition = commandProcessor.getNormalizedPositionInMicrosteps();
 	HomeSensor::cancelHoming();
 	sendStatus();
 	}
