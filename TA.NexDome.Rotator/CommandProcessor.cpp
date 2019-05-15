@@ -83,8 +83,8 @@ Response CommandProcessor::HandleGA(Command& command) const
 Response CommandProcessor::HandleGH(Command& command) const
 	{
 	const auto delta = deltaSteps(settings.home.position);
-	if (delta != 0)
-		HomeSensor::findHome(sgn(delta));
+	const auto direction = sgn(delta);
+	HomeSensor::findHome(direction == 0 ? 1 : direction);
 	return Response::FromSuccessfulCommand(command);
 	}
 
