@@ -14,8 +14,7 @@ PersistentSettings::PersistentSettings() :
 			ROTATOR_DEFAULT_SPEED,	// Maximum speed in microsteps per second
 			true					// Direction sense reversed?
 		}),
-	microstepsPerRotation(ROTATOR_FULL_REVOLUTION_MICROSTEPS),
-	home(0, 500)
+	home(0, 500, ROTATOR_FULL_REVOLUTION_MICROSTEPS)
 {}
 
 /*

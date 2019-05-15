@@ -7,7 +7,6 @@
   #include "WProgram.h"
 #endif
 
-#include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
 #include <XBeeStatemachine.h>
 #include "PersistentSettings.h"
@@ -19,8 +18,7 @@ class CommandProcessor
 public:
 	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine,
 	                 HomeSensor& homeSensor);
-	Response HandleCommand(Command& command);
-	Response HandleAR(Command& command) const;
+	Response HandleCommand(Command& command) const;
 	uint32_t getNormalizedPositionInMicrosteps() const;
 	int32_t getPositionInWholeSteps() const;
 	float getAzimuth() const;
@@ -28,22 +26,24 @@ public:
 	static int32_t stepsToMicrosteps(int32_t wholeSteps);
 
 private:
-	Response ForwardToShutter(Command& command);
-	Response HandleAW(Command& command); // AW - Acceleration ramp time write
-	Response HandleFR(Command& command); // Firmware version read
-	Response HandleGA(Command& command); // GA - GoTo Azimuth (in degrees).
-	Response HandleGH(Command& command); // Go to home sensor
-	Response HandlePR(Command& command); // Step position read
-	Response HandlePW(Command& command); // Step position write (sync)
-	Response HandleRR(Command& command); // Range (limit of travel) read
-	Response HandleRW(Command& command); // Range (limit of travel) write
-	Response HandleSW(Command& command); // Stop write (motor emergency stop)
-	Response HandleVR(Command& command); // Velocity [sic] read (motor maximum speed in microsteps/sec)
-	Response HandleVW(Command& command); // Velocity [sic] write (microsteps/sec)
-	Response HandleX(Command& command); // Movement status read
-	Response HandleZW(Command& command); // EEPROM write (save settings)
-	Response HandleZR(Command& command); // EEPROM read (load settings)
-	Response HandleZD(Command& command); // Reset to factory settings (clears both EEPROM and working settings)
+	Response ForwardToShutter(Command& command) const;
+	Response HandleAR(Command& command) const;
+	Response HandleAW(Command& command) const; // AW - Acceleration ramp time write
+	Response HandleFR(Command& command) const; // Firmware version read
+	Response HandleGA(Command& command) const; // GA - GoTo Azimuth (in degrees).
+	Response HandleGH(Command& command) const; // Go to home sensor
+	Response HandleHR(Command& command) const; // Read Home position (steps clockwise from true north)
+	Response HandleHW(Command& command) const; // Write home position (steps clockwise from true north)
+	Response HandlePR(Command& command) const; // Step position read
+	Response HandlePW(Command& command) const; // Step position write (sync)
+	Response HandleRR(Command& command) const; // Range (limit of travel) read
+	Response HandleRW(Command& command) const; // Range (limit of travel) write
+	Response HandleSW(Command& command) const; // Stop write (motor emergency stop)
+	Response HandleVR(Command& command) const; // Velocity [sic] read (motor maximum speed in microsteps/sec)
+	Response HandleVW(Command& command) const; // Velocity [sic] write (microsteps/sec)
+	Response HandleZW(Command& command) const; // EEPROM write (save settings)
+	Response HandleZR(Command& command) const; // EEPROM read (load settings)
+	Response HandleZD(Command& command) const; // Reset to factory settings (clears both EEPROM and working settings)
 	int32_t targetStepPosition(uint32_t toMicrostepPosition) const;
 	// Calculates the target microstep position using the shortest direction.
 	int32_t deltaSteps(uint32_t toMicrostepPosition) const;

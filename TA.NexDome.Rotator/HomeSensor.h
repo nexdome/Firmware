@@ -15,7 +15,9 @@ struct Home
 	{
 	int32_t position;
 	unsigned int width;
-	Home(int32_t stepPosition, unsigned width) : position(stepPosition), width(width) {}
+	int32_t microstepsPerRotation;
+	Home(int32_t stepPosition, unsigned width, int32_t circumferenceMicrosteps) 
+		: position(stepPosition), width(width), microstepsPerRotation(circumferenceMicrosteps) {}
 	};
 
 class HomeSensor

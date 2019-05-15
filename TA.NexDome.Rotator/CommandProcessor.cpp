@@ -7,14 +7,28 @@ CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettin
                                    HomeSensor& homeSensor)
 	: rotator(rotator), settings(settings), machine(machine), homeSensor(homeSensor) { }
 
-Response CommandProcessor::ForwardToShutter(Command& command)
+Response CommandProcessor::HandleHR(Command& command) const
+	{
+	return Response::FromInteger(command, microstepsToSteps(settings.home.position));
+	}
+
+Response CommandProcessor::HandleHW(Command& command) const
+	{
+	auto position = stepsToMicrosteps(command.StepPosition);
+	if (position < 0 || position > settings.home.microstepsPerRotation)
+		return Response::Error();
+	settings.home.position = position;
+	return Response::FromSuccessfulCommand(command);
+	}
+
+Response CommandProcessor::ForwardToShutter(Command& command) const
 	{
 	machine.SendToRemoteXbee(command.RawCommand);
 	//ToDo: should the response always be successful?
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleCommand(Command& command)
+Response CommandProcessor::HandleCommand(Command& command) const
 	{
 	if (command.IsShutterCommand())
 		{
@@ -29,13 +43,15 @@ Response CommandProcessor::HandleCommand(Command& command)
 		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
 		if (command.Verb == "GA") return HandleGA(command); // Goto Azimuth (rotator only)
 		if (command.Verb == "GH") return HandleGH(command); // Goto Home Sensor (rotator only)
-		if (command.Verb == "SW") return HandleSW(command); // Stop motor
+		if (command.Verb == "HR") return HandleHR(command); // Home position Read (rotator only)
+		if (command.Verb == "HW") return HandleHW(command); // Home position Write (rotator only)
+		if (command.Verb == "SW") return HandleSW(command); // Stop motor (emergency stop)
 		if (command.Verb == "PR") return HandlePR(command); // Position read
 		if (command.Verb == "PW") return HandlePW(command); // Position write (sync)
-		if (command.Verb == "RR") return HandleRR(command); // Range Read (get limit of travel)
-		if (command.Verb == "RW") return HandleRW(command); // Range Write (set limit of travel)
-		if (command.Verb == "VR") return HandleVR(command); // Read maximum motor speed
-		if (command.Verb == "VW") return HandleVW(command); // Read maximum motor speed
+		if (command.Verb == "RR") return HandleRR(command); // Range Read (circumference in steps)
+		if (command.Verb == "RW") return HandleRW(command); // Range Write (circumference in steps)
+		if (command.Verb == "VR") return HandleVR(command); // Velocity Read (motor speed, steps/s)
+		if (command.Verb == "VW") return HandleVW(command); // Velocity Write (motor speed steps/s)
 		if (command.Verb == "ZD") return HandleZD(command); // Reset to factory settings (load defaults).
 		if (command.Verb == "ZR") return HandleZR(command); // Load settings from persistent storage
 		if (command.Verb == "ZW") return HandleZW(command); // Write settings to persistent storage
@@ -55,49 +71,24 @@ Response CommandProcessor::HandleAR(Command& command) const
 	}
 
 
-Response CommandProcessor::HandleGA(Command& command)
+Response CommandProcessor::HandleGA(Command& command) const
 	{
-	//ToDo: This is temporary code for testing and needs to be re-done
-	const auto microstepsPerDegree = ROTATOR_FULL_REVOLUTION_MICROSTEPS / 360.0;
+	const auto microstepsPerDegree = settings.home.microstepsPerRotation / 360.0;
 	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
 	std::cout << "Target " << target << std::endl;
 	rotator.MoveToPosition(target);
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleGH(Command& command)
+Response CommandProcessor::HandleGH(Command& command) const
 	{
-	auto delta = deltaSteps(settings.home.position);
+	const auto delta = deltaSteps(settings.home.position);
 	if (delta != 0)
 		HomeSensor::findHome(sgn(delta));
 	return Response::FromSuccessfulCommand(command);
 	}
 
-//Response CommandProcessor::HandleMI(Command& command)
-//	{
-//	// Commands are in whole steps, motors operate in microsteps, so we must convert.
-//	auto motor = GetMotor(command);
-//	auto microStepsToMove = StepsToMicrosteps(command.StepPosition);
-//	auto targetPosition = motor->CurrentPosition() - microStepsToMove;
-//	if (targetPosition < 0)
-//		return Response::Error();
-//	motor->MoveToPosition(targetPosition);
-//	return Response::FromSuccessfulCommand(command);
-//	}
-//
-//Response CommandProcessor::HandleMO(Command& command)
-//	{
-//	// Commands are in whole steps, motors operate in microsteps, so we must convert.
-//	auto motor = GetMotor(command);
-//	auto microStepsToMove = StepsToMicrosteps(command.StepPosition);
-//	auto targetPosition = motor->CurrentPosition() + microStepsToMove;
-//	if (targetPosition > motor->LimitOfTravel())
-//		return Response::Error();
-//	motor->MoveToPosition(targetPosition);
-//	return Response::FromSuccessfulCommand(command);
-//	}
-
-Response CommandProcessor::HandleAW(Command& command)
+Response CommandProcessor::HandleAW(Command& command) const
 	{
 	auto rampTime = command.StepPosition;
 	// The minimum ramp time is 100ms, fail if the user tries to set it lower.
@@ -107,59 +98,60 @@ Response CommandProcessor::HandleAW(Command& command)
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleSW(Command& command)
+Response CommandProcessor::HandleSW(Command& command) const
 	{
 	rotator.HardStop();
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZW(Command& command)
+Response CommandProcessor::HandleZW(Command& command) const
 	{
 	settings.Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZR(Command& command)
+Response CommandProcessor::HandleZR(Command& command) const
 	{
 	settings = PersistentSettings::Load();
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZD(Command& command)
+Response CommandProcessor::HandleZD(Command& command) const
 	{
 	settings = PersistentSettings();
 	settings.Save();
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandlePR(Command& command)
+Response CommandProcessor::HandlePR(Command& command) const
 	{
 	auto position = microstepsToSteps(rotator.CurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
 
-Response CommandProcessor::HandlePW(Command& command)
+Response CommandProcessor::HandlePW(Command& command) const
 	{
 	auto microsteps = stepsToMicrosteps(command.StepPosition);
 	rotator.SetCurrentPosition(microsteps);
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleRW(Command& command)
+Response CommandProcessor::HandleRW(Command& command) const
 	{
-	auto microsteps = stepsToMicrosteps(command.StepPosition);
-	rotator.SetLimitOfTravel(microsteps);
+	const auto microsteps = stepsToMicrosteps(command.StepPosition);
+	settings.home.microstepsPerRotation = microsteps;
+	//rotator.SetLimitOfTravel(microsteps);
 	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleRR(Command& command)
+Response CommandProcessor::HandleRR(Command& command) const
 	{
-	auto range = microstepsToSteps(rotator.LimitOfTravel());
+	auto range = microstepsToSteps(settings.home.microstepsPerRotation);
 	return Response::FromPosition(command, range);
 	}
 
-Response CommandProcessor::HandleFR(Command& command)
+Response CommandProcessor::HandleFR(Command& command) const
 	{
 	std::string message;
 	message.append("FR");
@@ -167,13 +159,13 @@ Response CommandProcessor::HandleFR(Command& command)
 	return Response{message};
 	}
 
-Response CommandProcessor::HandleVR(Command& command)
+Response CommandProcessor::HandleVR(Command& command) const
 	{
 	auto maxSpeed = rotator.MaximumSpeed();
 	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
 	}
 
-Response CommandProcessor::HandleVW(Command& command)
+Response CommandProcessor::HandleVW(Command& command) const
 	{
 	uint16_t speed = stepsToMicrosteps(command.StepPosition);
 	if (speed < rotator.MinimumSpeed())
@@ -182,13 +174,6 @@ Response CommandProcessor::HandleVW(Command& command)
 	return Response::FromSuccessfulCommand(command);
 	}
 
-
-Response CommandProcessor::HandleX(Command& command)
-	{
-	if (rotator.IsMoving())
-		return Response::FromInteger(command, 2);
-	return Response::FromInteger(command, 0);
-	}
 
 /*
  * Computes the final target step position taking into account the shortest movement direction.
@@ -203,15 +188,16 @@ int32_t CommandProcessor::targetStepPosition(const uint32_t toMicrostepPosition)
  */
 int32_t CommandProcessor::deltaSteps(const uint32_t toMicrostepPosition) const
 	{
-	const int32_t halfway = settings.microstepsPerRotation / 2;
+	const auto circumferenceMicrosteps = settings.home.microstepsPerRotation;
+	const int32_t halfway = circumferenceMicrosteps / 2;
 	const uint32_t fromMicrostepPosition = getNormalizedPositionInMicrosteps();
 	int32_t delta = toMicrostepPosition - fromMicrostepPosition;
 	if (delta == 0)
 		return 0;
 	if (delta > halfway)
-		delta -= settings.microstepsPerRotation;
+		delta -= circumferenceMicrosteps;
 	if (delta < -halfway)
-		delta += settings.microstepsPerRotation;
+		delta += circumferenceMicrosteps;
 	return delta;
 	}
 
@@ -227,9 +213,11 @@ inline int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
 
 uint32_t CommandProcessor::getNormalizedPositionInMicrosteps() const
 	{
+	const auto circumferenceMicrosteps = settings.home.microstepsPerRotation;
 	auto position = rotator.CurrentPosition();
 	while (position < 0)
-		position += ROTATOR_FULL_REVOLUTION_MICROSTEPS;
+		position += circumferenceMicrosteps;
+	position %= circumferenceMicrosteps;
 	return position;
 	}
 
@@ -240,6 +228,6 @@ inline int32_t CommandProcessor::getPositionInWholeSteps() const
 
 float CommandProcessor::getAzimuth() const
 	{
-	const auto degreesPerStep = 360.0 / settings.microstepsPerRotation;
+	const auto degreesPerStep = 360.0 / settings.home.microstepsPerRotation;
 	return getPositionInWholeSteps() * degreesPerStep;
 	}
