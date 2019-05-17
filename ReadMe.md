@@ -135,6 +135,8 @@ AR  | RS      | none      | :ARddddd#  | @ARR       | Read acceleration ramp tim
 AW  | RS      | ddddd     | :AWt#      | @AWS,1000  | Write acceleration ramp time
 FR  | RS      | none      | :FRstring# | @FRR       | Reads the semantic version (SemVer) string of the firmware.
 GA  | R       | ddd       | :GAR#      | @GAR,180   | Goto Azimuth (param: integer degrees)
+HR  | R       | none      | :HRRddddd# | @HRR       | Home position Read (steps clockwise from true north)
+HW  | R       | ddddd     | :HWR#      | @HWR,1000  | Home position Write (seps clockwise from true north)
 PR  | RS      | none      | :PRt-dddd# | @PRR       | Position Read - get current step position in whole steps (signed integer)
 PW  | RS      | ±dddd     | :PWt#      | @PWR,-1000 | Position Write (sync) - set step position
 RR  | RS      | none      | :RRtdddd   | @RRS       | Range Read - read the range of travel in whole steps.
