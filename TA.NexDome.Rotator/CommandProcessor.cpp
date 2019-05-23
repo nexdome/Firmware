@@ -226,6 +226,16 @@ inline int32_t CommandProcessor::getPositionInWholeSteps() const
 	return microstepsToSteps(getNormalizedPositionInMicrosteps());
 	}
 
+int32_t CommandProcessor::getCircumferenceInWholeSteps() const
+	{
+	return microstepsToSteps(settings.home.microstepsPerRotation);
+	}
+
+int32_t CommandProcessor::getHomePositionWholeSteps() const
+	{
+	return microstepsToSteps(settings.home.position);
+	}
+
 float CommandProcessor::getAzimuth() const
 	{
 	const auto degreesPerStep = 360.0 / settings.home.microstepsPerRotation;

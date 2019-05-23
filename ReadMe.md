@@ -152,18 +152,23 @@ ZW  | RS      | none      | :ZWt#      | @ZWR       | Write working settings to 
 
 The firmware will produce notifications of various events. These may arrive at any time, for example in between a command and a response, but they will never divide a response. Client software must be prepared to handle these event notifications.
 
-Format     | Description
----------- | -----------------------------------------------------------------------------------
-XB->state  | The current state of the XBee communications link. The states are enumerated below.
-XB->Start  | Waiting for XBee to boot up or reboot
-XB->WaitAT | Waiting for XBee to enter command mode
-XB->Config | Sending configuration
-XB->Detect | Attempting to detect remote device
-XB->Online | Communications link established
-Pddddd     | Rotator position (ddddd = signed decimal integer)
-Sddddd     | Shutter position (ddddd = signed decimal integer)
-SER,p,h#   | Rotator status event. p=position in steps, h=state of home sensor
-SES,p,o,c# | Shutter status event. p=position in steps, o,c state of open/closed limit switch
+Format         | Description
+-------------- | -----------------------------------------------------------------------------------
+XB->state      | The current state of the XBee communications link. The states are enumerated below.
+XB->Start      | Waiting for XBee to boot up or reboot
+XB->WaitAT     | Waiting for XBee to enter command mode
+XB->Config     | Sending configuration
+XB->Detect     | Attempting to detect remote device
+XB->Online     | Communications link established
+Pddddd         | Rotator position (ddddd = signed decimal integer)
+Sddddd         | Shutter position (ddddd = signed decimal integer)
+SER,p,a,c,h,d# | Rotator status event. 
+               | p = current azimuth position in whole steps,
+               | a = AtHome (1 = home sensor active, 0 = home sensor inactive)
+               | c = dome circumference in whole steps
+               | h = home position sensor location, in whole steps clockwise from true north
+               | d = dead zone (reserved for future use)
+SES,p,o,c#     | Shutter status event. p=position in steps, o,c state of open/closed limit switch
 
 Note: position updates occur about every 250 milliseconds while motion is occurring. When motion ceases, an SER or SES status event is emitted and this indicates that motion of the corresponding motor has ceased.
 

@@ -10,7 +10,6 @@
 #include <XBeeApi.h>
 #include "NexDome.h"
 #include "HomeSensor.h"
-#include "XBeeConfigureState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "XBeeStartupState.h"
@@ -178,9 +177,13 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
  */
 void sendStatus()
 	{
+	const char separator = ',';
 	std::cout << std::dec << "SER,"
-	<< commandProcessor.getPositionInWholeSteps() << ','
-	<< HomeSensor::atHome()
+	<< commandProcessor.getPositionInWholeSteps() << separator
+	<< HomeSensor::atHome() << separator
+	<< commandProcessor.getCircumferenceInWholeSteps() << separator
+	<< commandProcessor.getHomePositionWholeSteps() << separator
+	<< 0 // dead-zone, reserved for future use
 	<< Response::terminator << std::endl;
 	}
 

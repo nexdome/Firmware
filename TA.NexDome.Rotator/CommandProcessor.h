@@ -21,6 +21,8 @@ public:
 	Response HandleCommand(Command& command) const;
 	uint32_t getNormalizedPositionInMicrosteps() const;
 	int32_t getPositionInWholeSteps() const;
+	int32_t getCircumferenceInWholeSteps() const;
+	int32_t getHomePositionWholeSteps() const;
 	float getAzimuth() const;
 	static int32_t microstepsToSteps(int32_t microsteps);
 	static int32_t stepsToMicrosteps(int32_t wholeSteps);
