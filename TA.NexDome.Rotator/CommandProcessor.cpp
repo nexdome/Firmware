@@ -1,6 +1,5 @@
 #include "CommandProcessor.h"
 #include "NexDome.h"
-#include "../TA.NexDome.Shutter/CommandProcessor.h"
 #include "Version.h"
 
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine,
@@ -19,6 +18,20 @@ Response CommandProcessor::HandleHW(Command& command) const
 		return Response::Error();
 	settings.home.position = position;
 	return Response::FromSuccessfulCommand(command);
+	}
+
+void CommandProcessor::sendStatus() const
+	{
+	const char separator = ',';
+	std::ostringstream status;
+	status << std::dec << ":SER,"
+		<< getPositionInWholeSteps() << separator
+		<< HomeSensor::atHome() << separator
+		<< getCircumferenceInWholeSteps() << separator
+		<< getHomePositionWholeSteps() << separator
+		<< 0 // dead-zone, reserved for future use
+		<< Response::terminator;
+	std::cout << status.str() << std::endl;
 	}
 
 Response CommandProcessor::ForwardToShutter(Command& command) const
@@ -50,6 +63,7 @@ Response CommandProcessor::HandleCommand(Command& command) const
 		if (command.Verb == "PW") return HandlePW(command); // Position write (sync)
 		if (command.Verb == "RR") return HandleRR(command); // Range Read (circumference in steps)
 		if (command.Verb == "RW") return HandleRW(command); // Range Write (circumference in steps)
+		if (command.Verb == "SR") return HandleSR(command);	// Status Request
 		if (command.Verb == "VR") return HandleVR(command); // Velocity Read (motor speed, steps/s)
 		if (command.Verb == "VW") return HandleVW(command); // Velocity Write (motor speed steps/s)
 		if (command.Verb == "ZD") return HandleZD(command); // Reset to factory settings (load defaults).
@@ -102,6 +116,12 @@ Response CommandProcessor::HandleSW(Command& command) const
 	{
 	rotator.HardStop();
 	return Response::FromSuccessfulCommand(command);
+	}
+
+Response CommandProcessor::HandleSR(Command& command) const
+	{
+	sendStatus();
+	return Response::NoResponse(command);
 	}
 
 Response CommandProcessor::HandleZW(Command& command) const

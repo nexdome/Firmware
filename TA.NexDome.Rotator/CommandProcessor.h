@@ -7,6 +7,7 @@
   #include "WProgram.h"
 #endif
 
+#include <sstream>
 #include <AdvancedStepper.h>
 #include <XBeeStatemachine.h>
 #include "PersistentSettings.h"
@@ -26,6 +27,7 @@ public:
 	float getAzimuth() const;
 	static int32_t microstepsToSteps(int32_t microsteps);
 	static int32_t stepsToMicrosteps(int32_t wholeSteps);
+	void sendStatus() const;
 
 private:
 	Response ForwardToShutter(Command& command) const;
@@ -41,6 +43,7 @@ private:
 	Response HandleRR(Command& command) const; // Range (limit of travel) read
 	Response HandleRW(Command& command) const; // Range (limit of travel) write
 	Response HandleSW(Command& command) const; // Stop write (motor emergency stop)
+	Response HandleSR(Command& command) const; // Status Request
 	Response HandleVR(Command& command) const; // Velocity [sic] read (motor maximum speed in microsteps/sec)
 	Response HandleVW(Command& command) const; // Velocity [sic] write (microsteps/sec)
 	Response HandleZW(Command& command) const; // EEPROM write (save settings)

@@ -172,25 +172,10 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 	machine.onXbeeFrameReceived(type, payload);
 }
 
-/*
- * Sends a status packet to the host
- */
-void sendStatus()
-	{
-	const char separator = ',';
-	std::cout << std::dec << "SER,"
-	<< commandProcessor.getPositionInWholeSteps() << separator
-	<< HomeSensor::atHome() << separator
-	<< commandProcessor.getCircumferenceInWholeSteps() << separator
-	<< commandProcessor.getHomePositionWholeSteps() << separator
-	<< 0 // dead-zone, reserved for future use
-	<< Response::terminator << std::endl;
-	}
-
 // Handle the motor stop event from the stepper driver.
 void onMotorStopped()
 	{
 	settings.motor.currentPosition = commandProcessor.getNormalizedPositionInMicrosteps();
 	HomeSensor::cancelHoming();
-	sendStatus();
+	commandProcessor.sendStatus();
 	}

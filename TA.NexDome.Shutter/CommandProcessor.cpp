@@ -1,9 +1,11 @@
+#include <sstream>
+
 #include "CommandProcessor.h"
 #include "NexDome.h"
 #include "Version.h"
 
-CommandProcessor::CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings)
-	: motor(motor), settings(settings) {}
+CommandProcessor::CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings, XBeeStateMachine& machine, LimitSwitch& limits)
+	: motor(motor), settings(settings), machine(machine), limitSwitches(limits) {}
 
 int32_t CommandProcessor::microstepsToSteps(int32_t microsteps)
 	{
@@ -20,6 +22,23 @@ int32_t CommandProcessor::getPositionInWholeSteps() const
 	return microstepsToSteps(motor.CurrentPosition());
 	}
 
+void CommandProcessor::sendStatus() const
+	{
+		const char separator = ',';
+		static std::ostringstream converter;
+		converter.clear();
+		converter.str("");
+		converter << ":SES,"
+			<< getPositionInWholeSteps() << separator
+			<< limitSwitches.isOpen() << separator
+			<< limitSwitches.isClosed()
+			<< Response::terminator;
+		machine.SendToRemoteXbee(converter.str());
+		std::cout << converter.str() << std::endl;
+
+	}
+
+
 Response CommandProcessor::HandleCommand(Command& command)
 	{
 	if (command.IsShutterCommand())
@@ -34,6 +53,8 @@ Response CommandProcessor::HandleCommand(Command& command)
 		if (command.Verb == "PW") return HandlePW(command); // Position write (sync)
 		if (command.Verb == "RR") return HandleRR(command); // Range Read (get limit of travel)
 		if (command.Verb == "RW") return HandleRW(command); // Range Write (set limit of travel)
+		if (command.Verb == "SR") return HandleSR(command); // Send status report
+		if (command.Verb == "SW") return HandleSW(command); // Emergency stop
 		if (command.Verb == "VR") return HandleVR(command); // Read maximum motor speed
 		if (command.Verb == "VW") return HandleVW(command); // Read maximum motor speed
 		if (command.Verb == "ZD") return HandleZD(command); // Reset to factory settings (load defaults).
@@ -117,6 +138,12 @@ Response CommandProcessor::HandleRW(Command& command)
 	auto microsteps = stepsToMicrosteps(command.StepPosition);
 	motor.SetLimitOfTravel(microsteps);
 	return Response::FromSuccessfulCommand(command);
+	}
+
+Response CommandProcessor::HandleSR(Command& command)
+	{
+	sendStatus();
+	return Response::NoResponse(command);
 	}
 
 Response CommandProcessor::HandleRR(Command& command)

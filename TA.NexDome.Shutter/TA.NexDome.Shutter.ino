@@ -21,16 +21,15 @@ Timer periodicTasks;
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
-auto commandProcessor = CommandProcessor(stepper, settings);
+auto limitSwitches = LimitSwitch(&stepper, OPEN_LIMIT_SWITCH_PIN, CLOSED_LIMIT_SWITCH_PIN);
 auto& xbeeSerial = Serial1;
 auto& host = Serial;
 std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload); // forward reference
-
 auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(HandleFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbee);
-auto limitSwitches = LimitSwitch(&stepper, OPEN_LIMIT_SWITCH_PIN, CLOSED_LIMIT_SWITCH_PIN);
+auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitches);
 
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 	{
@@ -177,25 +176,9 @@ void loop()
 		}
 	}
 
-/*
- * Sends a status packet to the host
- */
-void sendStatus()
-	{
-	static std::ostringstream converter;
-	converter.clear();
-	converter.str("");
-	converter << "SES,"
-		<< commandProcessor.getPositionInWholeSteps() << ','
-		<< limitSwitches.isOpen() << ','
-		<< limitSwitches.isClosed()
-		<< Response::terminator << std::endl;
-	machine.SendToRemoteXbee(converter.str());
-	std::cout << converter.str() << std::endl;
-	}
 
 // Handle the motor stop event from the stepper driver.
 void onMotorStopped()
 	{
-	sendStatus();
+	commandProcessor.sendStatus();
 	}
