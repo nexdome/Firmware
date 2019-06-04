@@ -24,17 +24,17 @@ int32_t CommandProcessor::getPositionInWholeSteps() const
 
 void CommandProcessor::sendStatus() const
 	{
-		const char separator = ',';
-		static std::ostringstream converter;
-		converter.clear();
-		converter.str("");
-		converter << ":SES,"
-			<< getPositionInWholeSteps() << separator
-			<< limitSwitches.isOpen() << separator
-			<< limitSwitches.isClosed()
-			<< Response::terminator;
-		machine.SendToRemoteXbee(converter.str());
-		std::cout << converter.str() << std::endl;
+	const char separator = ',';
+	static std::ostringstream converter;
+	converter.clear();
+	converter.str("");
+	converter << ":SES,"
+		<< getPositionInWholeSteps() << separator
+		<< limitSwitches.isOpen() << separator
+		<< limitSwitches.isClosed()
+		<< Response::terminator;
+	machine.SendToRemoteXbee(converter.str());
+	std::cout << converter.str() << std::endl;
 
 	}
 
@@ -61,20 +61,39 @@ Response CommandProcessor::HandleCommand(Command& command)
 		if (command.Verb == "ZR") return HandleZR(command); // Load settings from persistent storage
 		if (command.Verb == "ZW") return HandleZW(command); // Write settings to persistent storage
 		}
-	if (command.IsSystemCommand()) { }
+	if (command.IsSystemCommand()) {}
 	return Response::Error();
+	}
+
+void CommandProcessor::sendOpenNotification() const
+	{
+	sendToLocalAndRemote("open");
+	}
+
+void CommandProcessor::sendCloseNotification() const
+	{
+	sendToLocalAndRemote("close");
+	}
+
+void CommandProcessor::sendToLocalAndRemote(const std::string& message) const
+	{
+	std::ostringstream output;
+	output << Response::header << message << Response::terminator;
+	machine.SendToRemoteXbee(output.str());
+	std::cout << output.str() << std::endl;
 	}
 
 Response CommandProcessor::HandleOP(Command& command)
 	{
+	sendOpenNotification();
 	motor.MoveToPosition(settings.motor.maxPosition);
-	//ToDo: trigger some state that will monitor for the open limit switch
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleCL(Command& command)
 	{
-	motor.MoveToPosition((uint32_t)0);
+	sendCloseNotification();
+	motor.MoveToPosition(uint32_t(0));
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -157,7 +176,7 @@ Response CommandProcessor::HandleFR(Command& command)
 	std::string message;
 	message.append("FR");
 	message.append(SemanticVersion);
-	return Response{message};
+	return Response{ message };
 	}
 
 Response CommandProcessor::HandleVR(Command& command)

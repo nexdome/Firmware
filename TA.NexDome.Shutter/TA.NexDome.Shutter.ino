@@ -44,13 +44,11 @@ void ProcessManualControls()
 	const bool openButtonChanged = openButtonPressed != openButtonLastState;
 	if (openButtonChanged && openButtonPressed)
 		{
-		auto target = settings.motor.maxPosition;
-		std::cout << "Open to " << std::dec << target << std::endl;
-		stepper.MoveToPosition(target);
+		commandProcessor.sendOpenNotification();
+		stepper.MoveToPosition(settings.motor.maxPosition);
 		}
 	if (openButtonChanged && !openButtonPressed)
 		{
-		std::cout << "Open STOP" << std::endl;
 		stepper.SoftStop();
 		}
 	openButtonLastState = openButtonPressed;
@@ -58,13 +56,11 @@ void ProcessManualControls()
 	const bool closedButtonChanged = closedButtonPressed != closeButtonLastState;
 	if (closedButtonChanged && closedButtonPressed)
 		{
-		auto target = 0;
-		std::cout << "Close to " << std::dec << target << std::endl;
-		stepper.MoveToPosition(target);
+		commandProcessor.sendCloseNotification();
+		stepper.MoveToPosition(0);
 		}
 	if (closedButtonChanged && !closedButtonPressed)
 		{
-		std::cout << "Close STOP" << std::endl;
 		stepper.SoftStop();
 		}
 	closeButtonLastState = closedButtonPressed;
