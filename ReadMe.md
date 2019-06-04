@@ -169,10 +169,11 @@ Sddddd          | Shutter position (ddddd = signed decimal integer)
 |>|                c = dome circumference in whole steps
 |>|                h = home position sensor location, in whole steps clockwise from true north
 |>|                d = dead zone (reserved for future use)
-:SES,p,o,c#     | Shutter status report. 
-|>|                p=position in steps, 
-|>|				   o=state of open limit switch, 1=active, 0=inactive
-|>|				   c=state of closed limit switch, 1=active, 0=inactive
+:SES,p,l,o,c#     | Shutter status report. 
+|>|                p = position in steps
+|>|                l = limit of travel (fully open position) in steps
+|>|				   o = state of open limit switch, 1=active, 0=inactive
+|>|				   c = state of closed limit switch, 1=active, 0=inactive
 :left#          | The rotator is about to move to the left (counter-clockwise)
 :right#         | The rotator is about to move to the right (clockwise)
 :open#          | The shutter is about to move towards open

@@ -28,14 +28,15 @@ void CommandProcessor::sendStatus() const
 	static std::ostringstream converter;
 	converter.clear();
 	converter.str("");
-	converter << ":SES,"
+	converter << Response::header
+		<< "SES" << separator
 		<< getPositionInWholeSteps() << separator
+		<< microstepsToSteps(motor.LimitOfTravel()) << separator
 		<< limitSwitches.isOpen() << separator
 		<< limitSwitches.isClosed()
 		<< Response::terminator;
 	machine.SendToRemoteXbee(converter.str());
 	std::cout << converter.str() << std::endl;
-
 	}
 
 
