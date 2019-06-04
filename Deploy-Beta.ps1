@@ -2,7 +2,7 @@
 param (
     [string]$OutputFile = ".\Version.h",
     [string]$ProjectDirectory = ".",
-    [string]$DeployDirectory = "F:\OneDrive\Clients\NexDome (Babak Sedehi)\NexDome Beta\"
+    [string]$DeployDirectory = "F:\OneDrive\Clients\NexDome\NexDome-Beta\"
 )
 
 Push-Location $ProjectDirectory

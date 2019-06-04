@@ -164,15 +164,15 @@ XB->Online      | Communications link established
 Pddddd          | Rotator position (ddddd = signed decimal integer)
 Sddddd          | Shutter position (ddddd = signed decimal integer)
 :SER,p,a,c,h,d# | Rotator status report. 
-                | p = current azimuth position in whole steps,
-                | a = AtHome (1 = home sensor active, 0 = home sensor inactive)
-                | c = dome circumference in whole steps
-                | h = home position sensor location, in whole steps clockwise from true north
-                | d = dead zone (reserved for future use)
+|>|                p = current azimuth position in whole steps,  
+|>|                a = AtHome (1 = home sensor active, 0 = home sensor inactive)
+|>|                c = dome circumference in whole steps
+|>|                h = home position sensor location, in whole steps clockwise from true north
+|>|                d = dead zone (reserved for future use)
 :SES,p,o,c#     | Shutter status report. 
-                | p=position in steps, 
-				| o=state of open limit switch, 1=active, 0=inactive
-				| c=state of closed limit switch, 1=active, 0=inactive
+|>|                p=position in steps, 
+|>|				   o=state of open limit switch, 1=active, 0=inactive
+|>|				   c=state of closed limit switch, 1=active, 0=inactive
 :left#          | The rotator is about to move to the left (counter-clockwise)
 :right#         | The rotator is about to move to the right (clockwise)
 :open#          | The shutter is about to move towards open

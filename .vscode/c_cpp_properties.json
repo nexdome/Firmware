@@ -6,10 +6,12 @@
                 "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
                 "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\**",
                 "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
-                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.4.2\\**"
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.4.2\\**",
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.209\\**"
             ],
             "forcedInclude": [
-                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\cores\\arduino\\Arduino.h"
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\cores\\arduino\\Arduino.h",
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.209\\cores\\arduino\\Arduino.h"
             ],
             "intelliSenseMode": "msvc-x64"
         }
