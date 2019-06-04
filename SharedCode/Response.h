@@ -12,6 +12,7 @@
 struct Response
 {
 	static const std::string terminator;
+	static const std::string header;
 	std::string Message;
 	bool success;
 

@@ -28,6 +28,7 @@ public:
 	static int32_t microstepsToSteps(int32_t microsteps);
 	static int32_t stepsToMicrosteps(int32_t wholeSteps);
 	void sendStatus() const;
+	static void sendDirection(int direction);
 
 private:
 	Response ForwardToShutter(Command& command) const;

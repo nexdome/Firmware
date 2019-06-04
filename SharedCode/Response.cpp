@@ -6,12 +6,12 @@
  * Stream extraction operator: outputs the response if and only if the message
  * is not empty. An empty message indicates no response, which produces no output.
  */
-std::ostream& operator<<(std::ostream& os, const Response& obj) 
-{
-	if (obj.Message.length()>0)
+std::ostream& operator<<(std::ostream& os, const Response& obj)
+	{
+	if (obj.Message.length() > 0)
 		os << ':' << obj.Message << Response::terminator << std::endl;
 	return os;
-}
+	}
 
 Response Response::Error()
 	{
@@ -45,4 +45,5 @@ Response Response::NoResponse(Command& command)
 	}
 
 const std::string Response::terminator = "#";
+const std::string Response::header = ":";
 

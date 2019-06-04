@@ -2,6 +2,7 @@
 #include "NexDome.h"
 #include "Version.h"
 
+
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine,
                                    HomeSensor& homeSensor)
 	: rotator(rotator), settings(settings), machine(machine), homeSensor(homeSensor) { }
@@ -32,6 +33,16 @@ void CommandProcessor::sendStatus() const
 		<< 0 // dead-zone, reserved for future use
 		<< Response::terminator;
 	std::cout << status.str() << std::endl;
+	}
+
+void CommandProcessor::sendDirection(const int direction)
+	{
+	static const std::string clockwise = "right";
+	static const std::string counterClockwise = "left";
+	if (direction < 0)
+		std::cout << Response::header << counterClockwise << Response::terminator << std::endl;
+	else
+		std::cout << Response::header << clockwise << Response::terminator << std::endl;
 	}
 
 Response CommandProcessor::ForwardToShutter(Command& command) const
@@ -89,7 +100,8 @@ Response CommandProcessor::HandleGA(Command& command) const
 	{
 	const auto microstepsPerDegree = settings.home.microstepsPerRotation / 360.0;
 	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
-	std::cout << "Target " << target << std::endl;
+	const auto direction = sgn(target - rotator.CurrentPosition());
+	sendDirection(direction);
 	rotator.MoveToPosition(target);
 	return Response::FromSuccessfulCommand(command);
 	}

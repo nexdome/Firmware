@@ -173,6 +173,8 @@ Sddddd          | Shutter position (ddddd = signed decimal integer)
                 | p=position in steps, 
 				| o=state of open limit switch, 1=active, 0=inactive
 				| c=state of closed limit switch, 1=active, 0=inactive
+:left#          | The rotator is about to move to the left (counter-clockwise)
+:right#         | The rotator is about to move to the right (clockwise)
 
 Note: position updates occur about every 250 milliseconds while motion is occurring. When motion ceases, an SER or SES status event is emitted and this indicates that motion of the corresponding motor has ceased.
 

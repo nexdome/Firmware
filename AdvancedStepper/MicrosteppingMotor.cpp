@@ -11,9 +11,7 @@
 	Acceleration - measured in steps per second per second
 */
 
-#include <ArduinoSTL.h>
 #include "MicrosteppingMotor.h"
-#include <climits>
 
 // Configures the I/O pins and sets a safe starting state.
 void MicrosteppingMotor::InitializeHardware()
@@ -104,7 +102,6 @@ void MicrosteppingMotor::MoveToPosition(int32_t position)
 	int32_t deltaPosition = position - configuration->currentPosition;
 	targetPosition = position;
 	direction = sgn(deltaPosition);
-	std::cout << "tgt " << targetPosition << " dir " << direction << std::endl;
 	targetVelocity = configuration->maxSpeed * direction;
 	currentAcceleration = AccelerationFromRampTime() * direction;
 	EnergizeMotor();
@@ -283,7 +280,6 @@ void MicrosteppingMotor::SoftStop()
 	const auto current = CurrentPosition();
 	const auto distance = distanceToStop();
 	targetPosition = current + distance;
-	std::cout << std::dec << "current " << current << " dist " << distance << " target " << targetPosition << std::endl;
 }
 
 void MicrosteppingMotor::Loop()

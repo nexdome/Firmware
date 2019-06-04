@@ -126,13 +126,11 @@ void ProcessManualControls()
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
 	if (clockwiseButtonChanged && clockwiseButtonPressed)
 	{
-		int32_t target = INT32_MAX;
-		std::cout << "CW to " << std::dec << target << std::endl;
-		stepper.MoveToPosition(target);
+	CommandProcessor::sendDirection(+1);
+		stepper.MoveToPosition(INT32_MAX);
 	}
 	if (clockwiseButtonChanged && !clockwiseButtonPressed)
 	{
-		std::cout << "CW STOP" << std::endl;
 		stepper.SoftStop();
 	}
 	clockwiseButtonLastState = clockwiseButtonPressed;
@@ -140,13 +138,11 @@ void ProcessManualControls()
 	const bool counterclockwiseButtonChanged = counterclockwiseButtonPressed != counterclockwiseButtonLastState;
 	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed)
 	{
-		int32_t target = INT32_MIN;
-		std::cout << "CCW to " << std::dec << target << std::endl;
-		stepper.MoveToPosition(target);
+	CommandProcessor::sendDirection(-1);
+		stepper.MoveToPosition(INT32_MIN);
 	}
 	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed)
 	{
-		std::cout << "CCW STOP" << std::endl;
 		stepper.SoftStop();
 	}
 	counterclockwiseButtonLastState = counterclockwiseButtonPressed;
