@@ -31,25 +31,19 @@ void LimitSwitch::onCloseLimitReached()
 	{
 		motor->SetCurrentPosition(0);
 		motor->SoftStop();
-		std::cout << "STOPPED: ";
 	}
-	std::cout << "Closed limit" << std::endl;
 }
 
 void LimitSwitch::onOpenLimitReached()
 {
 	if (motor->CurrentVelocity() > 0)
 	{
-		//motor->SoftStop();
-		//auto stoppingDistance = motor->distanceToStop();
 		auto position = motor->CurrentPosition();
 		auto stopPosition = motor->CurrentPosition() + SHUTTER_LIMIT_STOPPING_DISTANCE;
 		motor->MoveToPosition(stopPosition);
 		if (stopPosition < motor->LimitOfTravel())
 			motor->SetLimitOfTravel(stopPosition);
-		std::cout << "STOPPED at: " << stopPosition << " ";
 	}
-	std::cout << "Open limit" << std::endl;
 }
 
 void LimitSwitch::init()

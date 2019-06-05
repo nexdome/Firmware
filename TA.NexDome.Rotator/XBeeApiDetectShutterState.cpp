@@ -35,10 +35,6 @@ void XBeeApiDetectShutterState::OnApiRx64FrameReceived(const std::vector<byte>& 
 	const auto msgStart = payload.begin() + 10;
 	const auto msgEnd = payload.end();
 	const std::string rxMessage(msgStart, msgEnd);
-
-	//ToDo: delete
-	std::cout << "Rx64: " << rxMessage << std::endl;
-
 	if (rxMessage == XBEE_HELLO_MESSAGE)
 	{
 		machine.SetDestinationAddress(payload);

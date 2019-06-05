@@ -14,8 +14,9 @@ PersistentSettings::PersistentSettings() :
 			ROTATOR_DEFAULT_SPEED,	// Maximum speed in microsteps per second
 			true					// Direction sense reversed?
 		}),
-	home(0, 500, ROTATOR_FULL_REVOLUTION_MICROSTEPS)
-{}
+	home(0, 500, ROTATOR_FULL_REVOLUTION_MICROSTEPS),
+	deadZone(ROTATOR_DEFAULT_DEADZONE)
+	{}
 
 /*
 	Saves persistent settings to EEPROM.

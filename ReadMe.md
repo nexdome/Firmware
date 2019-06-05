@@ -133,6 +133,8 @@ Cmd | Targets | Parameter | Response   | Example    | Description
 --- | ------- | --------- | ---------- | ---------- | -----------------------------------------------------------------------------
 AR  | RS      | none      | :ARddddd#  | @ARR       | Read acceleration ramp time in milliseconds
 AW  | RS      | ddddd     | :AWt#      | @AWS,1000  | Write acceleration ramp time
+DR  | R       | none      | :DRRddddd# | @DRR       | Read Dead-zone in steps (153 steps = 1 degree)
+DW  | R       | ddddd     | :DWR#      | @DWR,300   | Write Dead-zone in steps [0..10000] default 300
 FR  | RS      | none      | :FRstring# | @FRR       | Reads the semantic version (SemVer) string of the firmware.
 GA  | R       | ddd       | :GAR#      | @GAR,180   | Goto Azimuth (param: integer degrees)
 HR  | R       | none      | :HRRddddd# | @HRR       | Home position Read (steps clockwise from true north)
@@ -168,7 +170,7 @@ Sddddd          | Shutter position (ddddd = signed decimal integer)
 |>|                a = AtHome (1 = home sensor active, 0 = home sensor inactive)
 |>|                c = dome circumference in whole steps
 |>|                h = home position sensor location, in whole steps clockwise from true north
-|>|                d = dead zone (reserved for future use)
+|>|                d = dead zone (smallest allowed movement in steps)
 :SES,p,l,o,c#     | Shutter status report. 
 |>|                p = position in steps
 |>|                l = limit of travel (fully open position) in steps

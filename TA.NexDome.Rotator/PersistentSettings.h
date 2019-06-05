@@ -21,6 +21,7 @@ struct PersistentSettings
 	uint8_t minorVersion = MinorVersion;
 	struct MotorSettings motor{};
 	struct Home home;
+	int deadZone = 1000;
 	PersistentSettings();
 	static PersistentSettings Load();
 	void Save();

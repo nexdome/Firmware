@@ -43,7 +43,6 @@ void HomeSensor::onHomeSensorChanged()
 	{
 	state = digitalRead(sensorPin);
 	const auto position = motor->CurrentPosition();
-	std::cout << "HOME " << state << " at " << position << std::endl;
 	if (!motor->IsMoving()) // Ignore state change if rotator not moving
 		return;
 	const auto direction = motor->currentDirection();
@@ -74,7 +73,6 @@ bool HomeSensor::atHome()
 
 void HomeSensor::findHome(int direction)
 	{
-	std::cout << "Find Home dir " << direction << std::endl;
 	homingInProgress = true;
 	motor->MoveToPosition(direction ? INT32_MAX : INT32_MIN);
 	}

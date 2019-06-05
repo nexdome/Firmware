@@ -45,6 +45,5 @@ void XBeeShutterOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& pay
 
 void XBeeShutterOnlineState::SendCommand(std::string& command)
 {
-	//std::cout << "Remote command: " << command << std::endl;
 	machine.SendToRemoteXbee(command);
 }

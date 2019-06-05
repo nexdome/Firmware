@@ -19,6 +19,8 @@ class CommandProcessor
 public:
 	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine,
 	                 HomeSensor& homeSensor);
+	Response HandleDR(Command& command) const;
+	Response HandleDW(Command& command) const;
 	Response HandleCommand(Command& command) const;
 	uint32_t getNormalizedPositionInMicrosteps() const;
 	int32_t getPositionInWholeSteps() const;
@@ -53,9 +55,11 @@ private:
 	int32_t targetStepPosition(uint32_t toMicrostepPosition) const;
 	// Calculates the target microstep position using the shortest direction.
 	int32_t deltaSteps(uint32_t toMicrostepPosition) const;
+	int32_t getDeadZoneWholeSteps() const;
 	MicrosteppingMotor& rotator;
 	PersistentSettings& settings;
 	XBeeStateMachine& machine;
 	HomeSensor& homeSensor;
 	};
+
 #endif

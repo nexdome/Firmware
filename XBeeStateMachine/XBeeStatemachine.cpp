@@ -90,7 +90,6 @@ void XBeeStateMachine::printEscaped(byte data)
 			byte escaped = data ^ 0x20;
 			data ^= 0x20;
 			xbeeSerial.print((char)API_ESCAPE);
-			//std::cout << std::hex << (int)API_ESCAPE << " " ;
 			break;
 		}
 	}

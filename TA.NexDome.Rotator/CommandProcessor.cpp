@@ -7,6 +7,21 @@ CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettin
                                    HomeSensor& homeSensor)
 	: rotator(rotator), settings(settings), machine(machine), homeSensor(homeSensor) { }
 
+Response CommandProcessor::HandleDR(Command& command) const
+	{
+	const auto deadZone = getDeadZoneWholeSteps();
+	return Response::FromInteger(command, deadZone);
+	}
+
+Response CommandProcessor::HandleDW(Command& command) const
+	{
+	const auto deadZone = stepsToMicrosteps(command.StepPosition);
+	if (deadZone < 0 || deadZone > (1530 * 8))
+		return Response::Error();
+	settings.deadZone = deadZone;
+	return Response::FromSuccessfulCommand(command);
+	}
+
 Response CommandProcessor::HandleHR(Command& command) const
 	{
 	return Response::FromInteger(command, microstepsToSteps(settings.home.position));
@@ -30,7 +45,7 @@ void CommandProcessor::sendStatus() const
 		<< HomeSensor::atHome() << separator
 		<< getCircumferenceInWholeSteps() << separator
 		<< getHomePositionWholeSteps() << separator
-		<< 0 // dead-zone, reserved for future use
+		<< getDeadZoneWholeSteps()
 		<< Response::terminator;
 	std::cout << status.str() << std::endl;
 	}
@@ -64,6 +79,8 @@ Response CommandProcessor::HandleCommand(Command& command) const
 		{
 		if (command.Verb == "AR") return HandleAR(command); // Read firmware version
 		if (command.Verb == "AW") return HandleAW(command); // Read firmware version
+		if (command.Verb == "DR") return HandleDR(command); // Read dead zone (rotator only)
+		if (command.Verb == "DW") return HandleDW(command); // Write dead zone (rotator only)
 		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
 		if (command.Verb == "GA") return HandleGA(command); // Goto Azimuth (rotator only)
 		if (command.Verb == "GH") return HandleGH(command); // Goto Home Sensor (rotator only)
@@ -100,9 +117,15 @@ Response CommandProcessor::HandleGA(Command& command) const
 	{
 	const auto microstepsPerDegree = settings.home.microstepsPerRotation / 360.0;
 	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
-	const auto direction = sgn(target - rotator.CurrentPosition());
-	sendDirection(direction);
-	rotator.MoveToPosition(target);
+	const auto currentPosition = rotator.CurrentPosition();
+	const auto delta = target - currentPosition;
+	const auto direction = sgn(delta);
+	std::cout << delta << " [" << settings.deadZone << "]" << std::endl;
+	if (abs(delta) >= settings.deadZone)
+		{
+		sendDirection(direction);
+		rotator.MoveToPosition(target);
+		}
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -273,3 +296,9 @@ float CommandProcessor::getAzimuth() const
 	const auto degreesPerStep = 360.0 / settings.home.microstepsPerRotation;
 	return getPositionInWholeSteps() * degreesPerStep;
 	}
+
+int32_t CommandProcessor::getDeadZoneWholeSteps() const
+	{
+	return microstepsToSteps(settings.deadZone);
+	}
+
