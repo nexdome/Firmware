@@ -1,92 +1,63 @@
-
 #ifndef _COMMANDPROCESSOR_h
 #define _COMMANDPROCESSOR_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-  #include "Arduino.h"
+#include "Arduino.h"
 #else
   #include "WProgram.h"
 #endif
 
-#include <ArduinoSTL.h>
+#include <sstream>
 #include <AdvancedStepper.h>
-
-struct Command
-	{
-	String Verb;
-	char TargetDevice;
-	int32_t StepPosition;	// Target step position for a move command
-	bool IsMotorCommand();
-	bool IsSystemCommand();
-	};
-
-struct Response
-	{
-	static const String Terminator;
-	String Message;
-	bool success;
-
-	/*
-		Creates an error response.
-	*/
-	static Response Error();
-
-	/*
-		Creates a success response by echoing the command verb,
-		terminated with a '#'.
-	*/
-	static Response FromSuccessfulCommand(Command& command);
-
-	/*
-		Creates a response consisting of the command verb,
-		plus an unsigned integer (usually a motor step position).
-	*/
-	static Response FromPosition(Command& command, uint32_t position);
-
-	/*
-		Creates a response consisting of just an integer and the terminator.
-	*/
-	static Response FromInteger(Command& command, int i);
-	};
+#include <XBeeStateMachine.h>
+#include "PersistentSettings.h"
+#include "Command.h"
+#include "Response.h"
 
 class CommandProcessor
 	{
-	public:
-		CommandProcessor(MicrosteppingMotor& rotator);
-		Response HandleCommand(Command& command);
-		static int32_t MicrostepsToSteps(int32_t microsteps);
-		static int32_t StepsToMicrosteps(int32_t wholesteps);
+public:
+	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine);
+	Response HandleDR(Command& command) const;
+	Response HandleDW(Command& command) const;
+	Response HandleCommand(Command& command) const;
+	uint32_t getNormalizedPositionInMicrosteps() const;
+	int32_t getPositionInWholeSteps() const;
+	int32_t getCircumferenceInWholeSteps() const;
+	int32_t getHomePositionWholeSteps() const;
+	float getAzimuth() const;
+	static int32_t microstepsToSteps(int32_t microsteps);
+	static int32_t stepsToMicrosteps(int32_t wholeSteps);
+	void sendStatus() const;
+	static void sendDirection(int direction);
 
-	private:
-		MicrosteppingMotor * GetMotor(Command& command);		// Gets the motor addressed by the command
-		Response HandleAW(Command & command);	// AW - Acceleration ramp time write
-		Response HandleBR(Command & command);	// Backlash steps read
-		Response HandleBW(Command & command);	// Backlash steps write
-		Response HandleCS(Command & command);	// Calibration start
-		Response HandleCR(Command & command);	// Calibration state read
-		Response HandleCE(Command & command);	// Calibration end (abort/cancel)
-		Response HandleCl(Command & command);	// Calibration sensor first contact threshold
-		Response HandleCL(Command & command);	// Calibration sensor hard stop threshold
-		Response HandleCv(Command & command);	// Calibration slow motion velocity [sic] steps/sec
-		Response HandleCW(Command & command);	// Calibration state write
-		Response HandleER(Command & command);	// FSR value read
-		Response HandleFR(Command & command);	// Firmware version read
-		Response HandleMI(Command & command);	// Move motor in
-		Response HandleMO(Command & command);	// Move motor out
-		Response HandlePR(Command & command);	// Step position read
-		Response HandlePW(Command & command);	// Step position write (sync)
-		Response HandleRR(Command & command);	// Range (limit of travel) read
-		Response HandleRW(Command & command);	// Range (limit of travel) write
-		Response HandleSW(Command & command);	// Stop write (motor emergency stop)
-		Response HandleTR(Command & command);	// Temperature read (in Celsius)
-		Response HandleVR(Command & command);	// Velocity [sic] read (motor maximum speed in microsteps/sec)
-		Response HandleVW(Command & command);	// Velocity [sic] write (microsteps/sec)
-		Response HandleX(Command & command);	// Movement status read
-		Response HandleZW(Command & command);	// EEPROM write (save settings)
-		Response HandleZR(Command & command);	// EEPROM read (load settings)
-		Response HandleZD(Command & command);	// Reset to factory settings (clears both EEPROM and working settings)
-		MicrosteppingMotor *rotator;
+private:
+	Response ForwardToShutter(Command& command) const;
+	Response HandleAR(Command& command) const;
+	Response HandleAW(Command& command) const; // AW - Acceleration ramp time write
+	Response HandleFR(Command& command) const; // Firmware version read
+	Response HandleGA(Command& command) const; // GA - GoTo Azimuth (in degrees).
+	Response HandleGH(Command& command) const; // Go to home sensor
+	Response HandleHR(Command& command) const; // Read Home position (steps clockwise from true north)
+	Response HandleHW(Command& command) const; // Write home position (steps clockwise from true north)
+	Response HandlePR(Command& command) const; // Step position read
+	Response HandlePW(Command& command) const; // Step position write (sync)
+	Response HandleRR(Command& command) const; // Range (limit of travel) read
+	Response HandleRW(Command& command) const; // Range (limit of travel) write
+	Response HandleSW(Command& command) const; // Stop write (motor emergency stop)
+	Response HandleSR(Command& command) const; // Status Request
+	Response HandleVR(Command& command) const; // Velocity [sic] read (motor maximum speed in microsteps/sec)
+	Response HandleVW(Command& command) const; // Velocity [sic] write (microsteps/sec)
+	Response HandleZW(Command& command) const; // EEPROM write (save settings)
+	Response HandleZR(Command& command) const; // EEPROM read (load settings)
+	Response HandleZD(Command& command) const; // Reset to factory settings (clears both EEPROM and working settings)
+	int32_t targetStepPosition(uint32_t toMicrostepPosition) const;
+	// Calculates the target microstep position using the shortest direction.
+	int32_t deltaSteps(uint32_t toMicrostepPosition) const;
+	int32_t getDeadZoneWholeSteps() const;
+	MicrosteppingMotor& rotator;
+	PersistentSettings& settings;
+	XBeeStateMachine& machine;
 	};
 
-extern Response DispatchCommand(Command& command);
 #endif

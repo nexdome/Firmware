@@ -11,26 +11,98 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TA.NexDome.Shutter", "TA.Ne
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharedCode", "SharedCode\SharedCode.vcxitems", "{DEB85C95-F303-4660-A4D9-713323FFA19A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4BFADFB-E20F-4030-92E8-5401C303E3E8}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Deploy-Alpha.ps1 = Deploy-Alpha.ps1
+		Deploy-Beta.ps1 = Deploy-Beta.ps1
+		Gear and Step Calculator.xlsx = Gear and Step Calculator.xlsx
+		Generate-Version.ps1 = Generate-Version.ps1
+		License.md = License.md
+		ReadMe.md = ReadMe.md
+		TA.NexDome.sln.DotSettings = TA.NexDome.sln.DotSettings
+		Upload-Firmware.ps1 = Upload-Firmware.ps1
+		XBee Data Sheet 43-1431_v1.pdf = XBee Data Sheet 43-1431_v1.pdf
+		XBee.md = XBee.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TA.NexDome.FirmwareUpdater", "TA.NexDome.FirmwareUpdater\TA.NexDome.FirmwareUpdater.csproj", "{0264E8BB-A223-41E3-BB28-5EBA1DC42441}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeTerminal", "XBeeTerminal\XBeeTerminal.vcxproj", "{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Timer", "Timer\Timer.vcxitems", "{A7498378-97AB-4F1D-AF51-37412422EF0F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeStatemachine", "XBeeStatemachine\XBeeStatemachine.vcxitems", "{C7BEF4C6-F140-4D54-9C00-C333BDC513B6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeApi", "XBeeApi\XBeeApi.vcxitems", "{D566CDCC-F634-4BA0-93E6-0AA2C0D80AD0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerTest", "TimerTest\TimerTest.vcxproj", "{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeFactoryReset", "XBeeFactoryReset\XBeeFactoryReset.vcxproj", "{260C6D09-230E-4D8F-9FC1-39C76087CE8D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Timer\Timer.vcxitems*{2464fce5-cdfc-485a-9e64-ed3d95808ab7}*SharedItemsImports = 4
+		Timer\Timer.vcxitems*{260c6d09-230e-4d8f-9fc1-39c76087ce8d}*SharedItemsImports = 4
+		XBeeApi\XBeeApi.vcxitems*{260c6d09-230e-4d8f-9fc1-39c76087ce8d}*SharedItemsImports = 4
+		XBeeStatemachine\XBeeStatemachine.vcxitems*{260c6d09-230e-4d8f-9fc1-39c76087ce8d}*SharedItemsImports = 4
 		AdvancedStepper\AdvancedStepper.vcxitems*{893a4046-8112-4d9c-a69c-c1d11554760f}*SharedItemsImports = 9
+		Timer\Timer.vcxitems*{a7498378-97ab-4f1d-af51-37412422ef0f}*SharedItemsImports = 9
 		AdvancedStepper\AdvancedStepper.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		Timer\Timer.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		XBeeApi\XBeeApi.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		XBeeStatemachine\XBeeStatemachine.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		XBeeStatemachine\XBeeStatemachine.vcxitems*{c7bef4c6-f140-4d54-9c00-c333bdc513b6}*SharedItemsImports = 9
+		XBeeApi\XBeeApi.vcxitems*{d566cdcc-f634-4ba0-93e6-0aa2c0d80ad0}*SharedItemsImports = 9
 		SharedCode\SharedCode.vcxitems*{deb85c95-f303-4660-a4d9-713323ffa19a}*SharedItemsImports = 9
+		AdvancedStepper\AdvancedStepper.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
+		SharedCode\SharedCode.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
+		Timer\Timer.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
+		XBeeApi\XBeeApi.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
+		XBeeStatemachine\XBeeStatemachine.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.ActiveCfg = Debug|Win32
-		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.Build.0 = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|Any CPU.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.ActiveCfg = Release|Win32
-		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.Build.0 = Release|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|x86.ActiveCfg = Debug|Win32
-		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|x86.Build.0 = Debug|Win32
+		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|Any CPU.ActiveCfg = Release|Win32
 		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|x86.ActiveCfg = Release|Win32
-		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|x86.Build.0 = Release|Win32
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|x86.Build.0 = Debug|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.ActiveCfg = Release|Any CPU
+		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.Build.0 = Release|Any CPU
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|x86.ActiveCfg = Debug|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|x86.Build.0 = Debug|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|Any CPU.ActiveCfg = Release|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|x86.ActiveCfg = Release|Win32
+		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|x86.Build.0 = Release|Win32
+		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Debug|x86.ActiveCfg = Debug|Win32
+		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Debug|x86.Build.0 = Debug|Win32
+		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|Any CPU.ActiveCfg = Release|Win32
+		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|x86.ActiveCfg = Release|Win32
+		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|x86.Build.0 = Release|Win32
+		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Debug|x86.ActiveCfg = Debug|Win32
+		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Debug|x86.Build.0 = Debug|Win32
+		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Release|Any CPU.ActiveCfg = Release|Win32
+		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Release|x86.ActiveCfg = Release|Win32
+		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "TA.NexDome.Rotator"
+		},
+		{
+			"path": "TA.NexDome.Shutter"
+		},
+		{
+			"path": "XBeeFactoryReset"
+		}
+	],
+	"settings": {}
+}

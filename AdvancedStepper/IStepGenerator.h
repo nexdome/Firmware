@@ -4,8 +4,8 @@
 class IStepGenerator
 	{
 	public:
-		virtual void Start(float stepsPerSecond, IStepSequencer *sequencer) = 0;
-		virtual void Stop() = 0;
-		virtual void SetStepRate(float stepsPerSecond) = 0;
+		virtual void start(float stepsPerSecond, IStepSequencer *sequencer) = 0;
+		virtual void stop() = 0;
+		virtual void setStepRate(float stepsPerSecond) = 0;
 	};
 

@@ -5,11 +5,11 @@
  Editor:	http://www.visualmicro.com
 */
 
-#ifndef _AdvancedStepper_h
-#define _AdvancedStepper_h
+#ifndef ADVANCED_STEPPER_H
+#define ADVANCED_STEPPER_H
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+	#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif

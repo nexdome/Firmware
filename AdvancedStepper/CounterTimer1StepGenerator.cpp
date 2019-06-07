@@ -9,16 +9,16 @@ CounterTimer1StepGenerator::CounterTimer1StepGenerator()
 			Initialize();
 			}
 
-void CounterTimer1StepGenerator::Stop()
+void CounterTimer1StepGenerator::stop()
 	{
 	Initialize();
 	}
 
-void CounterTimer1StepGenerator::Start(float stepsPerSecond, IStepSequencer *sequencer)
+void CounterTimer1StepGenerator::start(float stepsPerSecond, IStepSequencer *sequencer)
 	{
 	activeSequencer = sequencer;
 	stepState = false;
-	SetStepRate(stepsPerSecond);
+	setStepRate(stepsPerSecond);
 	OCR1A = nextCompareValue;
 	TCNT1 = 0;
 	TCCR1A = 0x00;				// Generate no outputs 
@@ -26,14 +26,14 @@ void CounterTimer1StepGenerator::Start(float stepsPerSecond, IStepSequencer *seq
 	BitSet(TIMSK1, OCIE1A);		// Enable OCR1A interrupt
 	}
 
-void CounterTimer1StepGenerator::SetStepRate(float stepsPerSecond)
+void CounterTimer1StepGenerator::setStepRate(float stepsPerSecond)
 	{
-	uint16_t counts = ComputeCountsFromStepsPerSecond(stepsPerSecond);
+	const uint16_t counts = computeCountsFromStepsPerSecond(stepsPerSecond);
 	//OCR1A = counts;
 	nextCompareValue = counts;
 	}
 
-void CounterTimer1StepGenerator::TimerCompareInterruptService()
+void CounterTimer1StepGenerator::timerCompareInterruptService()
 	{
 	stepState = !stepState;
 	activeSequencer->Step(stepState); // Instruct the active sequencer to make a step
@@ -51,13 +51,13 @@ void CounterTimer1StepGenerator::Initialize()
 	stepState = false;			// Ensure that we start on a rising edge.
 	}
 
-uint16_t CounterTimer1StepGenerator::ComputeCountsFromStepsPerSecond(float stepsPerSecond)
+uint16_t CounterTimer1StepGenerator::computeCountsFromStepsPerSecond(float stepsPerSecond)
 	{
 	// Two interrupts are required for each step
 	auto frequency = stepsPerSecond * 2.0;
 	if (frequency > Fmax) frequency = Fmax;
 	if (frequency < Fmin) frequency = Fmin;
-	uint16_t counts = Fmax / frequency;
+	const uint16_t counts = Fmax / frequency;
 	return counts;
 	}
 
@@ -68,5 +68,5 @@ bool CounterTimer1StepGenerator::stepState = false;
 
 ISR(TIMER1_COMPA_vect)
 	{
-	CounterTimer1StepGenerator::TimerCompareInterruptService();
+	CounterTimer1StepGenerator::timerCompareInterruptService();
 	}

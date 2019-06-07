@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+  <loop>false</loop>
+  <repeat_times>1</repeat_times>
+  <repeat_period>500</repeat_period>
+  <frames_list>
+    <frame name="Yoohoo (broadcast)">
+      <payload>7E00110001000000000000FFFF00596F6F686F6F83</payload>
+    </frame>
+    <frame name="Yoohoo2U2 (ack, 64-bit address)">
+      <payload>7E000B00020013A20041535D9700C0</payload>
+    </frame>
+  </frames_list>
+</data>

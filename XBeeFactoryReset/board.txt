@@ -1,0 +1,7 @@
+# XBeeFactoryReset build property overrides
+#
+# Generate semantic version string from Git commit history
+recipe.hooks.sketch.prebuild.1.pattern=PowerShell.exe -NonInteractive -NoLogo -File {build.project_path}\..\Generate-Version.ps1 -ProjectDirectory {build.project_path} -OutputFile {build.project_path}\Version.h
+ 
+
+
