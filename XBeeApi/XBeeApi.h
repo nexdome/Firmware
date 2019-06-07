@@ -16,7 +16,7 @@
 #define _XBeeApi_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+	#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif
@@ -83,7 +83,7 @@ public:
 	void loop();
 	void reset();
 	static uint64_t GetRemoteAddress(std::vector<byte>& payload);
-	ModemStatus GetModemStatus();
+	ModemStatus GetModemStatus() const;
 #ifdef DEBUG_XBEE_API
 	static void printModemStatus(ModemStatus status);
 #endif

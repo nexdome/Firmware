@@ -19,7 +19,7 @@ int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
 
 int32_t CommandProcessor::getPositionInWholeSteps() const
 	{
-	return microstepsToSteps(motor.CurrentPosition());
+	return microstepsToSteps(motor.getCurrentPosition());
 	}
 
 void CommandProcessor::sendStatus() const
@@ -31,7 +31,7 @@ void CommandProcessor::sendStatus() const
 	converter << Response::header
 		<< "SES" << separator
 		<< getPositionInWholeSteps() << separator
-		<< microstepsToSteps(motor.LimitOfTravel()) << separator
+		<< microstepsToSteps(motor.limitOfTravel()) << separator
 		<< limitSwitches.isOpen() << separator
 		<< limitSwitches.isClosed()
 		<< Response::terminator;
@@ -87,14 +87,14 @@ void CommandProcessor::sendToLocalAndRemote(const std::string& message) const
 Response CommandProcessor::HandleOP(Command& command)
 	{
 	sendOpenNotification();
-	motor.MoveToPosition(settings.motor.maxPosition);
+	motor.moveToPosition(settings.motor.maxPosition);
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleCL(Command& command)
 	{
 	sendCloseNotification();
-	motor.MoveToPosition(uint32_t(0));
+	motor.moveToPosition(uint32_t(0));
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -104,7 +104,7 @@ Response CommandProcessor::HandleAW(Command& command)
 	// The minimum ramp time is 100ms, fail if the user tries to set it lower.
 	if (rampTime < MIN_RAMP_TIME)
 		return Response::Error();
-	motor.SetRampTime(rampTime);
+	motor.setRampTime(rampTime);
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -116,7 +116,7 @@ Response CommandProcessor::HandleAR(Command& command) const
 
 Response CommandProcessor::HandleSW(Command& command)
 	{
-	motor.HardStop();
+	motor.hardStop();
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -141,7 +141,7 @@ Response CommandProcessor::HandleZD(Command& command)
 
 Response CommandProcessor::HandlePR(Command& command)
 	{
-	auto position = microstepsToSteps(motor.CurrentPosition());
+	auto position = microstepsToSteps(motor.getCurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
@@ -168,7 +168,7 @@ Response CommandProcessor::HandleSR(Command& command)
 
 Response CommandProcessor::HandleRR(Command& command)
 	{
-	auto range = microstepsToSteps(motor.LimitOfTravel());
+	auto range = microstepsToSteps(motor.limitOfTravel());
 	return Response::FromPosition(command, range);
 	}
 
@@ -182,23 +182,23 @@ Response CommandProcessor::HandleFR(Command& command)
 
 Response CommandProcessor::HandleVR(Command& command)
 	{
-	auto maxSpeed = motor.MaximumSpeed();
+	auto maxSpeed = motor.getMaximumSpeed();
 	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
 	}
 
 Response CommandProcessor::HandleVW(Command& command)
 	{
 	uint16_t speed = stepsToMicrosteps(command.StepPosition);
-	if (speed < motor.MinimumSpeed())
+	if (speed < motor.getMinimumSpeed())
 		return Response::Error();
-	motor.SetMaximumSpeed(speed);
+	motor.setMaximumSpeed(speed);
 	return Response::FromSuccessfulCommand(command);
 	}
 
 
 Response CommandProcessor::HandleX(Command& command)
 	{
-	if (motor.IsMoving())
+	if (motor.isMoving())
 		return Response::FromInteger(command, 2);
 	return Response::FromInteger(command, 0);
 	}

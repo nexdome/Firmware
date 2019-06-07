@@ -8,14 +8,14 @@
 #endif
 
 struct Command
-{
+	{
 	std::string RawCommand;
 	std::string Verb;
 	char TargetDevice;
 	int32_t StepPosition;	// Target step position for a move command
-	inline bool IsRotatorCommand() { return TargetDevice == 'R'; }
-	inline bool IsShutterCommand() { return TargetDevice == 'S'; }
-	inline bool IsSystemCommand() { return TargetDevice == '0'; }
-};
+	bool IsRotatorCommand() const { return TargetDevice == 'R'; }
+	bool IsShutterCommand() const { return TargetDevice == 'S'; }
+	bool IsSystemCommand() const { return TargetDevice == '0'; }
+	};
 
 #endif

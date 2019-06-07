@@ -9,7 +9,7 @@
 #define _Timer_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+	#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif
@@ -54,15 +54,14 @@ class Timer
 public:
 	explicit Timer();
 	void SetDuration(unsigned long duration);
-	bool Expired();
+	bool Expired() const;
 	unsigned long Elapsed() const;
-	unsigned long Remaining();
+	unsigned long Remaining() const;
 	bool Enabled() const;
 	void Stop();
 private:
 	unsigned long startedAt;
 	unsigned long interval;
-	unsigned long setInterval{};
 	};
 
 

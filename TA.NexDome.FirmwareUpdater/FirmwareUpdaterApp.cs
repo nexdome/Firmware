@@ -17,7 +17,7 @@ namespace TA.NexDome.FirmwareUpdater
 
         public FirmwareUpdaterApp(string[] args)
         {
-        this.commandLineArguments = args;
+        commandLineArguments = args;
         }
 
     public async Task Run()
@@ -33,13 +33,13 @@ namespace TA.NexDome.FirmwareUpdater
 
         FirmwareUploaderOptions parsedOptions = new FirmwareUploaderOptions();
             try
-            {
+                {
             
-            var result = caseInsensitiveParser.ParseArguments<FirmwareUploaderOptions>(commandLineArguments);
-            result
-                .WithParsed(options => parsedOptions = options)
-                .WithNotParsed(errors => errors.ToList().ForEach(e => errorMessages.Add(e.ToString())));
-            }
+                var result = caseInsensitiveParser.ParseArguments<FirmwareUploaderOptions>(commandLineArguments);
+                result
+                    .WithParsed(options => parsedOptions = options)
+                    .WithNotParsed(errors => errors.ToList().ForEach(e => errorMessages.Add(e.ToString())));
+                }
         catch (Exception ex)
             {
             errorMessages.Add(ex.Message);

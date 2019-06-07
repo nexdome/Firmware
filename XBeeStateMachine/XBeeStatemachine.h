@@ -4,7 +4,7 @@
 #define _XBEESTATE_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "arduino.h"
+#include "Arduino.h"
 #else
 #include "WProgram.h"
 #endif
@@ -49,7 +49,7 @@ private:
 	void xbee_serial_receive() const;
 	void xbee_api_receive() const;
 	void copyAddress(const byte* source);
-	void printEscaped(byte data);
+	void printEscaped(byte data) const;
 	byte getNextFrameId();
 	HardwareSerial& xbeeSerial;
 	XBeeApi& xbeeApi;

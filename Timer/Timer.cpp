@@ -29,12 +29,12 @@ unsigned long Timer::Elapsed() const
 	return millis() - startedAt;
 	}
 
-unsigned long Timer::Remaining()
-{
+unsigned long Timer::Remaining() const
+	{
 	return interval - Elapsed();
 }
 
-bool Timer::Expired()
+bool Timer::Expired() const
 	{
 	return Enabled() ? Elapsed() >= interval : false;
 	}

@@ -16,6 +16,7 @@
 #include <XBeeApi.h>
 #include "XBeeStateMachine.h"
 #include "XBeeStartupState.h"
+#include "../SharedCode/NexDome.h"
 
 
 auto& xbeeSerial = Serial1;
@@ -23,7 +24,7 @@ auto& host = Serial;
 std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload);
-auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, (ReceiveHandler)onXbeeFrameReceived);
+auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 
 // Placeholder method - does nothing.
@@ -34,7 +35,7 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 // the setup function runs once when you press reset or power the board
 void setup() 
 {
-	hostReceiveBuffer.reserve(SERIAL_RX_BUFFER_SIZE);
+	hostReceiveBuffer.reserve(HOST_SERIAL_RX_BUFFER_SIZE);
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);

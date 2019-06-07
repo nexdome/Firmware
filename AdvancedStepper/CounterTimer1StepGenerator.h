@@ -18,14 +18,14 @@ class CounterTimer1StepGenerator : public IStepGenerator
 	{
 	 protected:
 		 void Initialize();
-		 uint16_t ComputeCountsFromStepsPerSecond(float frequency);
+		 uint16_t computeCountsFromStepsPerSecond(float frequency);
 
 	 public:
 		 CounterTimer1StepGenerator();
-		 virtual void Start(float stepsPerSecond, IStepSequencer *sequencer) final;
-		 virtual void Stop() final;
-		 virtual void SetStepRate(float stepsPerSecond) final;
-		 static void TimerCompareInterruptService();
+		 virtual void start(float stepsPerSecond, IStepSequencer *sequencer) final;
+		 virtual void stop() final;
+		 virtual void setStepRate(float stepsPerSecond) final;
+		 static void timerCompareInterruptService();
 
 	private:
 		static IStepSequencer *activeSequencer;

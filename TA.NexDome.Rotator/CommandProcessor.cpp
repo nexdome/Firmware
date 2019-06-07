@@ -3,9 +3,8 @@
 #include "Version.h"
 
 
-CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine,
-                                   HomeSensor& homeSensor)
-	: rotator(rotator), settings(settings), machine(machine), homeSensor(homeSensor) { }
+CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
+	: rotator(rotator), settings(settings), machine(machine) { }
 
 Response CommandProcessor::HandleDR(Command& command) const
 	{
@@ -117,14 +116,14 @@ Response CommandProcessor::HandleGA(Command& command) const
 	{
 	const auto microstepsPerDegree = settings.home.microstepsPerRotation / 360.0;
 	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
-	const auto currentPosition = rotator.CurrentPosition();
+	const auto currentPosition = rotator.getCurrentPosition();
 	const auto delta = target - currentPosition;
 	const auto direction = sgn(delta);
 	std::cout << delta << " [" << settings.deadZone << "]" << std::endl;
 	if (abs(delta) >= settings.deadZone)
 		{
 		sendDirection(direction);
-		rotator.MoveToPosition(target);
+		rotator.moveToPosition(target);
 		}
 	return Response::FromSuccessfulCommand(command);
 	}
@@ -143,13 +142,13 @@ Response CommandProcessor::HandleAW(Command& command) const
 	// The minimum ramp time is 100ms, fail if the user tries to set it lower.
 	if (rampTime < MIN_RAMP_TIME)
 		return Response::Error();
-	rotator.SetRampTime(rampTime);
+	rotator.setRampTime(rampTime);
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleSW(Command& command) const
 	{
-	rotator.HardStop();
+	rotator.hardStop();
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -180,7 +179,7 @@ Response CommandProcessor::HandleZD(Command& command) const
 
 Response CommandProcessor::HandlePR(Command& command) const
 	{
-	auto position = microstepsToSteps(rotator.CurrentPosition());
+	auto position = microstepsToSteps(rotator.getCurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
@@ -216,16 +215,16 @@ Response CommandProcessor::HandleFR(Command& command) const
 
 Response CommandProcessor::HandleVR(Command& command) const
 	{
-	auto maxSpeed = rotator.MaximumSpeed();
+	auto maxSpeed = rotator.getMaximumSpeed();
 	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
 	}
 
 Response CommandProcessor::HandleVW(Command& command) const
 	{
 	uint16_t speed = stepsToMicrosteps(command.StepPosition);
-	if (speed < rotator.MinimumSpeed())
+	if (speed < rotator.getMinimumSpeed())
 		return Response::Error();
-	rotator.SetMaximumSpeed(speed);
+	rotator.setMaximumSpeed(speed);
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -269,7 +268,7 @@ inline int32_t CommandProcessor::stepsToMicrosteps(int32_t wholeSteps)
 uint32_t CommandProcessor::getNormalizedPositionInMicrosteps() const
 	{
 	const auto circumferenceMicrosteps = settings.home.microstepsPerRotation;
-	auto position = rotator.CurrentPosition();
+	auto position = rotator.getCurrentPosition();
 	while (position < 0)
 		position += circumferenceMicrosteps;
 	position %= circumferenceMicrosteps;

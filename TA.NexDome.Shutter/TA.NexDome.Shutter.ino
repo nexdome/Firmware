@@ -45,7 +45,7 @@ void ProcessManualControls()
 	if (openButtonChanged && openButtonPressed)
 		{
 		commandProcessor.sendOpenNotification();
-		stepper.MoveToPosition(settings.motor.maxPosition);
+		stepper.moveToPosition(settings.motor.maxPosition);
 		}
 	if (openButtonChanged && !openButtonPressed)
 		{
@@ -57,7 +57,7 @@ void ProcessManualControls()
 	if (closedButtonChanged && closedButtonPressed)
 		{
 		commandProcessor.sendCloseNotification();
-		stepper.MoveToPosition(0);
+		stepper.moveToPosition(0);
 		}
 	if (closedButtonChanged && !closedButtonPressed)
 		{
@@ -102,41 +102,41 @@ void HandleSerialCommunications()
 	{
 	if (host.available() <= 0)
 		return; // No data available.
-	auto rx = host.read();
+	const auto rx = host.read();
 	if (rx < 0)
 		return; // No data available.
-	char rxChar = (char)rx;
+	const char rxChar = char(rx);
 	switch (rxChar)
 		{
-	case '\n': // newline - dispatch the command
-	case '\r': // carriage return - dispatch the command
-		if (hostReceiveBuffer.length() > 1)
-			{
-			hostReceiveBuffer.push_back(rxChar); // include the EOL in the receive buffer.
-			auto response = DispatchCommand(hostReceiveBuffer);
-			std::cout << response; // send a fully formatted response, or nothing if there is no response.
+		case '\n': // newline - dispatch the command
+		case '\r': // carriage return - dispatch the command
+			if (hostReceiveBuffer.length() > 1)
+				{
+				hostReceiveBuffer.push_back(rxChar); // include the EOL in the receive buffer.
+				const auto response = DispatchCommand(hostReceiveBuffer);
+				std::cout << response; // send a fully formatted response, or nothing if there is no response.
+				hostReceiveBuffer.clear();
+				}
+			break;
+		case '@': // Start of new command
 			hostReceiveBuffer.clear();
-			}
-		break;
-	case '@': // Start of new command
-		hostReceiveBuffer.clear();
-	default:
-		if (hostReceiveBuffer.length() < SERIAL_RX_BUFFER_SIZE)
-			{
-			hostReceiveBuffer.push_back(rxChar);
-			}
-		break;
+		default:
+			if (hostReceiveBuffer.length() < HOST_SERIAL_RX_BUFFER_SIZE)
+				{
+				hostReceiveBuffer.push_back(rxChar);
+				}
+			break;
 		}
 	}
 
 // the setup function runs once when you press reset or power the board
 void setup()
 	{
-	stepper.ReleaseMotor();
+	stepper.releaseMotor();
 	stepper.registerStopHandler(onMotorStopped);
 	pinMode(CLOCKWISE_BUTTON_PIN, INPUT_PULLUP);
 	pinMode(COUNTERCLOCKWISE_BUTTON_PIN, INPUT_PULLUP);
-	hostReceiveBuffer.reserve(SERIAL_RX_BUFFER_SIZE);
+	hostReceiveBuffer.reserve(HOST_SERIAL_RX_BUFFER_SIZE);
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
@@ -153,14 +153,14 @@ void setup()
 void loop()
 	{
 	static std::ostringstream converter;
-	stepper.Loop();
+	stepper.loop();
 	HandleSerialCommunications();
 	machine.Loop();
 	if (periodicTasks.Expired())
 		{
 		periodicTasks.SetDuration(250);
 		ProcessManualControls();
-		if (stepper.IsMoving())
+		if (stepper.isMoving())
 			{
 			auto wholeSteps = commandProcessor.getPositionInWholeSteps();
 			converter.clear();

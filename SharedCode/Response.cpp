@@ -16,7 +16,6 @@ std::ostream& operator<<(std::ostream& os, const Response& obj)
 Response Response::Error()
 	{
 	auto error = Response{ "Err" };
-	error.success = false;
 	return error;
 	}
 

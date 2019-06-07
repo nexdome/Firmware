@@ -9,7 +9,7 @@
 
 #include <sstream>
 #include <AdvancedStepper.h>
-#include <XBeeStatemachine.h>
+#include <XBeeStateMachine.h>
 #include "PersistentSettings.h"
 #include "Command.h"
 #include "Response.h"
@@ -17,8 +17,7 @@
 class CommandProcessor
 	{
 public:
-	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine,
-	                 HomeSensor& homeSensor);
+	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine);
 	Response HandleDR(Command& command) const;
 	Response HandleDW(Command& command) const;
 	Response HandleCommand(Command& command) const;
@@ -59,7 +58,6 @@ private:
 	MicrosteppingMotor& rotator;
 	PersistentSettings& settings;
 	XBeeStateMachine& machine;
-	HomeSensor& homeSensor;
 	};
 
 #endif

@@ -11,10 +11,11 @@
 	Acceleration - measured in steps per second per second
 */
 
+#include <Arduino.h>
 #include "MicrosteppingMotor.h"
 
 // Configures the I/O pins and sets a safe starting state.
-void MicrosteppingMotor::InitializeHardware()
+void MicrosteppingMotor::initializeHardware() const
 	{
 	pinMode(stepPin, OUTPUT);
 	pinMode(directionPin, OUTPUT);
@@ -33,7 +34,7 @@ MicrosteppingMotor::MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8
 	this->enablePin = enablePin;
 	this->directionPin = directionPin;
 	minSpeed = MIN_SPEED;
-	InitializeHardware();
+	initializeHardware();
 	stopHandler = nullptr;
 	}
 
@@ -54,14 +55,14 @@ void MicrosteppingMotor::Step(bool state)
 		// Check hard limits on falling edge
 		if (configuration->currentPosition == targetPosition)
 			{
-			HardStop();
+			hardStop();
 			}
 		}
 	}
 
 // Energizes the motor coils (applies holding torque) and prepares for stepping.
 // Takes account of direction reversal.
-void MicrosteppingMotor::EnergizeMotor()
+void MicrosteppingMotor::energizeMotor() const
 	{
 	uint8_t forward = configuration->directionReversed ? HIGH : LOW;
 	uint8_t backward = configuration->directionReversed ? LOW : HIGH;
@@ -71,7 +72,7 @@ void MicrosteppingMotor::EnergizeMotor()
 	}
 
 // Disables the motor coils (releases holding torque).
-void MicrosteppingMotor::ReleaseMotor()
+void MicrosteppingMotor::releaseMotor()
 	{
 	digitalWrite(enablePin, HIGH);	// active low, so de-energize the coils
 	digitalWrite(stepPin, LOW);		// active high, so ensure we are not commanding a step.
@@ -85,7 +86,7 @@ void MicrosteppingMotor::registerStopHandler(StopHandler handler)
 	this->stopHandler = handler;
 	}
 
-void MicrosteppingMotor::SetRampTime(uint16_t milliseconds)
+void MicrosteppingMotor::setRampTime(uint16_t milliseconds)
 	{
 	configuration->rampTimeMilliseconds = milliseconds;
 	}
@@ -97,14 +98,14 @@ void MicrosteppingMotor::SetRampTime(uint16_t milliseconds)
 	down to minSpeed and upon reaching the target position, will perform a hard stop.
 	Note: for short moves the motor may never reach maxSpeed.
 */
-void MicrosteppingMotor::MoveToPosition(int32_t position)
+void MicrosteppingMotor::moveToPosition(int32_t position)
 	{
 	int32_t deltaPosition = position - configuration->currentPosition;
 	targetPosition = position;
 	direction = sgn(deltaPosition);
 	targetVelocity = configuration->maxSpeed * direction;
-	currentAcceleration = AccelerationFromRampTime() * direction;
-	EnergizeMotor();
+	currentAcceleration = accelerationFromRampTime() * direction;
+	energizeMotor();
 	startTime = millis();
 
 	if (abs(currentVelocity) < minSpeed)
@@ -112,13 +113,13 @@ void MicrosteppingMotor::MoveToPosition(int32_t position)
 		// Starting from rest
 		startVelocity = minSpeed * direction;
 		currentVelocity = startVelocity;
-		stepGenerator->Start(minSpeed, this);
+		stepGenerator->start(minSpeed, this);
 		}
 	else
 		{
 		// Starting with the motor already in motion
 		startVelocity = currentVelocity;
-		stepGenerator->SetStepRate(abs(startVelocity));
+		stepGenerator->setStepRate(abs(startVelocity));
 		}
 	}
 
@@ -133,20 +134,20 @@ void MicrosteppingMotor::SetCurrentPosition(int32_t position)
 /*
 	Sets the limit of travel (maximum step position) of the motor.
 */
-	void MicrosteppingMotor::SetLimitOfTravel(uint32_t limit)
+void MicrosteppingMotor::SetLimitOfTravel(uint32_t limit)
 	{
-		configuration->maxPosition = limit;
+	configuration->maxPosition = limit;
 	}
 
-	void MicrosteppingMotor::SetMaximumSpeed(uint16_t speed)
+void MicrosteppingMotor::setMaximumSpeed(uint16_t speed)
 	{
-		configuration->maxSpeed = speed;
+	configuration->maxSpeed = speed;
 	}
 
 /*
 	Gets the current motor velocity in steps per second.
 */
-const float MicrosteppingMotor::CurrentVelocity()
+float MicrosteppingMotor::getCurrentVelocity() const
 	{
 	return currentVelocity;
 	}
@@ -154,32 +155,32 @@ const float MicrosteppingMotor::CurrentVelocity()
 /*
 	Gets the current motor position in steps.
 */
-const int32_t MicrosteppingMotor::CurrentPosition()
+int32_t MicrosteppingMotor::getCurrentPosition()
 	{
 	return configuration->currentPosition;
 	}
 
-const int32_t MicrosteppingMotor::MidpointPosition()
+int32_t MicrosteppingMotor::midpointPosition() const
 	{
 	return configuration->maxPosition / 2;
 	}
 
-const int32_t MicrosteppingMotor::LimitOfTravel()
+int32_t MicrosteppingMotor::limitOfTravel() const
 	{
 	return configuration->maxPosition;
 	}
 
-const uint16_t MicrosteppingMotor::MaximumSpeed()
-{
+uint16_t MicrosteppingMotor::getMaximumSpeed()
+	{
 	return configuration->maxSpeed;
-}
+	}
 
-const uint16_t MicrosteppingMotor::MinimumSpeed()
-{
+uint16_t MicrosteppingMotor::getMinimumSpeed()
+	{
 	return minSpeed;
-}
+	}
 
-inline bool MicrosteppingMotor::IsMoving()
+bool MicrosteppingMotor::isMoving()
 	{
 	return currentVelocity != 0;
 	}
@@ -189,14 +190,14 @@ inline bool MicrosteppingMotor::IsMoving()
  * Returns +1 for travel in increasing step position, -1 for decreasing step position.
  * May return 0 if not moving, but isMoving() is the preferred method to check for motion.
  */
-inline int8_t MicrosteppingMotor::currentDirection() { return direction; }
+inline int8_t MicrosteppingMotor::getCurrentDirection() { return direction; }
 
 /*
  * Compute the distance (in steps) needed to decelerate to stop (minimum speed),
  * given the current velocity and acceleration in steps per second.
  */
 int32_t MicrosteppingMotor::distanceToStop() const
-{
+	{
 	// v² = u² + 2as ∴ s = (v² - u²) / 2a	
 	// v is final velocity
 	// u is initial (current) velocity
@@ -207,17 +208,17 @@ int32_t MicrosteppingMotor::distanceToStop() const
 	const auto a = -currentAcceleration;
 	const auto s = (v * v - u * u) / (2 * a);
 	return int(s);
-}
+	}
 
 /*
 	Computes the linear acceleration required to accelerate from rest to the maximum
 	speed in the ramp time. The returned value is always positive.
 	From v = u + at; since u is 0, v = at where t is the ramp time. Therefore, a = v/t.
 */
-float MicrosteppingMotor::AccelerationFromRampTime()
+float MicrosteppingMotor::accelerationFromRampTime()
 	{
-	float rampTimeSeconds = (float)(configuration->rampTimeMilliseconds) / 1000.0;
-	float acceleration = (float)(configuration->maxSpeed) / rampTimeSeconds;
+	const float rampTimeSeconds = float(configuration->rampTimeMilliseconds) / 1000.0;
+	const float acceleration = float(configuration->maxSpeed) / rampTimeSeconds;
 	return acceleration;
 	}
 
@@ -226,10 +227,10 @@ float MicrosteppingMotor::AccelerationFromRampTime()
 	v = u + at
 	u = startVelocity, a is acceleration, t is elapsed time since start
 */
-float MicrosteppingMotor::AcceleratedVelocity()
+float MicrosteppingMotor::getAcceleratedVelocity() const
 	{
-	float elapsedTime = (millis() - startTime) / 1000.0;
-	float acceleratedVelocity = startVelocity + currentAcceleration * elapsedTime; // v = u + at
+	const float elapsedTime = (millis() - startTime) / 1000.0;
+	const float acceleratedVelocity = startVelocity + currentAcceleration * elapsedTime; // v = u + at
 	return acceleratedVelocity;
 	}
 
@@ -243,30 +244,30 @@ float MicrosteppingMotor::AcceleratedVelocity()
 	|v| = √(u² + 2as) (positive root)
 	maximum velocity = v * direction
 */
-float MicrosteppingMotor::DeceleratedVelocity()
+float MicrosteppingMotor::getDeceleratedVelocity() const
 	{
-	auto current = (int32_t)configuration->currentPosition;
-	auto target = (int32_t)targetPosition;
-	int32_t deltaSteps = target - current;
-	uint32_t stepsToGo = abs(deltaSteps);
-	auto acceleration = fabs(currentAcceleration);
-	auto uSquared = minSpeed * minSpeed;
-	auto vSquared = uSquared + 2.0 * acceleration * stepsToGo;
-	auto speed = sqrt(vSquared);
-	auto velocity = speed * direction;
+	const auto current = int32_t(configuration->currentPosition);
+	const auto target = int32_t(targetPosition);
+	const int32_t deltaSteps = target - current;
+	const uint32_t stepsToGo = abs(deltaSteps);
+	const auto acceleration = fabs(currentAcceleration);
+	const auto uSquared = minSpeed * minSpeed;
+	const auto vSquared = uSquared + 2.0 * acceleration * stepsToGo;
+	const auto speed = sqrt(vSquared);
+	const auto velocity = speed * direction;
 	return velocity;
 	}
 
 /*
 	Brings the motor to an immediate hard stop.
 */
-void MicrosteppingMotor::HardStop()
+void MicrosteppingMotor::hardStop()
 	{
-	stepGenerator->Stop();
+	stepGenerator->stop();
 	currentAcceleration = 0;
 	currentVelocity = 0;
 	direction = 0;
-	ReleaseMotor();
+	releaseMotor();
 	if (stopHandler != nullptr)
 		stopHandler();
 	}
@@ -275,16 +276,16 @@ void MicrosteppingMotor::HardStop()
  * Decelerate to a stop in the shortest distance allowed by the current acceleration.
  */
 void MicrosteppingMotor::SoftStop()
-{
-	if (!IsMoving()) return;
-	const auto current = CurrentPosition();
+	{
+	if (!isMoving()) return;
+	const auto current = getCurrentPosition();
 	const auto distance = distanceToStop();
 	targetPosition = current + distance;
-}
+	}
 
-void MicrosteppingMotor::Loop()
+void MicrosteppingMotor::loop()
 	{
-	if (MicrosteppingMotor::IsMoving())
+	if (isMoving())
 		ComputeAcceleratedVelocity();
 	}
 
@@ -293,10 +294,10 @@ void MicrosteppingMotor::Loop()
 */
 void MicrosteppingMotor::ComputeAcceleratedVelocity()
 	{
-	float accelerationCurve = AcceleratedVelocity();
-	float decelerationCurve = DeceleratedVelocity();
-	float computedSpeed = min(abs(accelerationCurve), abs(decelerationCurve));
-	float constrainedSpeed = constrain(computedSpeed, minSpeed, configuration->maxSpeed);
+	const float accelerationCurve = getAcceleratedVelocity();
+	const float decelerationCurve = getDeceleratedVelocity();
+	const float computedSpeed = min(abs(accelerationCurve), abs(decelerationCurve));
+	const float constrainedSpeed = constrain(computedSpeed, minSpeed, configuration->maxSpeed);
 	currentVelocity = constrainedSpeed * direction;
-	stepGenerator->SetStepRate(constrainedSpeed);	// Step rate must be positive
+	stepGenerator->setStepRate(constrainedSpeed);	// Step rate must be positive
 	}

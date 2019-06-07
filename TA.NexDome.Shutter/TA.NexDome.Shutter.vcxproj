@@ -152,7 +152,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties debug.view.FreeMemory="" arduino.upload.port="COM12" />
+      <UserProperties debug.view.FreeMemory="" debug.view.AnalogPins="1" arduino.upload.port="COM12" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

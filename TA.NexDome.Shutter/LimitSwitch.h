@@ -4,7 +4,7 @@
 #define _LIMITSWITCH_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+	#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif
@@ -17,7 +17,6 @@ public:
 	LimitSwitch(MicrosteppingMotor* stepper, uint8_t openLimit, uint8_t closeLimit);
 	bool isOpen() const;
 	bool isClosed() const;
-void loop();
 	void init();
 private:
 	uint8_t openLimitPin;

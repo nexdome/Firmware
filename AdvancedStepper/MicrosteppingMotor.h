@@ -4,9 +4,9 @@
 #define _MicrosteppingMotor_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
+#include "Arduino.h"
 #else
-	#include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 #include "IStepSequencer.h"
@@ -30,51 +30,47 @@ class MicrosteppingMotor : public IStepSequencer
 		MicrosteppingMotor(uint8_t stepPin, uint8_t enablePin, uint8_t directionPin, IStepGenerator& stepper, MotorSettings& settings);
 		virtual void Step(bool state) final;
 		//void MoveAtVelocity(float stepsPerSecond);
-		void EnergizeMotor();
-		void ReleaseMotor();
+		void energizeMotor() const;
+		void releaseMotor();
 		void registerStopHandler(StopHandler handler);
-		void SetRampTime(uint16_t milliseconds);
-		virtual void HardStop();
+		void setRampTime(uint16_t milliseconds);
+		virtual void hardStop();
 		virtual void SoftStop();
-		virtual void Loop();
+		virtual void loop();
 		void ComputeAcceleratedVelocity();
-		virtual void MoveToPosition(int32_t position);
+		virtual void moveToPosition(int32_t position);
 		void SetCurrentPosition(int32_t position);
 		void SetLimitOfTravel(uint32_t limit);
-		void SetMaximumSpeed(uint16_t speed);
-		const float CurrentVelocity();
-		virtual const int32_t CurrentPosition();
-		const int32_t MidpointPosition();
-		const int32_t LimitOfTravel();
-		const uint16_t MaximumSpeed();
-		const uint16_t MinimumSpeed();
-		virtual bool IsMoving();
-		virtual int8_t currentDirection();
+		void setMaximumSpeed(uint16_t speed);
+		float getCurrentVelocity() const;
+		virtual int32_t getCurrentPosition();
+	int32_t midpointPosition() const;
+	int32_t limitOfTravel() const;
+	uint16_t getMaximumSpeed();
+	uint16_t getMinimumSpeed();
+		virtual bool isMoving();
+		virtual int8_t getCurrentDirection();
 		int32_t distanceToStop() const;
 
-protected:
-		MotorSettings *configuration;
+	protected:
+		MotorSettings* configuration;
 
 	private:
 		uint8_t stepPin, enablePin, directionPin;
-		bool directionReversed;
-		IStepGenerator *stepGenerator;
+		IStepGenerator* stepGenerator;
 		int direction = +1;
 		int32_t targetPosition{};
 		unsigned long startTime{};
 		float startVelocity{}, currentVelocity, targetVelocity{}, currentAcceleration{};
 		float minSpeed;
-		void InitializeHardware();
-		float AcceleratedVelocity();
-		float DeceleratedVelocity();
-		float AccelerationFromRampTime();
+		void initializeHardware() const;
+		float getAcceleratedVelocity() const;
+		float getDeceleratedVelocity() const;
+		float accelerationFromRampTime();
 		StopHandler stopHandler;
 	};
 
 // Motor Parameters (defaults)
-#ifndef MICROSTEPS_PER_STEP
-#define MICROSTEPS_PER_STEP			(16) 
-#endif
 
 #ifndef MIN_SPEED
 #define MIN_SPEED					(250)	// Minimum speed that can be timed by the hardware timer
@@ -85,9 +81,9 @@ protected:
 #endif
 
 template <typename T> int sgn(T val)
-{
+	{
 	return (T(0) < val) - (val < T(0));
-}
+	}
 
 #endif
 

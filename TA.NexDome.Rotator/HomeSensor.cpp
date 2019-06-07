@@ -42,10 +42,9 @@ HomeSensor::HomeSensor(MicrosteppingMotor* stepper, Home* settings, const uint8_
 void HomeSensor::onHomeSensorChanged()
 	{
 	state = digitalRead(sensorPin);
-	const auto position = motor->CurrentPosition();
-	if (!motor->IsMoving()) // Ignore state change if rotator not moving
+	if (!motor->isMoving()) // Ignore state change if rotator not moving
 		return;
-	const auto direction = motor->currentDirection();
+	const auto direction = motor->getCurrentDirection();
 	if ((state && direction < 0) || (!state && direction > 0))
 		{
 		// sync position on either the rising or falling edge, depending on rotation direction.
@@ -74,12 +73,12 @@ bool HomeSensor::atHome()
 void HomeSensor::findHome(int direction)
 	{
 	homingInProgress = true;
-	motor->MoveToPosition(direction ? INT32_MAX : INT32_MIN);
+	motor->moveToPosition(direction ? INT32_MAX : INT32_MIN);
 	}
 
 void HomeSensor::cancelHoming()
 	{
 	homingInProgress = false;
-	if (motor->IsMoving())
+	if (motor->isMoving())
 		motor->SoftStop();
 	}

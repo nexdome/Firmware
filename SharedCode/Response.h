@@ -14,7 +14,6 @@ struct Response
 	static const std::string terminator;
 	static const std::string header;
 	std::string Message;
-	bool success;
 
 	friend std::ostream& operator<<(std::ostream&, const Response&);
 

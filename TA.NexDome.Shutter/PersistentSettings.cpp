@@ -3,19 +3,19 @@
 // 
 
 #include "PersistentSettings.h"
-#include <eeprom.h>
+#include <EEPROM.h>
 
 PersistentSettings::PersistentSettings()
-{
+	{
 	motor = MotorSettings
-	{ 
-		SHUTTER_FULL_OPEN_DEFAULT,	// Maximum position in microsteps
-		0,							// Current position in microsteps
-		MOTOR_RAMP_TIME,			// Ramp time to full speed in milliseconds
-		SHUTTER_DEFAULT_SPEED,		// Maximum speed in microsteps per second
-		true						// Direction reversed
-	};
-}
+		{
+			SHUTTER_FULL_OPEN_DEFAULT,	// Maximum position in microsteps
+			0,							// Current position in microsteps
+			MOTOR_RAMP_TIME,			// Ramp time to full speed in milliseconds
+			SHUTTER_DEFAULT_SPEED,		// Maximum speed in microsteps per second
+			true						// Direction reversed
+		};
+	}
 
 /*
 	Saves persistent settings to EEPROM.
@@ -25,15 +25,15 @@ PersistentSettings::PersistentSettings()
 	that valid settings exist.
 */
 void PersistentSettings::Save()
-{
-	uint16_t *destination = 0;
-	auto source = (const byte *)this;
-	auto byteCount = sizeof(PersistentSettings);
+	{
+	uint16_t* destination = 0;
+	const auto source = reinterpret_cast<const byte*>(this);
+	const auto byteCount = sizeof(PersistentSettings);
 	eeprom_update_block(source, destination, byteCount);
 	// Now write a "fingerprint" immediately after the settings.
 	destination += sizeof(PersistentSettings);
 	eeprom_update_word(destination, fingerprint);
-}
+	}
 
 /*
 	Loads and returns persistent settings from EEPROM.
@@ -42,9 +42,9 @@ void PersistentSettings::Save()
 	then default settings will be used.
 */
 PersistentSettings PersistentSettings::Load()
-{
+	{
 	auto defaultSettings = PersistentSettings();
-	uint16_t *source = 0;
+	uint16_t* source = 0;
 	auto loadedSettings = PersistentSettings();
 	eeprom_read_block(&loadedSettings, source, sizeof(PersistentSettings));
 	// Read the fingerprint and make sure it is valid
@@ -57,5 +57,5 @@ PersistentSettings PersistentSettings::Load()
 		return defaultSettings;
 	// All is well, we can return the loaded settings.
 	return loadedSettings;
-}
+	}
 

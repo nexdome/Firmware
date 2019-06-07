@@ -4,7 +4,7 @@
 #define _HOMESENSOR_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "arduino.h"
+#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif
@@ -25,7 +25,6 @@ class HomeSensor
 public:
 	HomeSensor(MicrosteppingMotor* stepper, Home* settings, uint8_t sensorPin);
 	static void init();
-	void loop();
 	static bool atHome();
 	static void findHome(int direction);
 	static void cancelHoming();
