@@ -2,8 +2,9 @@
 // 
 // 
 
-#include "PersistentSettings.h"
 #include <EEPROM.h>
+#include "NexDome.h"
+#include "PersistentSettings.h"
 
 PersistentSettings::PersistentSettings() :
 	motor(MotorSettings

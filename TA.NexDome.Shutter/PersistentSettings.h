@@ -12,6 +12,7 @@
 #include "NexDome.h"
 #include "AdvancedStepper.h"
 #include "Version.h"
+#include "BatteryMonitor.h"
 
 struct PersistentSettings
 {
@@ -20,6 +21,7 @@ struct PersistentSettings
 	char minorVersion = MinorVersion;
 
 	struct MotorSettings motor;
+	struct BatteryMonitorSettings batteryMonitor;
 
 	PersistentSettings();
 	static PersistentSettings Load();

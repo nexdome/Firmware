@@ -1,5 +1,7 @@
-#pragma once
-#include <limits.h>
+#ifndef NEXDOME_H
+#define NEXDOME_H
+
+#include <Arduino.h>
 
 /*
  * limits.h appears to have values that are not consistent
@@ -39,4 +41,4 @@
 #define CLOCKWISE_BUTTON_PIN (OPEN_BUTTON_PIN)
 #define COUNTERCLOCKWISE_BUTTON_PIN (CLOSE_BUTTON_PIN)
 
-
+#endif // NEXDOME_H

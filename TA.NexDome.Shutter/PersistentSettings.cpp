@@ -15,6 +15,7 @@ PersistentSettings::PersistentSettings()
 			SHUTTER_DEFAULT_SPEED,		// Maximum speed in microsteps per second
 			true						// Direction reversed
 		};
+	batteryMonitor = BatteryMonitorSettings();
 	}
 
 /*

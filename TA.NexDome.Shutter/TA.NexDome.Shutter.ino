@@ -14,6 +14,7 @@
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "LimitSwitch.h"
+#include "BatteryMonitor.h"
 
 void onMotorStopped(); // Forward reference
 
@@ -30,6 +31,7 @@ void HandleFrameReceived(FrameType type, const std::vector<byte>& payload); // f
 auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(HandleFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbee);
 auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitches);
+auto batteryMonitor = BatteryMonitor(machine, A0, settings.batteryMonitor);
 
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 	{
@@ -147,6 +149,7 @@ void setup()
 	std::cout << "Init" << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 	limitSwitches.init(); // attaches interrupt vectors
+	batteryMonitor.initialize(10000);
 	}
 
 // the loop function runs over and over again until power down or reset
@@ -156,6 +159,7 @@ void loop()
 	stepper.loop();
 	HandleSerialCommunications();
 	machine.Loop();
+	batteryMonitor.loop();
 	if (periodicTasks.Expired())
 		{
 		periodicTasks.SetDuration(250);
