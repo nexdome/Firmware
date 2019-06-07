@@ -5,7 +5,7 @@
 #include "Version.h"
 
 CommandProcessor::CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings, XBeeStateMachine& machine, LimitSwitch& limits)
-	: motor(motor), settings(settings), machine(machine), limitSwitches(limits) {}
+	: motor(motor), settings(settings), limitSwitches(limits), machine(machine) {}
 
 int32_t CommandProcessor::microstepsToSteps(int32_t microsteps)
 	{
@@ -141,21 +141,21 @@ Response CommandProcessor::HandleZD(Command& command)
 
 Response CommandProcessor::HandlePR(Command& command)
 	{
-	auto position = microstepsToSteps(motor.getCurrentPosition());
+	const auto position = microstepsToSteps(motor.getCurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
 
 Response CommandProcessor::HandlePW(Command& command)
 	{
-	auto microsteps = stepsToMicrosteps(command.StepPosition);
+	const auto microsteps = stepsToMicrosteps(command.StepPosition);
 	motor.SetCurrentPosition(microsteps);
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleRW(Command& command)
 	{
-	auto microsteps = stepsToMicrosteps(command.StepPosition);
+	const auto microsteps = stepsToMicrosteps(command.StepPosition);
 	motor.SetLimitOfTravel(microsteps);
 	return Response::FromSuccessfulCommand(command);
 	}
@@ -168,7 +168,7 @@ Response CommandProcessor::HandleSR(Command& command)
 
 Response CommandProcessor::HandleRR(Command& command)
 	{
-	auto range = microstepsToSteps(motor.limitOfTravel());
+	const auto range = microstepsToSteps(motor.limitOfTravel());
 	return Response::FromPosition(command, range);
 	}
 

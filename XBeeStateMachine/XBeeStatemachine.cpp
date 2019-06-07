@@ -208,7 +208,7 @@ void XBeeStateMachine::onXbeeFrameReceived(const FrameType type, const std::vect
 		{
 		case ModemStatusResponse:
 		{
-		auto status = xbeeApi.GetModemStatus();
+		const auto status = xbeeApi.GetModemStatus();
 #ifdef DEBUG_XBEE_STATE
 		std::cout << "Modem Status = " << status << std::endl;
 #endif

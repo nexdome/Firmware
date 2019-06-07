@@ -33,7 +33,7 @@ Timer periodicTasks;
 
 Response DispatchCommand(const std::string& buffer)
 	{
-	auto charCount = buffer.length();
+	const auto charCount = buffer.length();
 	if (charCount < 2)
 		return Response::Error();
 	Command command;
@@ -54,7 +54,7 @@ Response DispatchCommand(const std::string& buffer)
 	if (charCount > 5 && buffer[4] == ',')
 		{
 		auto position = buffer.substr(5);
-		auto wholeSteps = std::strtoul(position.begin(), NULL, 10);
+		const auto wholeSteps = std::strtoul(position.begin(), NULL, 10);
 		command.StepPosition = wholeSteps;
 		}
 	auto response = commandProcessor.HandleCommand(command);

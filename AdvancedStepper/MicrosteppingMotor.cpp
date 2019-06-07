@@ -100,7 +100,7 @@ void MicrosteppingMotor::setRampTime(uint16_t milliseconds)
 */
 void MicrosteppingMotor::moveToPosition(int32_t position)
 	{
-	int32_t deltaPosition = position - configuration->currentPosition;
+	const int32_t deltaPosition = position - configuration->currentPosition;
 	targetPosition = position;
 	direction = sgn(deltaPosition);
 	targetVelocity = configuration->maxSpeed * direction;

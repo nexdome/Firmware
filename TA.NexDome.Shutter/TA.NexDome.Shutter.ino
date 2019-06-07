@@ -69,7 +69,7 @@ void ProcessManualControls()
 
 Response DispatchCommand(const std::string& buffer)
 	{
-	auto charCount = buffer.length();
+	const auto charCount = buffer.length();
 	if (charCount < 2)
 		return Response::Error();
 	Command command;
@@ -89,8 +89,8 @@ Response DispatchCommand(const std::string& buffer)
 	// If the parameter was present, then parse it as an integer; otherwise use 0.
 	if (charCount > 5 && buffer[4] == ',')
 		{
-		auto position = buffer.substr(5);
-		auto wholeSteps = std::strtoul(position.begin(), nullptr, 10);
+		const auto position = buffer.substr(5);
+		const auto wholeSteps = std::strtoul(position.begin(), nullptr, 10);
 		command.StepPosition = wholeSteps;
 		}
 	auto response = commandProcessor.HandleCommand(command);
@@ -162,7 +162,7 @@ void loop()
 		ProcessManualControls();
 		if (stepper.isMoving())
 			{
-			auto wholeSteps = commandProcessor.getPositionInWholeSteps();
+			const auto wholeSteps = commandProcessor.getPositionInWholeSteps();
 			converter.clear();
 			converter.str("");
 			converter << "S" << wholeSteps;

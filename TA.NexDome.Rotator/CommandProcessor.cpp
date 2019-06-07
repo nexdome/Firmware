@@ -28,7 +28,7 @@ Response CommandProcessor::HandleHR(Command& command) const
 
 Response CommandProcessor::HandleHW(Command& command) const
 	{
-	auto position = stepsToMicrosteps(command.StepPosition);
+	const auto position = stepsToMicrosteps(command.StepPosition);
 	if (position < 0 || position > settings.home.microstepsPerRotation)
 		return Response::Error();
 	settings.home.position = position;
@@ -179,14 +179,14 @@ Response CommandProcessor::HandleZD(Command& command) const
 
 Response CommandProcessor::HandlePR(Command& command) const
 	{
-	auto position = microstepsToSteps(rotator.getCurrentPosition());
+	const auto position = microstepsToSteps(rotator.getCurrentPosition());
 	auto response = Response::FromPosition(command, position);
 	return response;
 	}
 
 Response CommandProcessor::HandlePW(Command& command) const
 	{
-	auto microsteps = stepsToMicrosteps(command.StepPosition);
+	const auto microsteps = stepsToMicrosteps(command.StepPosition);
 	rotator.SetCurrentPosition(microsteps);
 	return Response::FromSuccessfulCommand(command);
 	}
@@ -201,7 +201,7 @@ Response CommandProcessor::HandleRW(Command& command) const
 
 Response CommandProcessor::HandleRR(Command& command) const
 	{
-	auto range = microstepsToSteps(settings.home.microstepsPerRotation);
+	const auto range = microstepsToSteps(settings.home.microstepsPerRotation);
 	return Response::FromPosition(command, range);
 	}
 
