@@ -35,7 +35,7 @@ void BatteryMonitor::checkThresholdAndSendNotification()
 		return;
 	notificationTimer.SetDuration(settings.notifyInterval);
 	std::ostringstream message;
-	message << Response::header << "BVS" << movingAverageVoltage.average << Response::terminator;
+	message << Response::header << "BV" << movingAverageVoltage.average << Response::terminator;
 	machine.SendToRemoteXbee(message.str());
 	std::cout << message.str() << std::endl;
 	if (movingAverageVoltage.average < settings.threshold)
