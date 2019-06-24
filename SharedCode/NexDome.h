@@ -1,4 +1,4 @@
-#ifndef NEXDOME_H
+﻿#ifndef NEXDOME_H
 #define NEXDOME_H
 
 #include <Arduino.h>
@@ -7,8 +7,9 @@
  * limits.h appears to have values that are not consistent
  * with the Arduino compiler.
  */
-#define INT32_MAX (LONG_MAX)
-#define INT32_MIN (LONG_MIN)
+
+constexpr int32_t MaxStepPosition = 2 ^ 31 - 1;
+constexpr int32_t MinStepPosition = -(2 ^ 31);
 
 // Motor Parameters
 #define MICROSTEPS_PER_STEP (8) // Should match DIP switches on stepper driver
@@ -26,7 +27,7 @@
 #define SHUTTER_FULL_OPEN_DEFAULT (46000UL * MICROSTEPS_PER_STEP)
 #define SHUTTER_LIMIT_STOPPING_DISTANCE (800 * MICROSTEPS_PER_STEP)
 #define ROTATOR_FULL_REVOLUTION_MICROSTEPS (440640)
-#define ROTATOR_MAX_POSITION (INT32_MAX)
+#define ROTATOR_MAX_POSITION (MaxStepPosition)
 #define ROTATOR_HOME_POSITION (0)
 #define ROTATOR_DEFAULT_DEADZONE (300 * MICROSTEPS_PER_STEP)	// default dead-zone in microsteps
 

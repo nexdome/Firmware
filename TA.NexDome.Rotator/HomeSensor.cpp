@@ -9,8 +9,7 @@
  * Note: some fields have to be static because they are used during interrupts
  */
 
-#include <ArduinoSTL.h>
-#include <limits.h>
+#include "NexDome.h"
 #include "HomeSensor.h"
 
 #pragma region static fields used within interrupt service routines
@@ -50,7 +49,7 @@ void HomeSensor::onHomeSensorChanged()
 		// sync position on either the rising or falling edge, depending on rotation direction.
 		motor->SetCurrentPosition(settings->position);
 		if (homingInProgress)
-			cancelHoming();
+			foundHome();
 		}
 	}
 
@@ -73,7 +72,8 @@ bool HomeSensor::atHome()
 void HomeSensor::findHome(int direction)
 	{
 	homingInProgress = true;
-	motor->moveToPosition(direction ? INT32_MAX : INT32_MIN);
+	const auto distance = 2 * settings->microstepsPerRotation;	// Allow 2 full rotations only
+	motor->moveToPosition(direction * distance);
 	}
 
 void HomeSensor::cancelHoming()
@@ -81,4 +81,21 @@ void HomeSensor::cancelHoming()
 	homingInProgress = false;
 	if (motor->isMoving())
 		motor->SoftStop();
+	}
+
+/*
+ * This method is a bit of a hack, but it does work.
+ * Once the home sensor has been detected, we instruct the motor to soft-stop,
+ * then enter a while loop to wait for it to stop. This requires that interrupts are enabled
+ * so we re-enable interrupts. Once the motor has come to a stop, we tell it to move back to the
+ * detected home position.
+ */
+void HomeSensor::foundHome()
+	{
+	homingInProgress = false;
+	interrupts();
+	motor->SoftStop();
+	while (motor->isMoving())
+		motor->loop();
+	motor->moveToPosition(settings->position);
 	}

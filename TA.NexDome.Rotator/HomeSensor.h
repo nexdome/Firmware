@@ -13,7 +13,7 @@
 
 struct Home
 	{
-	int32_t position;
+	int32_t position;	// Home sensor azimuth in microsteps
 	unsigned int width;
 	int32_t microstepsPerRotation;
 	Home(int32_t stepPosition, unsigned width, int32_t circumferenceMicrosteps) 
@@ -28,6 +28,7 @@ public:
 	static bool atHome();
 	static void findHome(int direction);
 	static void cancelHoming();
+	static void foundHome();
 private:
 	static uint8_t sensorPin;
 	static volatile bool state;

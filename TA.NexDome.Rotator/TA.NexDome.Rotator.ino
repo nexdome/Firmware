@@ -123,10 +123,11 @@ void ProcessManualControls()
 	static bool counterclockwiseButtonLastState = false;
 	const bool clockwiseButtonPressed = digitalRead(CLOCKWISE_BUTTON_PIN) == 0;
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
+	const auto position = stepper.getCurrentPosition();
 	if (clockwiseButtonChanged && clockwiseButtonPressed)
 		{
 		CommandProcessor::sendDirection(+1);
-		stepper.moveToPosition(INT32_MAX);
+		stepper.moveToPosition(position + settings.home.microstepsPerRotation);
 		}
 	if (clockwiseButtonChanged && !clockwiseButtonPressed)
 		{
@@ -138,7 +139,7 @@ void ProcessManualControls()
 	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed)
 		{
 		CommandProcessor::sendDirection(-1);
-		stepper.moveToPosition(INT32_MIN);
+		stepper.moveToPosition(position - settings.home.microstepsPerRotation);
 		}
 	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed)
 		{
