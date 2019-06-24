@@ -8,9 +8,9 @@
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
 #include "NexDome.h"
+#include "PersistentSettings.h"
 #include "HomeSensor.h"
 #include "CommandProcessor.h"
-#include "PersistentSettings.h"
 #include "XBeeStartupState.h"
 
 // Forward declarations
@@ -27,8 +27,8 @@ std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
-auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
+auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN, commandProcessor);
 Timer periodicTasks;
 
 Response DispatchCommand(const std::string& buffer)
@@ -172,6 +172,6 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 void onMotorStopped()
 	{
 	settings.motor.currentPosition = commandProcessor.getNormalizedPositionInMicrosteps();
-	HomeSensor::cancelHoming();
 	commandProcessor.sendStatus();
+	home.onMotorStopped();
 	}

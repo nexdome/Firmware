@@ -1,6 +1,8 @@
+#include "PersistentSettings.h"
 #include "CommandProcessor.h"
 #include "NexDome.h"
 #include "Version.h"
+#include <sstream>
 
 
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)

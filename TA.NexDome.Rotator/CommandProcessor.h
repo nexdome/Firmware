@@ -7,12 +7,12 @@
   #include "WProgram.h"
 #endif
 
-#include <sstream>
 #include <AdvancedStepper.h>
 #include <XBeeStateMachine.h>
-#include "PersistentSettings.h"
 #include "Command.h"
 #include "Response.h"
+
+struct PersistentSettings;
 
 class CommandProcessor
 	{
@@ -30,6 +30,7 @@ public:
 	static int32_t stepsToMicrosteps(int32_t wholeSteps);
 	void sendStatus() const;
 	static void sendDirection(int direction);
+	int32_t targetStepPosition(uint32_t toMicrostepPosition) const;
 
 private:
 	Response ForwardToShutter(Command& command) const;
@@ -51,7 +52,6 @@ private:
 	Response HandleZW(Command& command) const; // EEPROM write (save settings)
 	Response HandleZR(Command& command) const; // EEPROM read (load settings)
 	Response HandleZD(Command& command) const; // Reset to factory settings (clears both EEPROM and working settings)
-	int32_t targetStepPosition(uint32_t toMicrostepPosition) const;
 	// Calculates the target microstep position using the shortest direction.
 	int32_t deltaSteps(uint32_t toMicrostepPosition) const;
 	int32_t getDeadZoneWholeSteps() const;
