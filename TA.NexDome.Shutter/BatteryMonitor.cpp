@@ -38,9 +38,9 @@ void BatteryMonitor::checkThresholdAndSendNotification()
 	message << Response::header << "BV" << movingAverageVoltage.average << Response::terminator;
 	machine.SendToRemoteXbee(message.str());
 	std::cout << message.str() << std::endl;
-	if (movingAverageVoltage.average < settings.threshold)
-		{
-		//ToDo: take action on low battery condition
-		std::cout << "Auto-close" << std::endl;
-		}
+	//if (movingAverageVoltage.average < settings.threshold)
+	//	{
+	//	//ToDo: take action on low battery condition
+	//	std::cout << "Auto-close" << std::endl;
+	//	}
 	}

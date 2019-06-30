@@ -23,10 +23,8 @@
 #define XBEE_HEARTBEAT_INTERVAL (10000UL)		// How often the shutter sends a 'heartbeat' message
 #define XBEE_NO_HEARTBEAT_TIMEOUT (	30000UL)	// How long to wait for a heartbeat before assuming the link is down
 #define XBEE_HELLO_MESSAGE "Yoohoo"				// A retro shout-out to FidoNet era mailer called dBridge.
-#define XBEE_HELLO_ACK "Yoohoo2U2"				// (yes I am old enough to remember FidoNet).
+#define XBEE_HELLO_ACK "2U2"				// (yes I am old enough to remember FidoNet).
 #define XBEE_ATTENTION "+++"					// Guard Time + Attention + Guard Time reverts XBee to AT Command Mode
-
-#define XBEE_FACTORY_INIT_STRING "ATRE,WR,FR,CN\r"
 
 class IXBeeState;
 

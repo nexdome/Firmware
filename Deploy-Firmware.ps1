@@ -2,7 +2,7 @@
 param (
     [string]$OutputFile = ".\Version.h",
     [string]$ProjectDirectory = ".",
-    [string]$DeployDirectory = "F:\OneDrive\Clients\NexDome\NexDome-Beta\"
+    [string]$DeployDirectory = "..\TA.NexDome.AscomServer\Firmware"
 )
 
 Push-Location $ProjectDirectory
@@ -12,13 +12,8 @@ $semver = $gitVersion.SemVer
 $majorVersion = $gitVersion.Major
 $minorVersion = $gitVersion.Minor
 
-if (-not ($semver -Match "-beta")) {
-    throw "The working copy has semantic version $semver, which is not a prerelease build"
-}
 
 $betaPath = [System.IO.Path]::Combine($DeployDirectory, $semver)
-$uploaderPath = [System.IO.Path]::Combine($DeployDirectory, "Uploader")
-$uploaderPublish = "C:\Users\Tim\source\repos\TA.NexDome\TA.NexDome.FirmwareUpdater\bin\Release\netcoreapp2.1\publish\"
 
 if (-not (Test-Path -LiteralPath $betaPath)) {
     
@@ -37,6 +32,5 @@ Copy-Item ".\TA.NexDome.Rotator\Release\TA.NexDome.Rotator.hex" -Destination "$b
 Copy-Item ".\TA.NexDome.Shutter\Release\TA.NexDome.Shutter.hex" -Destination "$betaPath\" -Force
 Copy-Item ".\XBeeFactoryReset\Release\XBeeFactoryReset.hex" -Destination "$betaPath\" -Force
 Copy-Item ".\ReadMe.pdf" -Destination "$betaPath\" -Force
-Copy-Item "$uploaderPublish" -Destination "$uploaderPath" -Recurse -Force
 
 Pop-Location

@@ -4,7 +4,6 @@
 
 #include "XBeeAssociatedState.h"
 #include "XBeeOnlineState.h"
-#include "XBeeStartupState.h"
 
 /*
  * Send a "Hello" message to the Rotator to let it know we are alive and
@@ -36,7 +35,7 @@ void XBeeAssociatedState::OnApiRx64FrameReceived(const std::vector<byte>& payloa
 	const auto msgStart = payload.begin() + 10;
 	const auto msgEnd = payload.end();
 	const std::string rxMessage(msgStart, msgEnd);
-	if (rxMessage.compare(XBEE_HELLO_ACK) == 0)
+	if (rxMessage == XBEE_HELLO_ACK)
 		{
 		machine.SetDestinationAddress(payload);
 		machine.ChangeState(new XBeeOnlineState(machine));
