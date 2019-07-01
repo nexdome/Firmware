@@ -29,8 +29,8 @@ void LimitSwitch::onCloseLimitReached()
 	{
 	if (motor->getCurrentVelocity() < 0)
 		{
-		motor->SetCurrentPosition(0);
-		motor->SoftStop();
+		motor->SetCurrentPosition(SHUTTER_LIMIT_STOPPING_DISTANCE);
+		motor->moveToPosition(0);
 		}
 	}
 
@@ -40,8 +40,8 @@ void LimitSwitch::onOpenLimitReached()
 		{
 		const auto stopPosition = motor->getCurrentPosition() + SHUTTER_LIMIT_STOPPING_DISTANCE;
 		motor->moveToPosition(stopPosition);
-		if (stopPosition < motor->limitOfTravel())
-			motor->SetLimitOfTravel(stopPosition);
+		//if (stopPosition < motor->limitOfTravel())
+		//	motor->SetLimitOfTravel(stopPosition);
 		}
 	}
 
