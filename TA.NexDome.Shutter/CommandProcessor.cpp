@@ -142,7 +142,7 @@ Response CommandProcessor::HandleZD(Command& command)
 Response CommandProcessor::HandlePR(Command& command)
 	{
 	const auto position = microstepsToSteps(motor.getCurrentPosition());
-	auto response = Response::FromPosition(command, position);
+	auto response = Response::FromInteger(command, position);
 	return response;
 	}
 
@@ -169,7 +169,7 @@ Response CommandProcessor::HandleSR(Command& command)
 Response CommandProcessor::HandleRR(Command& command)
 	{
 	const auto range = microstepsToSteps(motor.limitOfTravel());
-	return Response::FromPosition(command, range);
+	return Response::FromInteger(command, range);
 	}
 
 Response CommandProcessor::HandleFR(Command& command)
@@ -183,7 +183,7 @@ Response CommandProcessor::HandleFR(Command& command)
 Response CommandProcessor::HandleVR(Command& command)
 	{
 	auto maxSpeed = motor.getMaximumSpeed();
-	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
+	return Response::FromInteger(command, microstepsToSteps(maxSpeed));
 	}
 
 Response CommandProcessor::HandleVW(Command& command)

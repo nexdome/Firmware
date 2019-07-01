@@ -47,7 +47,7 @@ void ProcessManualControls()
 	if (openButtonChanged && openButtonPressed)
 		{
 		commandProcessor.sendOpenNotification();
-		stepper.moveToPosition(settings.motor.maxPosition);
+		stepper.moveToPosition(MaxStepPosition);
 		}
 	if (openButtonChanged && !openButtonPressed)
 		{
@@ -59,7 +59,7 @@ void ProcessManualControls()
 	if (closedButtonChanged && closedButtonPressed)
 		{
 		commandProcessor.sendCloseNotification();
-		stepper.moveToPosition(0);
+		stepper.moveToPosition(MinStepPosition);
 		}
 	if (closedButtonChanged && !closedButtonPressed)
 		{
