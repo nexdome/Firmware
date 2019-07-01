@@ -94,7 +94,7 @@ Response CommandProcessor::HandleOP(Command& command)
 Response CommandProcessor::HandleCL(Command& command)
 	{
 	sendCloseNotification();
-	motor.moveToPosition(uint32_t(0));
+	motor.moveToPosition(-1000);
 	return Response::FromSuccessfulCommand(command);
 	}
 

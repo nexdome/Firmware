@@ -1,6 +1,5 @@
-# Uses GitVersion command line tools to create a Version.h header file.
+# Copies built firmware files into the ASCOm driver project where an installer can be built
 param (
-    [string]$OutputFile = ".\Version.h",
     [string]$ProjectDirectory = ".",
     [string]$DeployDirectory = "..\TA.NexDome.AscomServer\Firmware"
 )
@@ -11,7 +10,6 @@ $gitVersion = GitVersion.exe | ConvertFrom-Json
 $semver = $gitVersion.SemVer
 $majorVersion = $gitVersion.Major
 $minorVersion = $gitVersion.Minor
-
 
 $betaPath = [System.IO.Path]::Combine($DeployDirectory, $semver)
 
