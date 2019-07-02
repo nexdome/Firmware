@@ -4,6 +4,7 @@ param (
     [string]$DeployDirectory = "..\TA.NexDome.AscomServer\Firmware"
 )
 
+Write-Host "Deploying to $DeployDirectory"
 Push-Location $ProjectDirectory
 
 $gitVersion = GitVersion.exe | ConvertFrom-Json
@@ -11,24 +12,25 @@ $semver = $gitVersion.SemVer
 $majorVersion = $gitVersion.Major
 $minorVersion = $gitVersion.Minor
 
-$betaPath = [System.IO.Path]::Combine($DeployDirectory, $semver)
 
-if (-not (Test-Path -LiteralPath $betaPath)) {
-    
+if (-not (Test-Path -LiteralPath $DeployDirectory)) {
     try {
-        New-Item -Path $betaPath -ItemType Directory -ErrorAction Stop | Out-Null #-Force
+        New-Item -Path $DeployDirectory -ItemType Directory -ErrorAction Stop | Out-Null -Force
     }
     catch {
-        Write-Error -Message "Unable to create directory '$DirectoryToCreate'. Error was: $_" -ErrorAction Stop
+        Write-Error -Message "Unable to create directory '$DeployDirectory'. Error was: $_" -ErrorAction Stop
     }
 }
 else {
-    Remove-Item "$betaPath\*" -Recurse -Force
+    Remove-Item "$DeployDirectory\*.hex" -ErrorAction Ignore
+    Remove-Item "$DeployDirectory\ReadMe.pdf" -ErrorAction Ignore
 }
 
-Copy-Item ".\TA.NexDome.Rotator\Release\TA.NexDome.Rotator.hex" -Destination "$betaPath\" -Force
-Copy-Item ".\TA.NexDome.Shutter\Release\TA.NexDome.Shutter.hex" -Destination "$betaPath\" -Force
-Copy-Item ".\XBeeFactoryReset\Release\XBeeFactoryReset.hex" -Destination "$betaPath\" -Force
-Copy-Item ".\ReadMe.pdf" -Destination "$betaPath\" -Force
+Copy-Item ".\TA.NexDome.Rotator\Release\TA.NexDome.Rotator.hex" -Destination "$DeployDirectory\" -Force
+Copy-Item ".\TA.NexDome.Shutter\Release\TA.NexDome.Shutter.hex" -Destination "$DeployDirectory\" -Force
+Copy-Item ".\XBeeFactoryReset\Release\XBeeFactoryReset.hex" -Destination "$DeployDirectory\" -Force
+Copy-Item ".\ReadMe.pdf" -Destination "$DeployDirectory\" -Force
+
+Write-Host "Deploy complete. Now build the ASCOM driver solution."
 
 Pop-Location
