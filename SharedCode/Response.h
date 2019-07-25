@@ -32,7 +32,7 @@ struct Response
 	/*
 		Creates a response consisting of the command verb, followed by an integer
 	*/
-	static Response FromInteger(Command& command, int i);
+	static Response FromInteger(Command& command, int32_t i);
 
 	/*
 	 * Creates a response with no message, i.e. nothing is returned to the sender.

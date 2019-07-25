@@ -26,7 +26,7 @@ Response Response::FromSuccessfulCommand(Command& command)
 	return Response{ converter.str() };
 	}
 
-Response Response::FromInteger(Command& command, int i)
+Response Response::FromInteger(Command& command, int32_t i)
 	{
 	std::ostringstream converter;
 	converter << command.Verb << command.TargetDevice << i;
