@@ -14,8 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4BFADFB-E20F-4030-92E8-5401C303E3E8}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		Deploy-Alpha.ps1 = Deploy-Alpha.ps1
-		Deploy-Beta.ps1 = Deploy-Beta.ps1
+		Deploy-Firmware.ps1 = Deploy-Firmware.ps1
 		Gear and Step Calculator.xlsx = Gear and Step Calculator.xlsx
 		Generate-Version.ps1 = Generate-Version.ps1
 		License.md = License.md
