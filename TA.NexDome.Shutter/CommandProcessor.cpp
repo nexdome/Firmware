@@ -86,15 +86,21 @@ void CommandProcessor::sendToLocalAndRemote(const std::string& message) const
 
 Response CommandProcessor::HandleOP(Command& command)
 	{
-	sendOpenNotification();
-	motor.moveToPosition(settings.motor.maxPosition);
+	if (!limitSwitches.isOpen())
+		{
+		sendOpenNotification();
+		motor.moveToPosition(settings.motor.maxPosition);
+		}
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleCL(Command& command)
 	{
-	sendCloseNotification();
-	motor.moveToPosition(-1000);
+	if (!limitSwitches.isClosed())
+		{
+		sendCloseNotification();
+		motor.moveToPosition(-1000);
+		}
 	return Response::FromSuccessfulCommand(command);
 	}
 
