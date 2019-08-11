@@ -182,6 +182,8 @@ Sddddd          | Shutter position (ddddd = signed decimal integer)
 :open#          | The shutter is about to move towards open
 :close#         | The shutter is about to move towards closed
 :BVddddd#       | Shutter battery volts in raw analogue-to-digital units (ADUs), range [0..65535]
+:Rain#          | Rain detected (shutter will auto-close)
+:RainStopped#   | Rain detector was previously indicating rain but has now stopped doing so.
 
 Note: position updates occur about every 250 milliseconds while motion is occurring. When motion ceases, an SER or SES status event is emitted and this indicates that motion of the corresponding motor has ceased.
 
