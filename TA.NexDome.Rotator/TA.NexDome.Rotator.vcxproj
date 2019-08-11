@@ -101,7 +101,7 @@
       <ForcedIncludeFiles>$(ProjectDir)__vm\.TA.NexDome.Rotator.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>__AVR_atmega32u4__;__AVR_ATmega32U4__;__AVR_ATmega32u4__;F_CPU=16000000L;ARDUINO=10809;ARDUINO_AVR_LEONARDO;ARDUINO_ARCH_AVR;USB_VID=0x2341;USB_PID=0x8036;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\TA.NexDome.Rotator;F:\Arduino-Sketchbook\libraries\ArduinoSTL\src;$(ProjectDir)..\XBeeApi;$(ProjectDir)..\XBeeStatemachine;F:\Arduino\hardware\arduino\avr\libraries\EEPROM\src;$(ProjectDir)..\AdvancedStepper;$(ProjectDir)..\Timer;F:\Arduino\libraries;F:\Arduino-Sketchbook\libraries;F:\Arduino\hardware\arduino\avr\libraries;F:\Arduino\hardware\arduino\avr\cores\arduino;F:\Arduino\hardware\arduino\avr\variants\leonardo;F:\Arduino\hardware\tools\avr\avr\include;F:\Arduino\hardware\tools\avr\avr\include\avr;F:\Arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include;F:\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.2\include;F:\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\TA.NexDome.Rotator;$(ProjectDir)..\SharedCode;F:\OneDrive\Documents\Arduino\libraries\ArduinoSTL\src;$(ProjectDir)..\XBeeApi;$(ProjectDir)..\XBeeStatemachine;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src;$(ProjectDir)..\AdvancedStepper;$(ProjectDir)..\Timer;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries;F:\OneDrive\Documents\Arduino\libraries;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\avr\include;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.2\include;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -124,6 +124,7 @@
     <ClInclude Include="CommandProcessor.h" />
     <ClInclude Include="HomeSensor.h" />
     <ClInclude Include="PersistentSettings.h" />
+    <ClInclude Include="RainSensor.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="XBeeApiDetectShutterState.h" />
     <ClInclude Include="XBeeConfigureState.h" />
@@ -136,6 +137,7 @@
     <ClCompile Include="CommandProcessor.cpp" />
     <ClCompile Include="HomeSensor.cpp" />
     <ClCompile Include="PersistentSettings.cpp" />
+    <ClCompile Include="RainSensor.cpp" />
     <ClCompile Include="XBeeApiDetectShutterState.cpp" />
     <ClCompile Include="XBeeConfigureState.cpp" />
     <ClCompile Include="XBeeShutterOnlineState.cpp" />

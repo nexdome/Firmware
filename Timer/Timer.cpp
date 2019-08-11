@@ -22,14 +22,14 @@ void Timer::SetDuration(unsigned long duration)
 	interval = duration;
 	}
 
-unsigned long Timer::Elapsed() const
+Duration Timer::Elapsed() const
 	{
 	if (!Enabled())
 		return 0UL;
 	return millis() - startedAt;
 	}
 
-unsigned long Timer::Remaining() const
+Duration Timer::Remaining() const
 	{
 	return interval - Elapsed();
 }

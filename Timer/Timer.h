@@ -49,19 +49,23 @@
 	A stopped timer will never expire.
 */
 
+using Duration = unsigned long;
+
 class Timer
 	{
 public:
 	explicit Timer();
-	void SetDuration(unsigned long duration);
+	void SetDuration(Duration duration);
 	bool Expired() const;
-	unsigned long Elapsed() const;
-	unsigned long Remaining() const;
+	Duration Elapsed() const;
+	Duration Remaining() const;
 	bool Enabled() const;
 	void Stop();
+	static constexpr Duration Seconds(float seconds) { return Duration(1000 * seconds); }
+	static constexpr Duration Minutes(float minutes) { return Duration(Seconds(60) * minutes); }
 private:
-	unsigned long startedAt;
-	unsigned long interval;
+	Duration startedAt;
+	Duration interval;
 	};
 
 
