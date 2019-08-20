@@ -86,15 +86,21 @@ void CommandProcessor::sendToLocalAndRemote(const std::string& message) const
 
 Response CommandProcessor::HandleOP(Command& command)
 	{
-	sendOpenNotification();
-	motor.moveToPosition(settings.motor.maxPosition);
+	if (!limitSwitches.isOpen())
+		{
+		sendOpenNotification();
+		motor.moveToPosition(settings.motor.maxPosition);
+		}
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleCL(Command& command)
 	{
-	sendCloseNotification();
-	motor.moveToPosition(uint32_t(0));
+	if (!limitSwitches.isClosed())
+		{
+		sendCloseNotification();
+		motor.moveToPosition(-1000);
+		}
 	return Response::FromSuccessfulCommand(command);
 	}
 
@@ -142,7 +148,7 @@ Response CommandProcessor::HandleZD(Command& command)
 Response CommandProcessor::HandlePR(Command& command)
 	{
 	const auto position = microstepsToSteps(motor.getCurrentPosition());
-	auto response = Response::FromPosition(command, position);
+	auto response = Response::FromInteger(command, position);
 	return response;
 	}
 
@@ -169,7 +175,7 @@ Response CommandProcessor::HandleSR(Command& command)
 Response CommandProcessor::HandleRR(Command& command)
 	{
 	const auto range = microstepsToSteps(motor.limitOfTravel());
-	return Response::FromPosition(command, range);
+	return Response::FromInteger(command, range);
 	}
 
 Response CommandProcessor::HandleFR(Command& command)
@@ -183,7 +189,7 @@ Response CommandProcessor::HandleFR(Command& command)
 Response CommandProcessor::HandleVR(Command& command)
 	{
 	auto maxSpeed = motor.getMaximumSpeed();
-	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
+	return Response::FromInteger(command, microstepsToSteps(maxSpeed));
 	}
 
 Response CommandProcessor::HandleVW(Command& command)

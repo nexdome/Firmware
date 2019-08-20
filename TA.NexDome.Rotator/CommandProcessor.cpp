@@ -1,6 +1,8 @@
+#include "PersistentSettings.h"
 #include "CommandProcessor.h"
 #include "NexDome.h"
 #include "Version.h"
+#include <sstream>
 
 
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
@@ -180,7 +182,7 @@ Response CommandProcessor::HandleZD(Command& command) const
 Response CommandProcessor::HandlePR(Command& command) const
 	{
 	const auto position = microstepsToSteps(rotator.getCurrentPosition());
-	auto response = Response::FromPosition(command, position);
+	auto response = Response::FromInteger(command, position);
 	return response;
 	}
 
@@ -202,7 +204,7 @@ Response CommandProcessor::HandleRW(Command& command) const
 Response CommandProcessor::HandleRR(Command& command) const
 	{
 	const auto range = microstepsToSteps(settings.home.microstepsPerRotation);
-	return Response::FromPosition(command, range);
+	return Response::FromInteger(command, range);
 	}
 
 Response CommandProcessor::HandleFR(Command& command) const
@@ -216,7 +218,7 @@ Response CommandProcessor::HandleFR(Command& command) const
 Response CommandProcessor::HandleVR(Command& command) const
 	{
 	auto maxSpeed = rotator.getMaximumSpeed();
-	return Response::FromPosition(command, microstepsToSteps(maxSpeed));
+	return Response::FromInteger(command, microstepsToSteps(maxSpeed));
 	}
 
 Response CommandProcessor::HandleVW(Command& command) const

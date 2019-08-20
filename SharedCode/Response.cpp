@@ -26,16 +26,11 @@ Response Response::FromSuccessfulCommand(Command& command)
 	return Response{ converter.str() };
 	}
 
-Response Response::FromPosition(Command& command, uint32_t position)
+Response Response::FromInteger(Command& command, int32_t i)
 	{
 	std::ostringstream converter;
-	converter << command.Verb << command.TargetDevice << position;
+	converter << command.Verb << command.TargetDevice << i;
 	return Response{ converter.str() };
-	}
-
-Response Response::FromInteger(Command& command, int i)
-	{
-	return Response::FromPosition(command, i);
 	}
 
 Response Response::NoResponse(Command& command)

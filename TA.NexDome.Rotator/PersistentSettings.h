@@ -9,7 +9,6 @@
 #include "WProgram.h"
 #endif
 
-#include "NexDome.h"
 #include "AdvancedStepper.h"
 #include "HomeSensor.h"
 #include "Version.h"

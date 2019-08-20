@@ -1,0 +1,8 @@
+@startuml
+HomeSensor -> Stepper : Start rotation clocwise
+Stepper --> HomeSensor : <<interrupt>> Sensor falling edge
+HomeSensor -> HomeSensor: sync position to home sensor azimuth
+HomeSensor -> Stepper : Perform soft stop
+Stepper --> HomeSensor : <<event>> OnMotorStopped
+HomeSensor -> Stepper : Rotate to Home Sensor Azimuth
+@enduml

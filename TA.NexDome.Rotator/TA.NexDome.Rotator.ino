@@ -1,4 +1,5 @@
 #if defined(ARDUINO) && ARDUINO >= 100
+#include "RainSensor.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -8,9 +9,9 @@
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
 #include "NexDome.h"
+#include "PersistentSettings.h"
 #include "HomeSensor.h"
 #include "CommandProcessor.h"
-#include "PersistentSettings.h"
 #include "XBeeStartupState.h"
 
 // Forward declarations
@@ -27,9 +28,10 @@ std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
-auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
+auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN, commandProcessor);
 Timer periodicTasks;
+auto rain = RainSensor(RAIN_SENSOR_PIN);
 
 Response DispatchCommand(const std::string& buffer)
 	{
@@ -112,6 +114,7 @@ void setup() {
 	xbeeApi.reset();
 	periodicTasks.SetDuration(1000);
 	HomeSensor::init();
+	rain.init(Timer::Seconds(30));
 	interrupts();
 	std::cout << F("Init") << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
@@ -123,10 +126,11 @@ void ProcessManualControls()
 	static bool counterclockwiseButtonLastState = false;
 	const bool clockwiseButtonPressed = digitalRead(CLOCKWISE_BUTTON_PIN) == 0;
 	const bool clockwiseButtonChanged = clockwiseButtonPressed != clockwiseButtonLastState;
+	const auto position = stepper.getCurrentPosition();
 	if (clockwiseButtonChanged && clockwiseButtonPressed)
 		{
 		CommandProcessor::sendDirection(+1);
-		stepper.moveToPosition(INT32_MAX);
+		stepper.moveToPosition(position + settings.home.microstepsPerRotation);
 		}
 	if (clockwiseButtonChanged && !clockwiseButtonPressed)
 		{
@@ -138,7 +142,7 @@ void ProcessManualControls()
 	if (counterclockwiseButtonChanged && counterclockwiseButtonPressed)
 		{
 		CommandProcessor::sendDirection(-1);
-		stepper.moveToPosition(INT32_MIN);
+		stepper.moveToPosition(position - settings.home.microstepsPerRotation);
 		}
 	if (counterclockwiseButtonChanged && !counterclockwiseButtonPressed)
 		{
@@ -158,6 +162,7 @@ void loop() {
 		if (stepper.isMoving())
 			std::cout << "P" << std::dec << commandProcessor.getPositionInWholeSteps() << std::endl;
 		ProcessManualControls();
+		rain.loop();
 		}
 	}
 
@@ -171,6 +176,6 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 void onMotorStopped()
 	{
 	settings.motor.currentPosition = commandProcessor.getNormalizedPositionInMicrosteps();
-	HomeSensor::cancelHoming();
 	commandProcessor.sendStatus();
+	home.onMotorStopped();
 	}

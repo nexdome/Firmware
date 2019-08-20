@@ -28,16 +28,15 @@ struct Response
 	*/
 	static Response FromSuccessfulCommand(Command& command);
 
-	/*
-		Creates a response consisting of the command verb,
-		plus an unsigned integer (usually a motor step position).
-	*/
-	static Response FromPosition(Command& command, uint32_t position);
 
 	/*
-		Creates a response consisting of just an integer and the terminator.
+		Creates a response consisting of the command verb, followed by an integer
 	*/
-	static Response FromInteger(Command& command, int i);
+	static Response FromInteger(Command& command, int32_t i);
+
+	/*
+	 * Creates a response with no message, i.e. nothing is returned to the sender.
+	 */
 	static Response NoResponse(Command& command);
 };
 

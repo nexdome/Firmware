@@ -14,6 +14,7 @@
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "LimitSwitch.h"
+#include "BatteryMonitor.h"
 
 void onMotorStopped(); // Forward reference
 
@@ -30,6 +31,7 @@ void HandleFrameReceived(FrameType type, const std::vector<byte>& payload); // f
 auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(HandleFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbee);
 auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitches);
+auto batteryMonitor = BatteryMonitor(machine, A0, settings.batteryMonitor);
 
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 	{
@@ -45,7 +47,7 @@ void ProcessManualControls()
 	if (openButtonChanged && openButtonPressed)
 		{
 		commandProcessor.sendOpenNotification();
-		stepper.moveToPosition(settings.motor.maxPosition);
+		stepper.moveToPosition(MaxStepPosition);
 		}
 	if (openButtonChanged && !openButtonPressed)
 		{
@@ -57,7 +59,7 @@ void ProcessManualControls()
 	if (closedButtonChanged && closedButtonPressed)
 		{
 		commandProcessor.sendCloseNotification();
-		stepper.moveToPosition(0);
+		stepper.moveToPosition(MinStepPosition);
 		}
 	if (closedButtonChanged && !closedButtonPressed)
 		{
@@ -140,13 +142,11 @@ void setup()
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	//while (!Serial) ;	// Wait for Leonardo software USB stack to become active
-	delay(1000); // Let the USB/serial stack warm up.
 	periodicTasks.SetDuration(1000);
 	interrupts();
-	std::cout << "Init" << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 	limitSwitches.init(); // attaches interrupt vectors
+	batteryMonitor.initialize(10000);
 	}
 
 // the loop function runs over and over again until power down or reset
@@ -156,6 +156,7 @@ void loop()
 	stepper.loop();
 	HandleSerialCommunications();
 	machine.Loop();
+	batteryMonitor.loop();
 	if (periodicTasks.Expired())
 		{
 		periodicTasks.SetDuration(250);
