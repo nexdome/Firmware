@@ -5,11 +5,11 @@
 
 /*
  * limits.h appears to have values that are not consistent
- * with the Arduino compiler.
+ * with reality.
  */
 
-constexpr int32_t MaxStepPosition = 2 ^ 31 - 1;
-constexpr int32_t MinStepPosition = -(2 ^ 31);
+constexpr int32_t MaxStepPosition = 2000000000L;
+constexpr int32_t MinStepPosition = -2000000000L;
 
 // Motor Parameters
 #define MICROSTEPS_PER_STEP (8) // Should match DIP switches on stepper driver
@@ -41,5 +41,6 @@ constexpr int32_t MinStepPosition = -(2 ^ 31);
 #define CLOSE_BUTTON_PIN (PIN6)
 #define CLOCKWISE_BUTTON_PIN (OPEN_BUTTON_PIN)
 #define COUNTERCLOCKWISE_BUTTON_PIN (CLOSE_BUTTON_PIN)
+#define RAIN_SENSOR_PIN (PIN7)
 
 #endif // NEXDOME_H

@@ -137,6 +137,7 @@ DR  | R       | none      | :DRRddddd# | @DRR       | Read Dead-zone in steps (1
 DW  | R       | ddddd     | :DWR#      | @DWR,300   | Write Dead-zone in steps [0..10000] default 300
 FR  | RS      | none      | :FRstring# | @FRR       | Reads the semantic version (SemVer) string of the firmware.
 GA  | R       | ddd       | :GAR#      | @GAR,180   | Goto Azimuth (param: integer degrees)
+GH  | R       | none      | :GHR#      | @GHR       | Rotates clockwise until the home sensor is detected and synchronizes the azimuth to the home position.
 HR  | R       | none      | :HRRddddd# | @HRR       | Home position Read (steps clockwise from true north)
 HW  | R       | ddddd     | :HWR#      | @HWR,1000  | Home position Write (seps clockwise from true north)
 PR  | RS      | none      | :PRt-dddd# | @PRR       | Position Read - get current step position in whole steps (signed integer)
@@ -181,6 +182,8 @@ Sddddd          | Shutter position (ddddd = signed decimal integer)
 :open#          | The shutter is about to move towards open
 :close#         | The shutter is about to move towards closed
 :BVddddd#       | Shutter battery volts in raw analogue-to-digital units (ADUs), range [0..65535]
+:Rain#          | Rain detected (shutter will auto-close)
+:RainStopped#   | Rain detector was previously indicating rain but has now stopped doing so.
 
 Note: position updates occur about every 250 milliseconds while motion is occurring. When motion ceases, an SER or SES status event is emitted and this indicates that motion of the corresponding motor has ceased.
 

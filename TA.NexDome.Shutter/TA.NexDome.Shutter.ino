@@ -47,7 +47,7 @@ void ProcessManualControls()
 	if (openButtonChanged && openButtonPressed)
 		{
 		commandProcessor.sendOpenNotification();
-		stepper.moveToPosition(settings.motor.maxPosition);
+		stepper.moveToPosition(MaxStepPosition);
 		}
 	if (openButtonChanged && !openButtonPressed)
 		{
@@ -59,7 +59,7 @@ void ProcessManualControls()
 	if (closedButtonChanged && closedButtonPressed)
 		{
 		commandProcessor.sendCloseNotification();
-		stepper.moveToPosition(0);
+		stepper.moveToPosition(MinStepPosition);
 		}
 	if (closedButtonChanged && !closedButtonPressed)
 		{
@@ -142,11 +142,8 @@ void setup()
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
 	xbeeSerial.begin(9600);
-	//while (!Serial) ;	// Wait for Leonardo software USB stack to become active
-	delay(1000); // Let the USB/serial stack warm up.
 	periodicTasks.SetDuration(1000);
 	interrupts();
-	std::cout << "Init" << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 	limitSwitches.init(); // attaches interrupt vectors
 	batteryMonitor.initialize(10000);

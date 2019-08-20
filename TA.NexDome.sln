@@ -14,8 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4BFADFB-E20F-4030-92E8-5401C303E3E8}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		Deploy-Alpha.ps1 = Deploy-Alpha.ps1
-		Deploy-Beta.ps1 = Deploy-Beta.ps1
+		Deploy-Firmware.ps1 = Deploy-Firmware.ps1
 		Gear and Step Calculator.xlsx = Gear and Step Calculator.xlsx
 		Generate-Version.ps1 = Generate-Version.ps1
 		License.md = License.md
@@ -26,23 +25,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		XBee.md = XBee.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TA.NexDome.FirmwareUpdater", "TA.NexDome.FirmwareUpdater\TA.NexDome.FirmwareUpdater.csproj", "{0264E8BB-A223-41E3-BB28-5EBA1DC42441}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeTerminal", "XBeeTerminal\XBeeTerminal.vcxproj", "{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Timer", "Timer\Timer.vcxitems", "{A7498378-97AB-4F1D-AF51-37412422EF0F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeStatemachine", "XBeeStatemachine\XBeeStatemachine.vcxitems", "{C7BEF4C6-F140-4D54-9C00-C333BDC513B6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeApi", "XBeeApi\XBeeApi.vcxitems", "{D566CDCC-F634-4BA0-93E6-0AA2C0D80AD0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerTest", "TimerTest\TimerTest.vcxproj", "{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeFactoryReset", "XBeeFactoryReset\XBeeFactoryReset.vcxproj", "{260C6D09-230E-4D8F-9FC1-39C76087CE8D}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Timer\Timer.vcxitems*{2464fce5-cdfc-485a-9e64-ed3d95808ab7}*SharedItemsImports = 4
 		Timer\Timer.vcxitems*{260c6d09-230e-4d8f-9fc1-39c76087ce8d}*SharedItemsImports = 4
 		XBeeApi\XBeeApi.vcxitems*{260c6d09-230e-4d8f-9fc1-39c76087ce8d}*SharedItemsImports = 4
 		XBeeStatemachine\XBeeStatemachine.vcxitems*{260c6d09-230e-4d8f-9fc1-39c76087ce8d}*SharedItemsImports = 4
@@ -77,26 +69,6 @@ Global
 		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Debug|x86.ActiveCfg = Debug|Win32
 		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|Any CPU.ActiveCfg = Release|Win32
 		{F3368067-9881-4ED7-9AFE-B31D67DFEEAD}.Release|x86.ActiveCfg = Release|Win32
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Debug|x86.Build.0 = Debug|Any CPU
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.ActiveCfg = Release|Any CPU
-		{0264E8BB-A223-41E3-BB28-5EBA1DC42441}.Release|x86.Build.0 = Release|Any CPU
-		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|x86.ActiveCfg = Debug|Win32
-		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Debug|x86.Build.0 = Debug|Win32
-		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|Any CPU.ActiveCfg = Release|Win32
-		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|x86.ActiveCfg = Release|Win32
-		{FFEBBC98-7610-41FC-A7D9-3E9B0576F8BE}.Release|x86.Build.0 = Release|Win32
-		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Debug|x86.ActiveCfg = Debug|Win32
-		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Debug|x86.Build.0 = Debug|Win32
-		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|Any CPU.ActiveCfg = Release|Win32
-		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|x86.ActiveCfg = Release|Win32
-		{2464FCE5-CDFC-485A-9E64-ED3D95808AB7}.Release|x86.Build.0 = Release|Win32
 		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Debug|x86.ActiveCfg = Debug|Win32
 		{260C6D09-230E-4D8F-9FC1-39C76087CE8D}.Debug|x86.Build.0 = Debug|Win32
