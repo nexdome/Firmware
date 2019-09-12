@@ -10,7 +10,6 @@
 #include <XBeeApi.h>
 #include "NexDome.h"
 #include "PersistentSettings.h"
-#include "HomeSensor.h"
 #include "CommandProcessor.h"
 #include "XBeeStartupState.h"
 
@@ -29,9 +28,7 @@ std::vector<byte> xbeeApiRxBuffer;
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
-auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN, commandProcessor);
 Timer periodicTasks;
-auto rain = RainSensor(RAIN_SENSOR_PIN);
 
 Response DispatchCommand(const std::string& buffer)
 	{
@@ -113,8 +110,6 @@ void setup() {
 	delay(1000);		// Let the USB/serial stack warm up a bit longer.
 	xbeeApi.reset();
 	periodicTasks.SetDuration(1000);
-	HomeSensor::init();
-	rain.init(Timer::Seconds(30));
 	interrupts();
 	std::cout << F("Init") << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
@@ -162,7 +157,6 @@ void loop() {
 		if (stepper.isMoving())
 			std::cout << "P" << std::dec << commandProcessor.getPositionInWholeSteps() << std::endl;
 		ProcessManualControls();
-		rain.loop();
 		}
 	}
 
@@ -177,5 +171,4 @@ void onMotorStopped()
 	{
 	settings.motor.currentPosition = commandProcessor.getNormalizedPositionInMicrosteps();
 	commandProcessor.sendStatus();
-	home.onMotorStopped();
 	}

@@ -43,7 +43,6 @@ void CommandProcessor::sendStatus() const
 	std::ostringstream status;
 	status << std::dec << ":SER,"
 		<< getPositionInWholeSteps() << separator
-		<< HomeSensor::atHome() << separator
 		<< getCircumferenceInWholeSteps() << separator
 		<< getHomePositionWholeSteps() << separator
 		<< getDeadZoneWholeSteps()
@@ -134,7 +133,6 @@ Response CommandProcessor::HandleGH(Command& command) const
 	{
 	const auto delta = deltaSteps(settings.home.position);
 	const auto direction = sgn(delta);
-	HomeSensor::findHome(direction == 0 ? 1 : direction);
 	return Response::FromSuccessfulCommand(command);
 	}
 

@@ -4,8 +4,8 @@
 #include "NexDome.h"
 #include "Version.h"
 
-CommandProcessor::CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings, XBeeStateMachine& machine, LimitSwitch& limits)
-	: motor(motor), settings(settings), limitSwitches(limits), machine(machine) {}
+CommandProcessor::CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings, XBeeStateMachine& machine)
+	: motor(motor), settings(settings), machine(machine) {}
 
 int32_t CommandProcessor::microstepsToSteps(int32_t microsteps)
 	{
@@ -32,8 +32,6 @@ void CommandProcessor::sendStatus() const
 		<< "SES" << separator
 		<< getPositionInWholeSteps() << separator
 		<< microstepsToSteps(motor.limitOfTravel()) << separator
-		<< limitSwitches.isOpen() << separator
-		<< limitSwitches.isClosed()
 		<< Response::terminator;
 	machine.SendToRemoteXbee(converter.str());
 	std::cout << converter.str() << std::endl;
@@ -86,21 +84,11 @@ void CommandProcessor::sendToLocalAndRemote(const std::string& message) const
 
 Response CommandProcessor::HandleOP(Command& command)
 	{
-	if (!limitSwitches.isOpen())
-		{
-		sendOpenNotification();
-		motor.moveToPosition(settings.motor.maxPosition);
-		}
 	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleCL(Command& command)
 	{
-	if (!limitSwitches.isClosed())
-		{
-		sendCloseNotification();
-		motor.moveToPosition(-1000);
-		}
 	return Response::FromSuccessfulCommand(command);
 	}
 

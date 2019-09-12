@@ -42,6 +42,11 @@ public:
 	void useCoordinatorAddress();
 	void onXbeeFrameReceived(FrameType type, const std::vector<byte>& payload) const;
 	void TriggerSendCommand(std::string& command);
+	int CCA = 0x2C;
+	const int CCAMax = 0x50;
+	const int CCAIncrement = 0x04;
+
+
 private:
 	friend class IXBeeState;
 	void xbee_serial_receive() const;

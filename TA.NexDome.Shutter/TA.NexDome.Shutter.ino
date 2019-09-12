@@ -13,8 +13,6 @@
 #include "XBeeStartupState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
-#include "LimitSwitch.h"
-#include "BatteryMonitor.h"
 
 void onMotorStopped(); // Forward reference
 
@@ -22,7 +20,6 @@ Timer periodicTasks;
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
-auto limitSwitches = LimitSwitch(&stepper, OPEN_LIMIT_SWITCH_PIN, CLOSED_LIMIT_SWITCH_PIN);
 auto& xbeeSerial = Serial1;
 auto& host = Serial;
 std::string hostReceiveBuffer;
@@ -30,8 +27,7 @@ std::vector<byte> xbeeApiRxBuffer;
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload); // forward reference
 auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(HandleFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbee);
-auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitches);
-auto batteryMonitor = BatteryMonitor(machine, A0, settings.batteryMonitor);
+auto commandProcessor = CommandProcessor(stepper, settings, machine);
 
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 	{
@@ -145,8 +141,6 @@ void setup()
 	periodicTasks.SetDuration(1000);
 	interrupts();
 	machine.ChangeState(new XBeeStartupState(machine));
-	limitSwitches.init(); // attaches interrupt vectors
-	batteryMonitor.initialize(10000);
 	}
 
 // the loop function runs over and over again until power down or reset
@@ -156,7 +150,6 @@ void loop()
 	stepper.loop();
 	HandleSerialCommunications();
 	machine.Loop();
-	batteryMonitor.loop();
 	if (periodicTasks.Expired())
 		{
 		periodicTasks.SetDuration(250);

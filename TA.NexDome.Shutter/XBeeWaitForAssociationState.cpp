@@ -30,5 +30,7 @@ void XBeeWaitForAssociationState::OnModemStatusReceived(ModemStatus status)
  */
 void XBeeWaitForAssociationState::OnTimerExpired()
 	{
+	machine.CCA = std::min(machine.CCA + machine.CCAIncrement, machine.CCAMax);
+	std::cout << "Setting CCA to " << std::hex << machine.CCA << std::dec << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 	}

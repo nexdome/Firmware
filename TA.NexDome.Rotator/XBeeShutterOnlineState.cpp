@@ -7,6 +7,7 @@
 
 void XBeeShutterOnlineState::OnEnter()
 	{
+	std::cout << "*** Final CCA " << std::hex << machine.CCA << std::dec << std::endl;
 	static const std::string ack(XBEE_HELLO_ACK);
 	machine.SendToRemoteXbee(ack);
 	timer.SetDuration(XBEE_NO_HEARTBEAT_TIMEOUT);

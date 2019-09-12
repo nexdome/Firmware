@@ -42,19 +42,10 @@
     <ClInclude Include="__vm\.TA.NexDome.Shutter.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LimitSwitch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XBeeConfigureState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MovingAverage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BatteryMonitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,13 +71,7 @@
     <ClCompile Include="XBeeOnlineState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LimitSwitch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="XBeeConfigureState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BatteryMonitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

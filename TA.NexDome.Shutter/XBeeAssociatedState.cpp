@@ -1,6 +1,6 @@
-// 
-// 
-// 
+//
+//
+//
 
 #include "XBeeAssociatedState.h"
 #include "XBeeOnlineState.h"
@@ -12,6 +12,7 @@
  */
 void XBeeAssociatedState::OnEnter()
 	{
+	std::cout << "\r\r***** Assoc CCA value: " << std::hex << machine.CCA << std::dec << std::endl << std::endl;
 	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
 	sendHello();
 	}

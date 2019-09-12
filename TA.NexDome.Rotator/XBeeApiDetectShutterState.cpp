@@ -19,6 +19,8 @@ void XBeeApiDetectShutterState::OnEnter()
  */
 void XBeeApiDetectShutterState::OnTimerExpired()
 	{
+	machine.CCA = std::min(machine.CCA + machine.CCAIncrement, machine.CCAMax);
+	std::cout << "CCA <- " << std::hex << machine.CCA << std::dec << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 	}
 

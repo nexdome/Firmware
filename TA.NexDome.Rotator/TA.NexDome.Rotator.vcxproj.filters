@@ -42,13 +42,7 @@
     <ClInclude Include="XBeeConfigureState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HomeSensor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RainSensor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -72,12 +66,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XBeeConfigureState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HomeSensor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RainSensor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
