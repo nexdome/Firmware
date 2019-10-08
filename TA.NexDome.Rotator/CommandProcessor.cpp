@@ -8,6 +8,22 @@
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
 	: rotator(rotator), settings(settings), machine(machine) { }
 
+/*
+ * Sends an encapsulated response to the host application
+ */
+void CommandProcessor::responseToHost(const std::string& rxMessage)
+	{
+	auto length = rxMessage.length();
+	if (length < 1) return;
+	if (rxMessage[0] != ':')
+		std::cout << ':';
+	std::cout << rxMessage;
+	if (rxMessage[length - 1] != '#')
+		std::cout << '#';
+	std::cout << std::endl;
+	}
+
+
 Response CommandProcessor::HandleDR(Command& command) const
 	{
 	const auto deadZone = getDeadZoneWholeSteps();
@@ -60,6 +76,8 @@ void CommandProcessor::sendDirection(const int direction)
 	else
 		std::cout << Response::header << clockwise << Response::terminator << std::endl;
 	}
+
+
 
 Response CommandProcessor::ForwardToShutter(Command& command) const
 	{

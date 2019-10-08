@@ -4,6 +4,7 @@
 
 #include "XBeeShutterOnlineState.h"
 #include "XBeeApiDetectShutterState.h"
+#include "CommandProcessor.h"
 
 void XBeeShutterOnlineState::OnEnter()
 	{
@@ -40,7 +41,7 @@ void XBeeShutterOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& pay
 		}
 
 	// If no other interpretation seems appropriate, then send to the host.
-	std::cout << rxMessage << std::endl;
+	CommandProcessor::responseToHost(rxMessage);
 	}
 
 void XBeeShutterOnlineState::SendCommand(std::string& command)
