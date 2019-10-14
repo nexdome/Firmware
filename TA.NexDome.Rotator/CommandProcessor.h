@@ -18,6 +18,7 @@ class CommandProcessor
 	{
 public:
 	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine);
+	static void responseToHost(const std::string& rxMessage);
 	Response HandleDR(Command& command) const;
 	Response HandleDW(Command& command) const;
 	Response HandleCommand(Command& command) const;

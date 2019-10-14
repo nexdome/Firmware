@@ -38,6 +38,6 @@ Response Response::NoResponse(Command& command)
 	return Response{ "" };
 	}
 
-const std::string Response::terminator = "#";
-const std::string Response::header = ":";
+const char Response::terminator = '#';
+const char Response::header = ':';
 
