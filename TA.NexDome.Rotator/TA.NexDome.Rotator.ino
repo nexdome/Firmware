@@ -175,7 +175,9 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 // Handle the motor stop event from the stepper driver.
 void onMotorStopped()
 	{
+	std::cout << "STOP" << std::endl;
+	// First, "normalize" the step position
 	settings.motor.currentPosition = commandProcessor.getNormalizedPositionInMicrosteps();
-	commandProcessor.sendStatus();
 	home.onMotorStopped();
+	commandProcessor.sendStatus();
 	}
