@@ -14,15 +14,16 @@
 #include "Version.h"
 #include "BatteryMonitor.h"
 
+constexpr uint16_t fingerprint = 0x4AFB;
 struct PersistentSettings
-{
-	static const uint16_t fingerprint = 0x4AFB;
+	{
+	uint16_t fingerprintHead = fingerprint;
 	char majorVersion = MajorVersion;
 	char minorVersion = MinorVersion;
 
 	struct MotorSettings motor;
 	struct BatteryMonitorSettings batteryMonitor;
-
+	uint16_t fingerprintTail = fingerprint;
 	PersistentSettings();
 	static PersistentSettings Load();
 	void Save();
