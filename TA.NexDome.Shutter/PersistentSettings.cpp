@@ -1,29 +1,26 @@
-// 
-// 
-// 
+//
+//
+//
 
 #include "PersistentSettings.h"
 #include <EEPROM.h>
 
-PersistentSettings::PersistentSettings()
-	{
-	motor = MotorSettings
-		{
+PersistentSettings::PersistentSettings() :
+	motor(MotorSettings{
 			SHUTTER_FULL_OPEN_DEFAULT,	// Maximum position in microsteps
 			0,							// Current position in microsteps
 			MOTOR_RAMP_TIME,			// Ramp time to full speed in milliseconds
 			SHUTTER_DEFAULT_SPEED,		// Maximum speed in microsteps per second
 			true						// Direction reversed
-		};
-	batteryMonitor = BatteryMonitorSettings();
-	}
+		}),
+	batteryMonitor(BatteryMonitorSettings{})
+	{}
 
 /*
 	Saves persistent settings to EEPROM.
 	Uses update rather than write in an attempt to minimize unnecessary
 	write cycles.
-	Writes a 16-bit fingerprint into the first two EEPROM locations to indicate
-	that valid settings exist.
+	The settings structure already includes the fingerprint. This is validated on loading.
 */
 void PersistentSettings::Save()
 	{
@@ -48,10 +45,7 @@ PersistentSettings PersistentSettings::Load()
 	uint16_t* source = 0;
 	auto loadedSettings = PersistentSettings();
 	eeprom_read_block(&loadedSettings, source, sizeof(PersistentSettings));
-	// Read the fingerprint and make sure it is valid
-	source += sizeof(PersistentSettings);
-	auto eepromFingerprint = eeprom_read_word(source);
-	if (eepromFingerprint != fingerprint)
+	if (loadedSettings.fingerprintHead != fingerprint || loadedSettings.fingerprintTail != fingerprint)
 		return defaultSettings;	// use defaults if fingerprint is invalid
 	// Ensure that the firmware major version is the same as when the settings were saved.
 	if (loadedSettings.majorVersion != MajorVersion)
