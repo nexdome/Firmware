@@ -19,7 +19,9 @@ void XBeeStateMachine::Loop()
 		{
 		xbee_serial_receive();
 		}
-	currentState->Loop();
+	if (currentState!=nullptr)
+		currentState->Loop();
+	StateTransitionIfRequested();
 	}
 
 void XBeeStateMachine::sendToLocalXbee(const std::string& message) const
@@ -96,18 +98,27 @@ void XBeeStateMachine::printEscaped(byte data) const
 
 void XBeeStateMachine::ChangeState(IXBeeState* newState)
 	{
+	nextState = newState;
+	}
+
+void XBeeStateMachine::StateTransitionIfRequested()
+	{
 	// The following line is not diagnostics, it's part of the protocol and must not be commented out.
-	std::cout << "XB->" << newState->name() << std::endl;
-	if (currentState != nullptr)
+	if (nextState != nullptr)
 		{
-		currentState->OnExit();
-		if (currentState != newState)	// we are possibly re-entering the same state
+		std::cout << "XB->" << nextState->name() << std::endl;
+		if (currentState != nullptr)
 			{
-			delete currentState;
+			currentState->OnExit();
+			if (currentState != nextState)	// we are possibly re-entering the same state
+				{
+				delete currentState;
+				}
 			}
+		currentState = nextState;
+		nextState = nullptr;
+		currentState->OnEnter();
 		}
-	currentState = newState;
-	newState->OnEnter();
 	}
 
 void XBeeStateMachine::ListenInAtCommandMode()

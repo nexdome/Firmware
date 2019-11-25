@@ -5,11 +5,13 @@
 
 void XBeeConfigureState::OnTimerExpired()
 	{
+	std::cout << " timeout" << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 	}
 
 void XBeeConfigureState::OnEnter()
 	{
+	timer.SetDuration(XBEE_AT_COMMAND_TIMEOUT);
 	sendNextAtCommand();
 	}
 
@@ -25,6 +27,7 @@ bool XBeeConfigureState::sendNextAtCommand()
 		if (ch == ',')
 		{
 			message.push_back('\r');
+			std::cout << message /*<< std::endl*/;
 			machine.sendToLocalXbee(message);
 			timer.SetDuration(XBEE_AT_COMMAND_TIMEOUT);
 			return true;
@@ -35,10 +38,14 @@ bool XBeeConfigureState::sendNextAtCommand()
 
 void XBeeConfigureState::OnSerialLineReceived(const std::string& message)
 	{
-	if (message != "OK")
-		machine.ChangeState(new XBeeStartupState(machine));
-
-	if (sendNextAtCommand() == false)
-		machine.ChangeState(new XBeeWaitForAssociationState(machine));
+	std::cout << " - " << message << std::endl;
+	if (message == "OK")
+		{
+		if (!sendNextAtCommand())
+			machine.ChangeState(new XBeeWaitForAssociationState(machine));
+		return;
+		}
+	// Any response but "OK" causes the configuration process to be restarted from scratch
+	machine.ChangeState(new XBeeStartupState(machine));
 	}
 
