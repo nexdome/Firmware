@@ -1,9 +1,13 @@
-// 
-// 
-// 
+/*
+ * XBee has associated with a remote coordinator.
+ * Send a "hello" message and await a response.
+ * If response received within the allotted time, then we are online.
+ * If no response received, reconfigure the XBee from scratch.
+ */
 
 #include "XBeeAssociatedState.h"
 #include "XBeeOnlineState.h"
+#include "XBeeWaitForCommandModeState.h"
 
 /*
  * Send a "Hello" message to the Rotator to let it know we are alive and
@@ -48,6 +52,7 @@ void XBeeAssociatedState::OnApiRx64FrameReceived(const std::vector<byte>& payloa
  */
 void XBeeAssociatedState::OnTimerExpired()
 	{
-	timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
-	sendHello();
+	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
+	//timer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
+	//sendHello();
 	}

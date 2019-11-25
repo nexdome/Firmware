@@ -3,7 +3,7 @@
 // 
 
 #include "XBeeOnlineState.h"
-#include "XBeeAssociatedState.h"
+#include "XBeeStartupState.h"
 #include "Response.h"
 
 extern Response DispatchCommand(const std::string& command);	// defined in global scope in the .ino file
@@ -11,11 +11,27 @@ extern Response DispatchCommand(const std::string& command);	// defined in globa
 void XBeeOnlineState::OnEnter()
 	{
 	timer.SetDuration(XBEE_HEARTBEAT_INTERVAL);
+	handshakeTimer.Stop();
+	}
+
+inline void XBeeOnlineState::sendHello()
+	{
+	static const std::string hello(XBEE_HELLO_MESSAGE);
+	machine.SendToRemoteXbee(hello);
+	handshakeTimer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
 	}
 
 void XBeeOnlineState::OnTimerExpired()
 	{
-	machine.ChangeState(new XBeeAssociatedState(machine));
+	sendHello();
+	}
+
+void XBeeOnlineState::Loop()
+	{
+	if (handshakeTimer.Expired())
+		{
+		machine.ChangeState(new XBeeStartupState(machine));
+		}
 	}
 
 void XBeeOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
@@ -32,5 +48,14 @@ void XBeeOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
 		const auto commandString = std::string(payload.begin() + 10, payload.end());
 		const auto response = DispatchCommand(commandString);
 		machine.SendToRemoteXbee(response.Message);
+		return;
+		}
+	// Test for "Hello" acknowledgement
+	const auto msgStart = payload.begin() + 10;
+	const auto msgEnd = payload.end();
+	const std::string rxMessage(msgStart, msgEnd);
+	if (rxMessage == XBEE_HELLO_ACK)
+		{
+		handshakeTimer.Stop();
 		}
 	}
