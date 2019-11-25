@@ -11,8 +11,8 @@
 #define XBEE_AT_GUARD_TIME (1200UL)				// Wait time before sending AT attention string and receiving "OK"
 #define XBEE_AT_COMMAND_TIMEOUT (5000UL)		// Time to wait for "OK" response to AT command before giving up
 #define XBEE_REMOTE_HANDSHAKE_TIMEOUT (3000UL)	// Maximum time to wait for rotator to acknowledge the hello message.
-#define XBEE_ASSOCIATE_TIMEOUT (10000UL)		// Maximum time to wait for shutter to associate with a coordinator.
-#define XBEE_DETECT_SHUTTER_TIMEOUT (20000UL)	// Maximum time to wait for the shutter to say hello.
+#define XBEE_ASSOCIATE_TIMEOUT (20000UL)		// Maximum time to wait for shutter to associate with a coordinator.
+#define XBEE_DETECT_SHUTTER_TIMEOUT (60000UL)	// Maximum time to wait for the shutter to say hello.
 #define XBEE_HEARTBEAT_INTERVAL (8000UL)		// How often the shutter sends a 'heartbeat' message
 #define XBEE_NO_HEARTBEAT_TIMEOUT (	17000UL)	// How long to wait for a heartbeat before assuming the link is down
 #define XBEE_HELLO_MESSAGE "Yoohoo"				// A retro shout-out to FidoNet era mailer called dBridge.
