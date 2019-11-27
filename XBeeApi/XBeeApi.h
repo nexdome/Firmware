@@ -103,6 +103,7 @@ private:
 	void printFrame();
 	void printChecksum();
 	void printRxChar(byte rxb);
+	void printFrameType();
 #endif
 	};
 

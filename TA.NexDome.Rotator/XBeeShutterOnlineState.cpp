@@ -33,7 +33,8 @@ void XBeeShutterOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& pay
 	const auto msgStart = payload.begin() + 10;
 	const auto msgEnd = payload.end();
 	const std::string rxMessage(msgStart, msgEnd);
-	if (rxMessage.compare(XBEE_HELLO_MESSAGE) == 0)
+	std::cout << "rx " << rxMessage << std::endl;
+	if (rxMessage == XBEE_HELLO_MESSAGE)
 		{
 		machine.SetDestinationAddress(payload);
 		machine.ChangeState(new XBeeShutterOnlineState(machine));

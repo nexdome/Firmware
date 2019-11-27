@@ -5,7 +5,9 @@
 
 void XBeeConfigureState::OnTimerExpired()
 	{
+#ifdef DEBUG_XBEE_CONFIG
 	std::cout << " timeout" << std::endl;
+#endif
 	machine.ChangeState(new XBeeStartupState(machine));
 	}
 
@@ -26,9 +28,10 @@ bool XBeeConfigureState::sendNextAtCommand()
 		if (ch == 0) return false;
 		if (ch == ',')
 		{
+#ifdef DEBUG_XBEE_CONFIG
 			std::cout << message;
+#endif
 			message.push_back('\r');
-			std::cout << message /*<< std::endl*/;
 			machine.sendToLocalXbee(message);
 			timer.SetDuration(XBEE_AT_COMMAND_TIMEOUT);
 			return true;
@@ -39,7 +42,9 @@ bool XBeeConfigureState::sendNextAtCommand()
 
 void XBeeConfigureState::OnSerialLineReceived(const std::string& message)
 	{
+#ifdef DEBUG_XBEE_CONFIG
 	std::cout << " - " << message << std::endl;
+#endif
 	if (message == "OK")
 		{
 		if (!sendNextAtCommand())
