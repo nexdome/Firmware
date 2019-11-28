@@ -22,6 +22,7 @@ void onMotorStopped();
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
+//std::ohserialstream xout(Serial1);
 auto& xbeeSerial = Serial1;
 auto& host = Serial;
 std::string hostReceiveBuffer;

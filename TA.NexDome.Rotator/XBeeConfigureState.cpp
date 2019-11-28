@@ -5,6 +5,9 @@
 
 void XBeeConfigureState::OnTimerExpired()
 	{
+#ifdef DEBUG_XBEE_CONFIG
+	std::cout << " timeout" << std::endl;
+#endif
 	machine.ChangeState(new XBeeStartupState(machine));
 	}
 
@@ -24,9 +27,11 @@ bool XBeeConfigureState::sendNextAtCommand()
 		if (ch == 0) return false;
 		if (ch == ',')
 		{
+
 #ifdef DEBUG_XBEE_CONFIG
 			std::cout << message;
 #endif
+			delay(XbeeInterAtCommandDelay);
 			message.push_back('\r');
 			machine.sendToLocalXbee(message);
 			timer.SetDuration(XBEE_AT_COMMAND_TIMEOUT);

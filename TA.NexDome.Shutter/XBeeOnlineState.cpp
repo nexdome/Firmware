@@ -46,7 +46,9 @@ void XBeeOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
 	const auto msgStart = payload.begin() + 10;
 	const auto msgEnd = payload.end();
 	const std::string rxMessage(msgStart, msgEnd);
+#ifdef DEBUG_XBEE_API
 	std::cout << "Rx64 " << rxMessage << std::endl;
+#endif
 	// payload[10] is the first byte of the received data
 	if (length > 10 && payload[10] == '@')
 		{

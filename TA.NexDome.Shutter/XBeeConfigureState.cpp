@@ -31,6 +31,7 @@ bool XBeeConfigureState::sendNextAtCommand()
 #ifdef DEBUG_XBEE_CONFIG
 			std::cout << message;
 #endif
+			delay(XbeeInterAtCommandDelay);
 			message.push_back('\r');
 			machine.sendToLocalXbee(message);
 			timer.SetDuration(XBEE_AT_COMMAND_TIMEOUT);
