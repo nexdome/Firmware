@@ -26,10 +26,8 @@ else {
     Remove-Item "$DeployDirectory\ReadMe.pdf" -ErrorAction Ignore
 }
 
-Copy-Item ".\TA.NexDome.Rotator\Release\TA.NexDome.Rotator.hex" -Destination "$DeployDirectory\" -Force
-Copy-Item ".\TA.NexDome.Shutter\Release\TA.NexDome.Shutter.hex" -Destination "$DeployDirectory\" -Force
-Copy-Item ".\XBeeFactoryReset\Release\XBeeFactoryReset.hex" -Destination "$DeployDirectory\" -Force
-Copy-Item ".\ReadMe.pdf" -Destination "$DeployDirectory\" -Force
+Copy-Item ".\TA.NexDome.Rotator\Release\TA.NexDome.Rotator.hex" -Destination "$DeployDirectory\Rotator-$semver.hex" -Force
+Copy-Item ".\TA.NexDome.Shutter\Release\TA.NexDome.Shutter.hex" -Destination "$DeployDirectory\Shutter-$semver.hex" -Force
 
 Write-Host "Deploy complete. Now build the ASCOM driver solution."
 
