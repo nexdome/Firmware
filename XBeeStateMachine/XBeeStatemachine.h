@@ -1,30 +1,23 @@
 // XbeeStateMachine.h
 
-#ifndef _XBEESTATE_h
-#define _XBEESTATE_h
-
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
+#pragma once
+#include <Arduino.h>
 
 #include <ArduinoSTL.h>
 #include <XBeeApi.h>
 #include <Timer.h>
 
-
-#define XBEE_BOOT_TIME_MILLIS (5000UL)			// Time for XBEE to become ready from cold reset
-#define XBEE_AT_GUARD_TIME (1500UL)				// Wait time before sending AT attention string and receiving "OK"
-#define XBEE_AT_COMMAND_TIMEOUT (5000UL)		// Time to wait for "OK" response to AT command before giving up
-#define XBEE_REMOTE_HANDSHAKE_TIMEOUT (5000UL)	// Maximum time to wait for rotator to acknowledge the hello message.
-#define XBEE_ASSOCIATE_TIMEOUT (20000UL)		// Maximum time to wait for shutter to associate with a coordinator.
-#define XBEE_DETECT_SHUTTER_TIMEOUT (40000UL)	// Maximum time to wait for the shutter to say hello.
-#define XBEE_HEARTBEAT_INTERVAL (10000UL)		// How often the shutter sends a 'heartbeat' message
-#define XBEE_NO_HEARTBEAT_TIMEOUT (	30000UL)	// How long to wait for a heartbeat before assuming the link is down
-#define XBEE_HELLO_MESSAGE "Yoohoo"				// A retro shout-out to FidoNet era mailer called dBridge.
-#define XBEE_HELLO_ACK "2U2"				// (yes I am old enough to remember FidoNet).
-#define XBEE_ATTENTION "+++"					// Guard Time + Attention + Guard Time reverts XBee to AT Command Mode
+constexpr Duration XBEE_AT_GUARD_TIME = Timer::Milliseconds(1200);	// Wait time before sending AT attention string and receiving "OK"
+constexpr Duration XBEE_AT_COMMAND_TIMEOUT = Timer::Seconds(5);				// Time to wait for "OK" response to AT command before giving up
+constexpr Duration XbeeInterAtCommandDelay = Timer::Milliseconds(100);
+constexpr Duration XBEE_REMOTE_HANDSHAKE_TIMEOUT = Timer::Seconds(3);		// Maximum time to wait for rotator to acknowledge the hello message.
+constexpr Duration XBEE_ASSOCIATE_TIMEOUT = Timer::Seconds(20);				// Maximum time to wait for shutter to associate with a coordinator.
+constexpr Duration XBEE_DETECT_SHUTTER_TIMEOUT = Timer::Seconds(60);		// Maximum time to wait for the shutter to say hello.
+constexpr Duration XBEE_HEARTBEAT_INTERVAL = Timer::Seconds(8);				// How often the shutter sends a 'heartbeat' message
+constexpr Duration XBEE_NO_HEARTBEAT_TIMEOUT = Timer::Seconds(17);			// How long to wait for a heartbeat before assuming the link is down
+#define XBEE_HELLO_MESSAGE "Yoohoo"	// A retro shout-out to FidoNet era mailer called dBridge.
+#define XBEE_HELLO_ACK "2U2"		// (yes I am old enough to remember FidoNet).
+#define XBEE_ATTENTION "+++"		// Guard Time + Attention + Guard Time reverts XBee to AT Command Mode
 
 class IXBeeState;
 
@@ -34,7 +27,8 @@ public:
 	XBeeStateMachine(HardwareSerial& xBeePort, XBeeApi& xbee);
 	void Loop();
 	void ChangeState(IXBeeState* newState);
-	void ListenInAtCommandMode();
+void StateTransitionIfRequested();
+void ListenInAtCommandMode();
 	void ListenInApiMode();
 	void sendToLocalXbee(const std::string& message) const;
 	void SendToRemoteXbee(const std::string& message);
@@ -52,9 +46,10 @@ private:
 	HardwareSerial& xbeeSerial;
 	XBeeApi& xbeeApi;
 	std::vector<byte> remoteAddress;
-	IXBeeState* currentState;
+	IXBeeState* currentState = nullptr;
 	bool ApiModeEnabled = false;
 	byte frameId = 0;
+	IXBeeState* nextState = nullptr;
 };
 
 class IXBeeState
@@ -86,5 +81,3 @@ protected:
 	XBeeStateMachine& machine;
 	static Timer timer;
 };
-
-#endif

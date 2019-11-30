@@ -22,6 +22,7 @@ void onMotorStopped();
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
+//std::ohserialstream xout(Serial1);
 auto& xbeeSerial = Serial1;
 auto& host = Serial;
 std::string hostReceiveBuffer;
@@ -175,7 +176,9 @@ void onXbeeFrameReceived(FrameType type, std::vector<byte>& payload)
 // Handle the motor stop event from the stepper driver.
 void onMotorStopped()
 	{
+	std::cout << "STOP" << std::endl;
+	// First, "normalize" the step position
 	settings.motor.currentPosition = commandProcessor.getNormalizedPositionInMicrosteps();
-	commandProcessor.sendStatus();
 	home.onMotorStopped();
+	commandProcessor.sendStatus();
 	}

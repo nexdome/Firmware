@@ -11,8 +11,8 @@
 
 struct Response
 {
-	static const std::string terminator;
-	static const std::string header;
+	static const char terminator;
+	static const char header;
 	std::string Message;
 
 	friend std::ostream& operator<<(std::ostream&, const Response&);

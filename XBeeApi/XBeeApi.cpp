@@ -143,6 +143,8 @@ void XBeeApi::printFrame()
 	{
 	Serial.print(F("Type: "));
 	Serial.print(frameType, HEX);
+	Serial.print(' ');
+	printFrameType();
 	Serial.print(F(" Length: "));
 	Serial.print(frameLength);
 	Serial.println();
@@ -166,5 +168,27 @@ void XBeeApi::printRxChar(byte rxb)
 	Serial.print(rxState, HEX);
 	Serial.print(" Rx: ");
 	Serial.println(rxb, HEX);
+	}
+
+void XBeeApi::printFrameType()
+	{
+	switch(frameType)
+		{
+		case Rx64Response:
+			std::cout << "Rx64";
+			break;
+		case Rx16Response:
+			std::cout << "Rx16";
+			break;
+		case TxStatusResponse:
+			std::cout << "TxStat";
+			break;
+		case ModemStatusResponse:
+			std::cout << "Modem";
+			break;
+		default:
+			std::cout << "Unsupported";
+			break;
+		}
 	}
 #endif

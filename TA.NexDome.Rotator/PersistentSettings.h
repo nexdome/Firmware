@@ -13,14 +13,16 @@
 #include "HomeSensor.h"
 #include "Version.h"
 
+constexpr uint16_t fingerprint = 0x4AFB;
 struct PersistentSettings
 {
-	static const uint16_t fingerprint = 0x4AFB;
+	uint16_t fingerprintHead = fingerprint;
 	uint8_t majorVersion = MajorVersion;
 	uint8_t minorVersion = MinorVersion;
 	struct MotorSettings motor{};
 	struct Home home;
 	int deadZone = 1000;
+	uint16_t fingerprintTail = fingerprint;
 	PersistentSettings();
 	static PersistentSettings Load();
 	void Save();

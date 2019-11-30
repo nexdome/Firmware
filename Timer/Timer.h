@@ -15,10 +15,10 @@
 #endif
 
 /*
-	A simple timer that works correctly with Arduino's 	millis() function and 
+	A simple timer that works correctly with Arduino's 	millis() function and
 	unsigned arithmetic, provided the timed interval is short compared to the
 	maximum value of millis(), which is about 49 days.
-	
+
 	On an Arduino, millis() returns a 32-bit unsigned
 	integer, with maximum value of 4,294,967,295 (2^32 - 1). This represents
 	a duration of about 49 days, after which the value of millis() will wrap
@@ -61,8 +61,11 @@ public:
 	Duration Remaining() const;
 	bool Enabled() const;
 	void Stop();
+	static constexpr Duration Milliseconds(unsigned long millis) { return Duration(millis); }
+	static constexpr Duration Milliseconds(unsigned millis) { return Duration(millis); }
+	static constexpr Duration Milliseconds(int millis) { return Duration(unsigned(millis)); }
 	static constexpr Duration Seconds(float seconds) { return Duration(1000 * seconds); }
-	static constexpr Duration Minutes(float minutes) { return Duration(Seconds(60) * minutes); }
+	static constexpr Duration Minutes(float minutes) { return Duration(Seconds(60 * minutes)); }
 private:
 	Duration startedAt;
 	Duration interval;

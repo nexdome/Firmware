@@ -17,7 +17,11 @@ public:
 	 std::string name() override { return ("Online"); }
 	void OnEnter() override;
 	void OnTimerExpired() override;
+	void Loop() override;
 	virtual void OnApiRx64FrameReceived(const std::vector<byte>& payload) override;
+private:
+	Timer handshakeTimer;
+	void sendHello();
 };
 
 #endif

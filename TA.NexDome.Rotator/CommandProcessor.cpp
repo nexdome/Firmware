@@ -8,6 +8,22 @@
 CommandProcessor::CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine)
 	: rotator(rotator), settings(settings), machine(machine) { }
 
+/*
+ * Sends an encapsulated response to the host application
+ */
+void CommandProcessor::responseToHost(const std::string& rxMessage)
+	{
+	auto length = rxMessage.length();
+	if (length < 1) return;
+	if (rxMessage[0] != ':')
+		std::cout << ':';
+	std::cout << rxMessage;
+	if (rxMessage[length - 1] != '#')
+		std::cout << '#';
+	std::cout << std::endl;
+	}
+
+
 Response CommandProcessor::HandleDR(Command& command) const
 	{
 	const auto deadZone = getDeadZoneWholeSteps();
@@ -39,6 +55,8 @@ Response CommandProcessor::HandleHW(Command& command) const
 
 void CommandProcessor::sendStatus() const
 	{
+	if (HomeSensor::homingInProgress())
+		return;
 	const char separator = ',';
 	std::ostringstream status;
 	status << std::dec << ":SER,"
@@ -60,6 +78,8 @@ void CommandProcessor::sendDirection(const int direction)
 	else
 		std::cout << Response::header << clockwise << Response::terminator << std::endl;
 	}
+
+
 
 Response CommandProcessor::ForwardToShutter(Command& command) const
 	{
@@ -121,9 +141,9 @@ Response CommandProcessor::HandleGA(Command& command) const
 	const auto currentPosition = rotator.getCurrentPosition();
 	const auto delta = target - currentPosition;
 	const auto direction = sgn(delta);
-	std::cout << delta << " [" << settings.deadZone << "]" << std::endl;
 	if (abs(delta) >= settings.deadZone)
 		{
+		HomeSensor::cancelHoming();
 		sendDirection(direction);
 		rotator.moveToPosition(target);
 		}

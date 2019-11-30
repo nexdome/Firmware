@@ -1,9 +1,10 @@
-// 
-// 
-// 
+//
+//
+//
 
 #include "XBeeShutterOnlineState.h"
-#include "XBeeApiDetectShutterState.h"
+#include "XBeeStartupState.h"
+#include "CommandProcessor.h"
 
 void XBeeShutterOnlineState::OnEnter()
 	{
@@ -20,7 +21,7 @@ re-established and confirmed.
 */
 void XBeeShutterOnlineState::OnTimerExpired()
 	{
-	machine.ChangeState(new XBeeApiDetectShutterState(machine));
+	machine.ChangeState(new XBeeStartupState(machine));
 	}
 
 
@@ -32,7 +33,7 @@ void XBeeShutterOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& pay
 	const auto msgStart = payload.begin() + 10;
 	const auto msgEnd = payload.end();
 	const std::string rxMessage(msgStart, msgEnd);
-	if (rxMessage.compare(XBEE_HELLO_MESSAGE) == 0)
+	if (rxMessage == XBEE_HELLO_MESSAGE)
 		{
 		machine.SetDestinationAddress(payload);
 		machine.ChangeState(new XBeeShutterOnlineState(machine));
@@ -40,7 +41,7 @@ void XBeeShutterOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& pay
 		}
 
 	// If no other interpretation seems appropriate, then send to the host.
-	std::cout << rxMessage << std::endl;
+	CommandProcessor::responseToHost(rxMessage);
 	}
 
 void XBeeShutterOnlineState::SendCommand(std::string& command)

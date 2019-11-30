@@ -39,6 +39,7 @@ void XBeeConfigureState::OnSerialLineReceived(const std::string& message)
 	{
 		std::cout << "Unexpected response (expected 'OK') - start again.";
 		machine.ChangeState(new XBeeStartupState(machine));
+		return;
 	}
 
 	if (sendNextAtCommand() == false)

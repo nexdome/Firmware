@@ -1,8 +1,4 @@
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
+#include <Arduino.h>
 
 #include <ArduinoSTL.h>
 #include <sstream>
@@ -14,7 +10,10 @@
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "LimitSwitch.h"
+#define DEBUG_CONSERVE_FLASH (defined DEBUG_XBEE_API || defined DEBUG_XBEE_CONFIG)
+#if !DEBUG_CONSERVE_FLASH
 #include "BatteryMonitor.h"
+#endif
 
 void onMotorStopped(); // Forward reference
 
@@ -31,7 +30,9 @@ void HandleFrameReceived(FrameType type, const std::vector<byte>& payload); // f
 auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(HandleFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbee);
 auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitches);
+#if !DEBUG_CONSERVE_FLASH
 auto batteryMonitor = BatteryMonitor(machine, A0, settings.batteryMonitor);
+#endif
 
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 	{
@@ -146,7 +147,9 @@ void setup()
 	interrupts();
 	machine.ChangeState(new XBeeStartupState(machine));
 	limitSwitches.init(); // attaches interrupt vectors
+#if !DEBUG_CONSERVE_FLASH
 	batteryMonitor.initialize(10000);
+#endif
 	}
 
 // the loop function runs over and over again until power down or reset
@@ -156,7 +159,9 @@ void loop()
 	stepper.loop();
 	HandleSerialCommunications();
 	machine.Loop();
+#if !DEBUG_CONSERVE_FLASH
 	batteryMonitor.loop();
+#endif
 	if (periodicTasks.Expired())
 		{
 		periodicTasks.SetDuration(250);
