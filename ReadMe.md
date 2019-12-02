@@ -138,6 +138,7 @@ DW  | R       | ddddd     | :DWR#      | @DWR,300   | Write Dead-zone in steps [
 FR  | RS      | none      | :FRstring# | @FRR       | Reads the semantic version (SemVer) string of the firmware.
 GA  | R       | ddd       | :GAR#      | @GAR,180   | Goto Azimuth (param: integer degrees)
 GH  | R       | none      | :GHR#      | @GHR       | Rotates clockwise until the home sensor is detected and synchronizes the azimuth to the home position.
+GS  | R       | ddddd     | :GSR#      | @GSR,1000  | Goto whole step position (0 <=param <= @RRR)
 HR  | R       | none      | :HRRddddd# | @HRR       | Home position Read (steps clockwise from true north)
 HW  | R       | ddddd     | :HWR#      | @HWR,1000  | Home position Write (seps clockwise from true north)
 PR  | RS      | none      | :PRt-dddd# | @PRR       | Position Read - get current step position in whole steps (signed integer)
