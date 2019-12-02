@@ -105,6 +105,7 @@ Response CommandProcessor::HandleCommand(Command& command) const
 		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
 		if (command.Verb == "GA") return HandleGA(command); // Goto Azimuth (rotator only)
 		if (command.Verb == "GH") return HandleGH(command); // Goto Home Sensor (rotator only)
+		if (command.Verb == "GS") return HandleGS(command); // Goto step position (rotator only)
 		if (command.Verb == "HR") return HandleHR(command); // Home position Read (rotator only)
 		if (command.Verb == "HW") return HandleHW(command); // Home position Write (rotator only)
 		if (command.Verb == "SW") return HandleSW(command); // Stop motor (emergency stop)
@@ -134,19 +135,30 @@ Response CommandProcessor::HandleAR(Command& command) const
 	}
 
 
+void CommandProcessor::rotateToMicrostepPosition(const int32_t target) const {
+const auto currentPosition = rotator.getCurrentPosition();
+const auto delta = target - currentPosition;
+const auto direction = sgn(delta);
+if (abs(delta) >= settings.deadZone)
+	{
+	HomeSensor::cancelHoming();
+	sendDirection(direction);
+	rotator.moveToPosition(target);
+	}
+}
+
 Response CommandProcessor::HandleGA(Command& command) const
 	{
 	const auto microstepsPerDegree = settings.home.microstepsPerRotation / 360.0;
 	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
-	const auto currentPosition = rotator.getCurrentPosition();
-	const auto delta = target - currentPosition;
-	const auto direction = sgn(delta);
-	if (abs(delta) >= settings.deadZone)
-		{
-		HomeSensor::cancelHoming();
-		sendDirection(direction);
-		rotator.moveToPosition(target);
-		}
+	rotateToMicrostepPosition(target);
+	return Response::FromSuccessfulCommand(command);
+	}
+
+Response CommandProcessor::HandleGS(Command& command) const
+	{
+	const auto target = targetStepPosition(stepsToMicrosteps(command.StepPosition));
+	rotateToMicrostepPosition(target);
 	return Response::FromSuccessfulCommand(command);
 	}
 

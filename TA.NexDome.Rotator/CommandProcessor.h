@@ -39,6 +39,8 @@ private:
 	Response HandleAW(Command& command) const; // AW - Acceleration ramp time write
 	Response HandleFR(Command& command) const; // Firmware version read
 	Response HandleGA(Command& command) const; // GA - GoTo Azimuth (in degrees).
+	void rotateToMicrostepPosition(int32_t target) const;
+	Response HandleGS(Command& command) const; // GS - GoTo Step Position
 	Response HandleGH(Command& command) const; // Go to home sensor
 	Response HandleHR(Command& command) const; // Read Home position (steps clockwise from true north)
 	Response HandleHW(Command& command) const; // Write home position (steps clockwise from true north)
