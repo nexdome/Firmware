@@ -12,19 +12,22 @@
 #include <AdvancedStepper.h>
 
 class LimitSwitch
-{
-public:
-	LimitSwitch(MicrosteppingMotor* stepper, uint8_t openLimit, uint8_t closeLimit);
-	bool isOpen() const;
-	bool isClosed() const;
-	void init();
-private:
-	uint8_t openLimitPin;
-	uint8_t closedLimitPin;
-	static MicrosteppingMotor * motor;
-	static void onOpenLimitReached();
-	static void onCloseLimitReached();
-};
+	{
+	public:
+		LimitSwitch(MicrosteppingMotor* stepper, uint8_t openLimit, uint8_t closeLimit);
+		bool isOpen() const;
+		bool isClosed() const;
+		void init() const;
+		void onMotorStopped();
+
+	private:
+		uint8_t openLimitPin;
+		uint8_t closedLimitPin;
+		static volatile bool closeTriggered;
+		static MicrosteppingMotor* motor;
+		static void onOpenLimitReached();
+		static void onCloseLimitReached();
+	};
 
 #endif
 

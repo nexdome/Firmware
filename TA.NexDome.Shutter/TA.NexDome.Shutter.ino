@@ -182,5 +182,6 @@ void loop()
 // Handle the motor stop event from the stepper driver.
 void onMotorStopped()
 	{
+	limitSwitches.onMotorStopped();
 	commandProcessor.sendStatus();
 	}
