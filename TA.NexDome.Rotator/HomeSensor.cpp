@@ -68,8 +68,7 @@ bool HomeSensor::atHome()
 void HomeSensor::setPhase(HomingPhase newPhase)
 	{
 	phase = newPhase;
-	Serial.print("Phase ");
-	Serial.println(phase);
+	std::cout << "Phase " << phase << std::endl;
 	}
 
 /*
@@ -115,20 +114,19 @@ void HomeSensor::foundHome()
 void HomeSensor::onMotorStopped() const
 	{
 	std::cout << "Hstop " << phase << std::endl;
-	switch (phase)
+	if (phase == Reversing)
 		{
-		case Reversing:
-			setPhase(AtHome);
-			break;
-		case Stopping:
-			setPhase(Reversing);
-			const auto target = commandProcessor.targetStepPosition(homeSettings->position);
-			motor->moveToPosition(target);
-			break;
-		default:
-			setPhase(Idle);
-			return;
+		setPhase(AtHome);
+		return;
 		}
+	if (phase == Stopping)
+		{
+		setPhase(Reversing);
+		const auto target = commandProcessor.targetStepPosition(homeSettings->position);
+		motor->moveToPosition(target);
+		return;
+		}
+	setPhase(Idle);
 	}
 
 bool HomeSensor::homingInProgress()
