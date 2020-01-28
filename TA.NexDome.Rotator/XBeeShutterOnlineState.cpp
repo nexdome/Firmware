@@ -3,7 +3,7 @@
 //
 
 #include "XBeeShutterOnlineState.h"
-#include "XBeeStartupState.h"
+#include "XBeeWaitForCommandModeState.h"
 #include "CommandProcessor.h"
 
 void XBeeShutterOnlineState::OnEnter()
@@ -21,7 +21,8 @@ re-established and confirmed.
 */
 void XBeeShutterOnlineState::OnTimerExpired()
 	{
-	machine.ChangeState(new XBeeStartupState(machine));
+	std::cout << "timeout" << std::endl;
+	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 	}
 
 

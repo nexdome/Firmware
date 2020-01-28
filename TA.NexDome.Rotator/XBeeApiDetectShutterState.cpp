@@ -1,6 +1,6 @@
 #include "XBeeApiDetectShutterState.h"
 #include "XBeeShutterOnlineState.h"
-#include "XBeeStartupState.h"
+#include "XBeeWaitForCommandModeState.h"
 
 /*
  * We expect to receive a Hello message from the shutter XBee within a reasonable period
@@ -19,7 +19,7 @@ void XBeeApiDetectShutterState::OnEnter()
  */
 void XBeeApiDetectShutterState::OnTimerExpired()
 	{
-	machine.ChangeState(new XBeeStartupState(machine));
+	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 	}
 
 /*

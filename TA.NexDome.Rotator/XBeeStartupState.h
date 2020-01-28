@@ -11,7 +11,7 @@
 #include <XBeeStateMachine.h>
 
 // The time that the state machine will wait before attempting to configure the XBee
-constexpr Duration XbeeBootTime = Timer::Seconds(1);
+constexpr Duration XbeeBootTime = Timer::Seconds(10);
 
 class XBeeStartupState : public IXBeeState
 {

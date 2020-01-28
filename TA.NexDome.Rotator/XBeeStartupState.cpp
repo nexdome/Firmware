@@ -4,7 +4,7 @@
 
 void XBeeStartupState::OnEnter()
 {
-	machine.ListenInAtCommandMode();
+	//machine.ListenInAtCommandMode();
 	timer.SetDuration(XbeeBootTime);
 }
 

@@ -20,6 +20,7 @@ inline void XBeeOnlineState::sendHello()
 	machine.SendToRemoteXbee(hello);
 	timer.SetDuration(XBEE_HEARTBEAT_INTERVAL);
 	handshakeTimer.SetDuration(XBEE_REMOTE_HANDSHAKE_TIMEOUT);
+	std::cout << "ping " << millis() << std::endl;
 	}
 
 void XBeeOnlineState::OnTimerExpired()
