@@ -33,6 +33,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeApi", "XBeeApi\XBeeApi.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XBeeFactoryReset", "XBeeFactoryReset\XBeeFactoryReset.vcxproj", "{260C6D09-230E-4D8F-9FC1-39C76087CE8D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoSTL-1.1.0", "Libraries\ArduinoSTL\1.1.0\ArduinoSTL\ArduinoSTL-1.1.0.vcxitems", "{C7FA71C2-1335-4A2C-9042-6C5CC165C808}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Timer\Timer.vcxitems*{260c6d09-230e-4d8f-9fc1-39c76087ce8d}*SharedItemsImports = 4
@@ -41,11 +43,13 @@ Global
 		AdvancedStepper\AdvancedStepper.vcxitems*{893a4046-8112-4d9c-a69c-c1d11554760f}*SharedItemsImports = 9
 		Timer\Timer.vcxitems*{a7498378-97ab-4f1d-af51-37412422ef0f}*SharedItemsImports = 9
 		AdvancedStepper\AdvancedStepper.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
+		Libraries\ArduinoSTL\1.1.0\ArduinoSTL\ArduinoSTL-1.1.0.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		SharedCode\SharedCode.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		Timer\Timer.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		XBeeApi\XBeeApi.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		XBeeStatemachine\XBeeStatemachine.vcxitems*{c5f80730-f44f-4478-bdae-6634efc2ca88}*SharedItemsImports = 4
 		XBeeStatemachine\XBeeStatemachine.vcxitems*{c7bef4c6-f140-4d54-9c00-c333bdc513b6}*SharedItemsImports = 9
+		Libraries\ArduinoSTL\1.1.0\ArduinoSTL\ArduinoSTL-1.1.0.vcxitems*{c7fa71c2-1335-4a2c-9042-6c5cc165c808}*SharedItemsImports = 9
 		XBeeApi\XBeeApi.vcxitems*{d566cdcc-f634-4ba0-93e6-0aa2c0d80ad0}*SharedItemsImports = 9
 		SharedCode\SharedCode.vcxitems*{deb85c95-f303-4660-a4d9-713323ffa19a}*SharedItemsImports = 9
 		AdvancedStepper\AdvancedStepper.vcxitems*{f3368067-9881-4ed7-9afe-b31d67dfeead}*SharedItemsImports = 4

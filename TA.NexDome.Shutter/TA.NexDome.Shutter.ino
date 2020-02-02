@@ -103,7 +103,7 @@ Response DispatchCommand(const std::string& buffer)
 
 void HandleSerialCommunications()
 	{
-	if (host.available() <= 0)
+	if (!host || host.available() <= 0)
 		return; // No data available.
 	const auto rx = host.read();
 	if (rx < 0)

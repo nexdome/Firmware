@@ -1,5 +1,4 @@
 #if defined(ARDUINO) && ARDUINO >= 100
-#include "RainSensor.h"
 #include "Arduino.h"
 #else
 #include "WProgram.h"
@@ -8,6 +7,7 @@
 #include <ArduinoSTL.h>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
+#include "RainSensor.h"
 #include "NexDome.h"
 #include "PersistentSettings.h"
 #include "HomeSensor.h"
@@ -71,7 +71,7 @@ Response DispatchCommand(const std::string& buffer)
  */
 void HandleSerialCommunications()
 	{
-	if (host.available() <= 0)
+	if (!host || host.available() <= 0)
 		return;	// No data available.
 	const auto rx = host.read();
 	if (rx < 0)
@@ -116,8 +116,8 @@ void setup() {
 	periodicTasks.SetDuration(1000);
 	HomeSensor::init();
 	rain.init(Timer::Seconds(30));
+	pinMode(LED_BUILTIN, OUTPUT);
 	interrupts();
-	std::cout << F("Init") << std::endl;
 	machine.ChangeState(new XBeeStartupState(machine));
 	}
 
@@ -152,6 +152,13 @@ void ProcessManualControls()
 	counterclockwiseButtonLastState = counterclockwiseButtonPressed;
 	}
 
+void heartbeat()
+	{
+	static bool state = false;
+	state = !state;
+	digitalWrite(LED_BUILTIN, state ? HIGH : LOW);
+	}
+
 // the loop function runs over and over again until power down or reset
 void loop() {
 	stepper.loop();
@@ -160,6 +167,9 @@ void loop() {
 	if (periodicTasks.Expired())
 		{
 		periodicTasks.SetDuration(250);
+		if (host.availableForWrite() < 32)
+			USB_Flush(host);
+		heartbeat();
 		if (stepper.isMoving())
 			std::cout << "P" << std::dec << commandProcessor.getPositionInWholeSteps() << std::endl;
 		ProcessManualControls();
