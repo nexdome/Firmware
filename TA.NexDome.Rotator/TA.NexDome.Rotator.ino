@@ -5,6 +5,7 @@
 #endif
 
 #include <ArduinoSTL.h>
+#include <SafeSerial.h>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
 #include "RainSensor.h"
@@ -22,9 +23,8 @@ void onMotorStopped();
 auto stepGenerator = CounterTimer1StepGenerator();
 auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
-//std::ohserialstream xout(Serial1);
 auto& xbeeSerial = Serial1;
-auto& host = Serial;
+SafeSerial host;
 std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 auto xbeeApi = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(onXbeeFrameReceived));
@@ -33,6 +33,14 @@ auto commandProcessor = CommandProcessor(stepper, settings, machine);
 auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN, commandProcessor);
 Timer periodicTasks;
 auto rain = RainSensor(RAIN_SENSOR_PIN);
+
+// cin and cout for ArduinoSTL
+namespace std
+	{
+	ohserialstream cout(host);
+	ihserialstream cin(host);
+	}
+
 
 Response DispatchCommand(const std::string& buffer)
 	{
@@ -109,8 +117,9 @@ void setup() {
 	hostReceiveBuffer.reserve(HOST_SERIAL_RX_BUFFER_SIZE);
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
+	// Connect cin and cout to our SafeSerial instance
+	ArduinoSTL_Serial.connect(host);
 	xbeeSerial.begin(9600);
-	//while (!Serial);	// Wait for Leonardo software USB stack to become active
 	delay(1000);		// Let the USB/serial stack warm up a bit longer.
 	xbeeApi.reset();
 	periodicTasks.SetDuration(1000);
@@ -167,8 +176,6 @@ void loop() {
 	if (periodicTasks.Expired())
 		{
 		periodicTasks.SetDuration(250);
-		if (host.availableForWrite() < 32)
-			USB_Flush(host);
 		heartbeat();
 		if (stepper.isMoving())
 			std::cout << "P" << std::dec << commandProcessor.getPositionInWholeSteps() << std::endl;
