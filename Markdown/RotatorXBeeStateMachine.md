@@ -5,9 +5,9 @@ title Rotator XBee State Machine
 
 [*] -> Startup
 Startup: OnEnter: set timeout = XBEE_BOOT_TIME (5s)
-Startup: OnEnter: Listen in AT Command Mode
 Startup --> WaitCommandMode: timeout
 
+WaitCommandMode: OnEnter: Listen in AT Command Mode
 WaitCommandMode: OnEnter: send "+++" to XBee
 WaitCommandMode: OnEnter: set timeout to 2 x guard time
 WaitCommandMode --> Configure: "OK" received
