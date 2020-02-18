@@ -21,7 +21,9 @@ re-established and confirmed.
 */
 void XBeeShutterOnlineState::OnTimerExpired()
 	{
+#ifdef DEBUG_XBEE_STATE
 	std::cout << "timeout" << std::endl;
+#endif
 	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 	}
 
