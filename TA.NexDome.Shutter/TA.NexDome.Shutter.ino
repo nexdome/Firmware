@@ -2,6 +2,7 @@
 
 #include <ArduinoSTL.h>
 #include <sstream>
+#include <SafeSerial.h>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
 #include "NexDome.h"
@@ -23,7 +24,7 @@ auto settings = PersistentSettings::Load();
 auto stepper = MicrosteppingMotor(MOTOR_STEP_PIN, MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, stepGenerator, settings.motor);
 auto limitSwitches = LimitSwitch(&stepper, OPEN_LIMIT_SWITCH_PIN, CLOSED_LIMIT_SWITCH_PIN);
 auto& xbeeSerial = Serial1;
-auto& host = Serial;
+SafeSerial host;
 std::string hostReceiveBuffer;
 std::vector<byte> xbeeApiRxBuffer;
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload); // forward reference
@@ -33,6 +34,14 @@ auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitch
 #if !DEBUG_CONSERVE_FLASH
 auto batteryMonitor = BatteryMonitor(machine, A0, settings.batteryMonitor);
 #endif
+
+// cin and cout for ArduinoSTL
+namespace std
+	{
+	ohserialstream cout(host);
+	ihserialstream cin(host);
+	}
+
 
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload)
 	{
@@ -103,7 +112,7 @@ Response DispatchCommand(const std::string& buffer)
 
 void HandleSerialCommunications()
 	{
-	if (host.available() <= 0)
+	if (!host || host.available() <= 0)
 		return; // No data available.
 	const auto rx = host.read();
 	if (rx < 0)
@@ -142,6 +151,8 @@ void setup()
 	hostReceiveBuffer.reserve(HOST_SERIAL_RX_BUFFER_SIZE);
 	xbeeApiRxBuffer.reserve(API_MAX_FRAME_LENGTH);
 	host.begin(115200);
+	// Connect cin and cout to our SafeSerial instance
+	ArduinoSTL_Serial.connect(host);
 	xbeeSerial.begin(9600);
 	periodicTasks.SetDuration(1000);
 	interrupts();

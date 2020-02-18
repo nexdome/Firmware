@@ -23,6 +23,11 @@ void CommandProcessor::responseToHost(const std::string& rxMessage)
 	std::cout << std::endl;
 	}
 
+Response CommandProcessor::HandleZZ(Command& command) const
+	{
+	void(*resetFunc) (void) = 0; //declare reset function at address 0
+	resetFunc(); //call reset
+	}
 
 Response CommandProcessor::HandleDR(Command& command) const
 	{
@@ -119,6 +124,7 @@ Response CommandProcessor::HandleCommand(Command& command) const
 		if (command.Verb == "ZD") return HandleZD(command); // Reset to factory settings (load defaults).
 		if (command.Verb == "ZR") return HandleZR(command); // Load settings from persistent storage
 		if (command.Verb == "ZW") return HandleZW(command); // Write settings to persistent storage
+		if (command.Verb == "ZZ") return HandleZZ(command); // Reboot immediately
 		}
 	if (command.IsSystemCommand())
 		{

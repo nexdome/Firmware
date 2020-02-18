@@ -1,14 +1,14 @@
 
 #include "XBeeConfigureState.h"
 #include "XBeeApiDetectShutterState.h"
-#include "XBeeStartupState.h"
+#include "XBeeWaitForCommandModeState.h"
 
 void XBeeConfigureState::OnTimerExpired()
 	{
 #ifdef DEBUG_XBEE_CONFIG
 	std::cout << " timeout" << std::endl;
 #endif
-	machine.ChangeState(new XBeeStartupState(machine));
+	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 	}
 
 void XBeeConfigureState::OnEnter()
@@ -53,6 +53,6 @@ void XBeeConfigureState::OnSerialLineReceived(const std::string& message)
 		return;
 		}
 	// Any response but "OK" causes the configuration process to be restarted from scratch
-	machine.ChangeState(new XBeeStartupState(machine));
+	machine.ChangeState(new XBeeWaitForCommandModeState(machine));
 	}
 
