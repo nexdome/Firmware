@@ -86,112 +86,7 @@ All command handlers return a `Response` structure, which contains the text (if 
 
 ## Command Protocol
 
-### Command Grammar
-
-Commands have the form: 
-
-<kbd>@</kbd> `Verb` `target` <kbd>,</kbd> `Parameter` <kbd>`<CR>`</kbd><kbd>`<LF>`</kbd>
-
-The parts of this command syntax are:
-
-- <kbd>@</kbd> is a literal character that marks the start of a new command and clears the receive buffer.
-- `Verb` is the command verb, which normally consists of two characters. Single character verbs are also possible but in this case the entire command is a single character.
-- `Device` is the target device for the command, generally `R` (rotator) or `S` (shutter).
-- <kbd>,</kbd> is a literal character that separates the device ID from the parameter. The comma is required if a parameter is present and should be absent if there is no parameter.
-- `Parameter` is usually a signed or unsigned decimal integer and is the data payload for commands that need data. Refer to the notes for each command for specific requirements.
-- <kbd>`<CR>`</kbd><kbd>`<LF>`</kbd> is the command terminator and submits the command to the command dispatcher. Only one is required and if both are present then they can be in any order.
-
-Example: `@AWS,1000` {set shutter acceleration ramp time to 1000 ms}.
-
-### Errors
-
-Any unrecognised or invalid command responds with the text `:Err#`.
-
-### Responses
-
-In general, responses always begin with `:` and end with `#`.
-
-Unless otherwise stated in the table below, all commands respond by echoing their command code and target device, in the format:
-
-<kbd>:</kbd> cct <kbd>#</kbd>
-
-where `cc` is the original command verb and `t` is the target device ('R' for rotator, 'S' for shutter).
-
-The parameter value (if any) is not echoed. For example, the response to `@GAR,1000` is `:GAR#`. Receipt of this echo response indicates that the command is valid and was successfully received.
-
-Commands that return a value include the value immediately after the target and before the terminating `#`. Example: `:VRR10000#`
-
-Any command that cannot be processed for any reason will respond with `:Err#`
-
-**Other status and debug output may be generated at any time, not necessarily in response to any command.** See [Event Notifications](#event-notifications) below.
-
-### Command Details
-
-In the following table, upper case letters are literal characters. Lower case letters are placeholders.
-
-Cmd | Targets | Parameter | Response   | Example    | Description
---- | ------- | --------- | ---------- | ---------- | -----------------------------------------------------------------------------
-AR  | RS      | none      | :ARddddd#  | @ARR       | Read acceleration ramp time in milliseconds
-AW  | RS      | ddddd     | :AWt#      | @AWS,1000  | Write acceleration ramp time
-DR  | R       | none      | :DRRddddd# | @DRR       | Read Dead-zone in steps (153 steps = 1 degree)
-DW  | R       | ddddd     | :DWR#      | @DWR,300   | Write Dead-zone in steps [0..10000] default 300
-FR  | RS      | none      | :FRstring# | @FRR       | Reads the semantic version (SemVer) string of the firmware.
-GA  | R       | ddd       | :GAR#      | @GAR,180   | Goto Azimuth (param: integer degrees)
-GH  | R       | none      | :GHR#      | @GHR       | Rotates clockwise until the home sensor is detected and synchronizes the azimuth to the home position.
-GS  | R       | ddddd     | :GSR#      | @GSR,1000  | Goto whole step position (0 <=param <= @RRR)
-HR  | R       | none      | :HRRddddd# | @HRR       | Home position Read (steps clockwise from true north)
-HW  | R       | ddddd     | :HWR#      | @HWR,1000  | Home position Write (seps clockwise from true north)
-PR  | RS      | none      | :PRt-dddd# | @PRR       | Position Read - get current step position in whole steps (signed integer)
-PW  | RS      | ±dddd     | :PWt#      | @PWR,-1000 | Position Write (sync) - set step position
-RR  | RS      | none      | :RRtdddd   | @RRS       | Range Read - read the range of travel in whole steps.
-RW  | RS      | ddddd     | :RWt#      | @RWR,64000 | Range Write. Sets the maximum shutter travel or dome circumference, in steps.
-SR  | RS      | none      | :SEt,...#  | @SRR       | Requests an immediate status report. Status returned as comma separated values.
-SW  | RS      | none      | :SWt#      | @SWS       | Performs an immediate "hard stop" without decelerating.
-VR  | RS      | none      | :VRtddddd# | @VRR       | Velocity read - motor speed in whole steps per second
-VW  | RS      | ddddd     | :VWt#      | @VWS,10000 | Velocity Write - motor speed in whole steps per second
-ZD  | RS      | none      | :ZDt#      | @ZDR       | Load factory defaults into working settings (does not save)
-ZR  | RS      | none      | :ZRt#      | @ZRR       | Load saved settings from EEPROM into memory
-ZW  | RS      | none      | :ZWt#      | @ZWR       | Write working settings to EEPROM
-
-### Event Notifications
-
-The firmware will produce notifications of various events. These may arrive at any time, for example in between a command and a response, but they will never divide a response. Client software must be prepared to handle these event notifications.
-
-Format          | Description
---------------  | -----------------------------------------------------------------------------------
-XB->state       | The current state of the XBee communications link. The states are enumerated below.
-XB->Start       | Waiting for XBee to boot up or reboot
-XB->WaitAT      | Waiting for XBee to enter command mode
-XB->Config      | Sending configuration
-XB->Detect      | Attempting to detect remote device
-XB->Online      | Communications link established
-Pddddd          | Rotator position (ddddd = signed decimal integer)
-Sddddd          | Shutter position (ddddd = signed decimal integer)
-:SER,p,a,c,h,d# | Rotator status report. 
-|>|                p = current azimuth position in whole steps,  
-|>|                a = AtHome (1 = home sensor active, 0 = home sensor inactive)
-|>|                c = dome circumference in whole steps
-|>|                h = home position sensor location, in whole steps clockwise from true north
-|>|                d = dead zone (smallest allowed movement in steps)
-:SES,p,l,o,c#     | Shutter status report. 
-|>|                p = position in steps
-|>|                l = limit of travel (fully open position) in steps
-|>|				   o = state of open limit switch, 1=active, 0=inactive
-|>|				   c = state of closed limit switch, 1=active, 0=inactive
-:left#          | The rotator is about to move to the left (counter-clockwise)
-:right#         | The rotator is about to move to the right (clockwise)
-:open#          | The shutter is about to move towards open
-:close#         | The shutter is about to move towards closed
-:BVddddd#       | Shutter battery volts in raw analogue-to-digital units (ADUs), range [0..65535]
-:Rain#          | Rain detected (shutter will auto-close)
-:RainStopped#   | Rain detector was previously indicating rain but has now stopped doing so.
-
-Note: position updates occur about every 250 milliseconds while motion is occurring. When motion ceases, an SER or SES status event is emitted and this indicates that motion of the corresponding motor has ceased.
-
-### Other Output
-
-It is possible that other undocumented output may be produced and the host application should be constructed in such a way that this output is ignored. Diagnostic output should not be relied upon by a host application for any purpose.
-
+For details of the firmware commands and responses, please refer to the [Firmware Protocol page][wiki-protocol] of the [ASCOM driver wiki][wiki-home].
 ## Arduino Libraries Used
 
 - ArduinoSTL - standard template library (install from library manager)
@@ -222,3 +117,5 @@ The framework of the state machine is common to both rotator and shutter, so it 
 [nexdome]: http://nexdome.com "NexDome home page"
 [tigra]: http://tigra-astronomy.com/ "Tigra Astronomy home page"
 [vmide]: https://www.visualmicro.com "Visual Micro Arduino IDE for Visual Studio"
+[wiki-home]: https://github.com/nexdome/ASCOM/wiki "NexDome Control System wiki"
+[wiki-protocol]: https://github.com/nexdome/ASCOM/wiki/Firmware-Protocol "Wiki page: Firmware Protocol"
