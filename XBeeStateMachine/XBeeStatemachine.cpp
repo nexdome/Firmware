@@ -107,6 +107,9 @@ void XBeeStateMachine::StateTransitionIfRequested()
 	if (nextState != nullptr)
 		{
 		std::cout << "XB->" << nextState->name() << std::endl;
+#ifdef DEBUG_TIMESTAMP_STATE_CHANGES
+		std::cout << millis() << std::endl;
+#endif
 		if (currentState != nullptr)
 			{
 			currentState->OnExit();

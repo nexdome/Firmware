@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding ="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+  <PropertyGroup Label="Globals" >
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{c7fa71c2-1335-4a2c-9042-6c5cc165c808}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\algorithm.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\ArduinoSTL.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\associative_base.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\bitset.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\char_traits.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\complex.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\del_op.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\del_opnt.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\del_ops.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\del_opv.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\del_opvnt.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\del_opvs.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\deque.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\eh_alloc.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\eh_globals.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\exception.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\func_exception.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\iomanip.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\ios.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\iostream.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\istream.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\iterator.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\limits.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\list.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\locale.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\map.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\new_handler.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\new_op.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\new_opnt.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\new_opv.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\new_opvnt.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\numeric.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\ostream.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\ostream_helpers.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\queue.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\set.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\sstream.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\stack.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\stdexcept.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\streambuf.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\string.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\support.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\typeinfo.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\utility.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\valarray.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\vector.cpp" />
+<ClCompile Include="$(MSBuildThisFileDirectory)src\abi\abi.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\ArduinoSTL.h" />
+<ClInclude Include="$(MSBuildThisFileDirectory)src\system_configuration.h" />
+<ClInclude Include="$(MSBuildThisFileDirectory)src\unwind-cxx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)keywords.txt" />
+<Text Include="$(MSBuildThisFileDirectory)library.properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" />
+<None Include="$(MSBuildThisFileDirectory)README.md" />
+<None Include="$(MSBuildThisFileDirectory)src\algorithm" />
+<None Include="$(MSBuildThisFileDirectory)src\associative_base" />
+<None Include="$(MSBuildThisFileDirectory)src\basic_definitions" />
+<None Include="$(MSBuildThisFileDirectory)src\bitset" />
+<None Include="$(MSBuildThisFileDirectory)src\cassert" />
+<None Include="$(MSBuildThisFileDirectory)src\cctype" />
+<None Include="$(MSBuildThisFileDirectory)src\cerrno" />
+<None Include="$(MSBuildThisFileDirectory)src\cfloat" />
+<None Include="$(MSBuildThisFileDirectory)src\char_traits" />
+<None Include="$(MSBuildThisFileDirectory)src\climits" />
+<None Include="$(MSBuildThisFileDirectory)src\clocale" />
+<None Include="$(MSBuildThisFileDirectory)src\cmath" />
+<None Include="$(MSBuildThisFileDirectory)src\complex" />
+<None Include="$(MSBuildThisFileDirectory)src\csetjmp" />
+<None Include="$(MSBuildThisFileDirectory)src\csignal" />
+<None Include="$(MSBuildThisFileDirectory)src\cstdarg" />
+<None Include="$(MSBuildThisFileDirectory)src\cstddef" />
+<None Include="$(MSBuildThisFileDirectory)src\cstdio" />
+<None Include="$(MSBuildThisFileDirectory)src\cstdlib" />
+<None Include="$(MSBuildThisFileDirectory)src\cstring" />
+<None Include="$(MSBuildThisFileDirectory)src\ctime" />
+<None Include="$(MSBuildThisFileDirectory)src\cwchar" />
+<None Include="$(MSBuildThisFileDirectory)src\cwctype" />
+<None Include="$(MSBuildThisFileDirectory)src\deque" />
+<None Include="$(MSBuildThisFileDirectory)src\exception" />
+<None Include="$(MSBuildThisFileDirectory)src\functional" />
+<None Include="$(MSBuildThisFileDirectory)src\func_exception" />
+<None Include="$(MSBuildThisFileDirectory)src\initializer_list" />
+<None Include="$(MSBuildThisFileDirectory)src\iomanip" />
+<None Include="$(MSBuildThisFileDirectory)src\ios" />
+<None Include="$(MSBuildThisFileDirectory)src\iosfwd" />
+<None Include="$(MSBuildThisFileDirectory)src\iostream" />
+<None Include="$(MSBuildThisFileDirectory)src\istream" />
+<None Include="$(MSBuildThisFileDirectory)src\istream_helpers" />
+<None Include="$(MSBuildThisFileDirectory)src\iterator" />
+<None Include="$(MSBuildThisFileDirectory)src\iterator_base" />
+<None Include="$(MSBuildThisFileDirectory)src\limits" />
+<None Include="$(MSBuildThisFileDirectory)src\list" />
+<None Include="$(MSBuildThisFileDirectory)src\locale" />
+<None Include="$(MSBuildThisFileDirectory)src\map" />
+<None Include="$(MSBuildThisFileDirectory)src\memory" />
+<None Include="$(MSBuildThisFileDirectory)src\new" />
+<None Include="$(MSBuildThisFileDirectory)src\numeric" />
+<None Include="$(MSBuildThisFileDirectory)src\ostream" />
+<None Include="$(MSBuildThisFileDirectory)src\ostream_helpers" />
+<None Include="$(MSBuildThisFileDirectory)src\queue" />
+<None Include="$(MSBuildThisFileDirectory)src\serstream" />
+<None Include="$(MSBuildThisFileDirectory)src\set" />
+<None Include="$(MSBuildThisFileDirectory)src\sstream" />
+<None Include="$(MSBuildThisFileDirectory)src\stack" />
+<None Include="$(MSBuildThisFileDirectory)src\stdexcept" />
+<None Include="$(MSBuildThisFileDirectory)src\streambuf" />
+<None Include="$(MSBuildThisFileDirectory)src\string" />
+<None Include="$(MSBuildThisFileDirectory)src\string_iostream" />
+<None Include="$(MSBuildThisFileDirectory)src\support" />
+<None Include="$(MSBuildThisFileDirectory)src\typeinfo" />
+<None Include="$(MSBuildThisFileDirectory)src\type_traits" />
+<None Include="$(MSBuildThisFileDirectory)src\utility" />
+<None Include="$(MSBuildThisFileDirectory)src\valarray" />
+<None Include="$(MSBuildThisFileDirectory)src\vector" />
+<None Include="$(MSBuildThisFileDirectory)src\abi\libgcc_eh\Makefile" />
+<None Include="$(MSBuildThisFileDirectory)src\abi\libgcc_eh\Makefile.in" />
+<None Include="$(MSBuildThisFileDirectory)src\abi\libsupc\Makefile" />
+<None Include="$(MSBuildThisFileDirectory)src\abi\libsupc\Makefile.in" />
+  </ItemGroup>
+</Project>

@@ -10,8 +10,14 @@
 #endif
 #include <XBeeStateMachine.h>
 
-// The time that the state machine will wait before attempting to configure the XBee
-constexpr Duration XbeeBootTime = Timer::Seconds(5);
+/*
+ * The time that the XBee state machine will wait before attempting to configure the XBee.
+ * The idea here is to give the XBee time to initialize and become ready.
+ * Also, the shutter boot delay is deliberately greater than the rotator delay, so that if both
+ * happen to be powered on simultaneously, then the rotator has time to be configured and ready
+ * when the shutter XBee tries to associate with the coordinator.
+*/
+constexpr Duration XbeeBootTime = Timer::Seconds(6);
 
 class XBeeStartupState : public IXBeeState
 {

@@ -11,21 +11,21 @@ Startup --> WaitCommandMode: timeout
 WaitCommandMode: OnEnter: send "+++" to XBee
 WaitCommandMode: OnEnter: set timeout to 2 x guard time
 WaitCommandMode --> Configure: "OK" received
-WaitCommandMode --> Startup: timeout
+WaitCommandMode --> WaitCommandMode: timeout
 
 Configure: OnEnter: send next AT Command
-Configure --> Startup: timeout
+Configure --> WaitCommandMode: timeout
 Configure --> Configure: __"OK" received & more AT commands__\nsend next AT command\nreset timeout
 Configure --> DetectShutter: "OK" received & No more AT commands
 
 DetectShutter: OnEnter: set timeout = DETECT_SHUTTER_TIMEOUT
 DetectShutter: OnEnter: Listen in API mode
-DetectShutter --> Startup: timeout
+DetectShutter --> WaitCommandMode: timeout
 DetectShutter -> ShutterOnline: __Hello message received__\nset destination address from received frame
 
 ShutterOnline: OnEnter: send Hello Ack Message
 ShutterOnline: OnEnter: set timeout = NO_ACTIVITY_TIMEOUT
-ShutterOnline --> Startup: timeout
+ShutterOnline --> WaitCommandMode: timeout
 
 @enduml
 ```
