@@ -13,7 +13,7 @@ struct BatteryMonitorSettings
 	{
 	uint8_t sampleWindow;
 	uint64_t sampleInterval;
-	uint16_t threshold;
+	uint16_t threshold; // auto-close threshold
 	uint64_t notifyInterval;
 	BatteryMonitorSettings() : sampleWindow(10), sampleInterval(3000), threshold(0), notifyInterval(30000) { }
 	};

@@ -46,10 +46,11 @@ Response CommandProcessor::HandleCommand(Command& command)
 		{
 		if (command.Verb == "AR") return HandleAR(command); // Ramp time (acceleration) read (milliseconds)
 		if (command.Verb == "AW") return HandleAW(command); // Ramp time (acceleration) write (milliseconds)
+		if (command.Verb == "BR") return HandleBR(command); // Read battery low threshold
+		if (command.Verb == "BW") return HandleBW(command); // Write battery low threshold
 		if (command.Verb == "CL") return HandleCL(command); // Close shutter
 		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
 		if (command.Verb == "OP") return HandleOP(command); // Open shutter
-		if (command.Verb == "SW") return HandleSW(command); // Stop motor (hard stop)
 		if (command.Verb == "PR") return HandlePR(command); // Position read
 		if (command.Verb == "PW") return HandlePW(command); // Position write (sync)
 		if (command.Verb == "RR") return HandleRR(command); // Range Read (get limit of travel)
@@ -118,6 +119,18 @@ Response CommandProcessor::HandleAR(Command& command) const
 	{
 	const auto rampTime = settings.motor.rampTimeMilliseconds;
 	return Response::FromInteger(command, rampTime);
+	}
+
+Response CommandProcessor::HandleBR(Command& command) const
+	{
+	return Response::FromInteger(command, settings.batteryMonitor.threshold);
+	}
+
+Response CommandProcessor::HandleBW(Command& command)
+	{
+	const auto threshold = command.StepPosition;
+	settings.batteryMonitor.threshold = threshold;
+	return Response::FromSuccessfulCommand(command);
 	}
 
 Response CommandProcessor::HandleSW(Command& command)

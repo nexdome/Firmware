@@ -3,6 +3,7 @@
 #include "BatteryMonitor.h"
 #include "Response.h"
 #include "CommandProcessor.h"
+extern Response DispatchCommand(const std::string& buffer);
 
 BatteryMonitor::BatteryMonitor(XBeeStateMachine& machine, uint8_t analogPin, BatteryMonitorSettings& settings)
 	: machine(machine), analogPin(analogPin), settings(settings),
@@ -38,9 +39,12 @@ void BatteryMonitor::checkThresholdAndSendNotification()
 	message << Response::header << "BV" << movingAverageVoltage.average << Response::terminator;
 	machine.SendToRemoteXbee(message.str());
 	std::cout << message.str() << std::endl;
-	//if (movingAverageVoltage.average < settings.threshold)
-	//	{
-	//	//ToDo: take action on low battery condition
-	//	std::cout << "Auto-close" << std::endl;
-	//	}
+	if (movingAverageVoltage.average < settings.threshold)
+		{
+		const std::string closeShutter = "@CLS";
+		const std::string lowVoltsMessage = "Volts";
+		machine.SendToRemoteXbee(lowVoltsMessage);
+		std::cout << lowVoltsMessage << std::endl;
+		::DispatchCommand(closeShutter);
+		}
 	}

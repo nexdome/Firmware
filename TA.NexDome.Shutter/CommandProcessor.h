@@ -33,6 +33,8 @@ class CommandProcessor
 		Response HandleCL(Command& command); // Close shutter
 		Response HandleAW(Command& command); // AW - Acceleration ramp time write
 		Response HandleAR(Command& command) const;
+		Response HandleBR(Command& command) const; // Read battery low volts threshold
+		Response HandleBW(Command& command); // Read battery low volts threshold
 		Response HandleFR(Command& command); // Firmware version read
 		Response HandlePR(Command& command); // Step position read
 		Response HandlePW(Command& command); // Step position write (sync)
