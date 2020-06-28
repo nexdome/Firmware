@@ -24,6 +24,7 @@ public:
 	explicit BatteryMonitor(XBeeStateMachine& machine, uint8_t analogPin, BatteryMonitorSettings& settings);
 	void initialize(unsigned long initialDelay);
 	void loop();
+	bool lowVolts();
 private:
 	void checkThresholdAndSendNotification();
 	XBeeStateMachine& machine;

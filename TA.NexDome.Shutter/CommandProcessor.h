@@ -18,7 +18,7 @@
 class CommandProcessor
 	{
 	public:
-		CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings, XBeeStateMachine& machine, LimitSwitch& limits);
+		CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings, XBeeStateMachine& machine, LimitSwitch& limits, BatteryMonitor& monitor);
 		Response HandleCommand(Command& command);
 		static int32_t microstepsToSteps(int32_t microsteps);
 		static int32_t stepsToMicrosteps(int32_t wholeSteps);
@@ -52,6 +52,7 @@ class CommandProcessor
 		PersistentSettings& settings;
 		LimitSwitch& limitSwitches;
 		XBeeStateMachine& machine;
+		BatteryMonitor& battery;
 	};
 
 #endif
