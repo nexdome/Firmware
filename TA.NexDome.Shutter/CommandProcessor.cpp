@@ -1,4 +1,5 @@
 #include <sstream>
+#include <stdint.h>
 
 #include "CommandProcessor.h"
 #include "NexDome.h"
@@ -36,7 +37,9 @@ void CommandProcessor::sendStatus() const
 		<< limitSwitches.isClosed()
 		<< Response::terminator;
 	machine.SendToRemoteXbee(converter.str());
-	std::cout << converter.str() << std::endl;
+#ifdef SHUTTER_LOCAL_OUTPUT
+    std::cout << converter.str() << std::endl;
+#endif
 	}
 
 

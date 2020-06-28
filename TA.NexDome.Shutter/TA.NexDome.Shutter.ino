@@ -6,7 +6,7 @@
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
 #include "NexDome.h"
-#include "XBeeStateMachine.h"
+#include "XBeeStatemachine.h"
 #include "XBeeStartupState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
@@ -178,7 +178,9 @@ void loop()
 			converter.clear();
 			converter.str("");
 			converter << "S" << wholeSteps;
+#ifdef SHUTTER_LOCAL_OUTPUT
 			std::cout << "S" << std::dec << wholeSteps << std::endl;
+#endif
 			machine.SendToRemoteXbee(converter.str());
 			}
 		}
