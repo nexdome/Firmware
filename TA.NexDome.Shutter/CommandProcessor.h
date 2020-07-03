@@ -19,7 +19,7 @@ class CommandProcessor
 	{
 	public:
 		CommandProcessor(MicrosteppingMotor& motor, PersistentSettings& settings, XBeeStateMachine& machine, LimitSwitch& limits, BatteryMonitor& monitor);
-		Response HandleCommand(Command& command);
+		void HandleCommand(const Command& command); // sets the global static response
 		static int32_t microstepsToSteps(int32_t microsteps);
 		static int32_t stepsToMicrosteps(int32_t wholeSteps);
 		int32_t getPositionInWholeSteps() const;
@@ -29,25 +29,25 @@ class CommandProcessor
 
 	private:
 		void sendToLocalAndRemote(const std::string& message) const;
-		Response HandleOP(Command& command); // Open shutter
-		Response HandleCL(Command& command); // Close shutter
-		Response HandleAW(Command& command); // AW - Acceleration ramp time write
-		Response HandleAR(Command& command) const;
-		Response HandleBR(Command& command) const; // Read battery low volts threshold
-		Response HandleBW(Command& command); // Read battery low volts threshold
-		Response HandleFR(Command& command); // Firmware version read
-		Response HandlePR(Command& command); // Step position read
-		Response HandlePW(Command& command); // Step position write (sync)
-		Response HandleRR(Command& command); // Range (limit of travel) read
-		Response HandleRW(Command& command); // Range (limit of travel) write
-		Response HandleSR(Command& command); // Request status report
-		Response HandleSW(Command& command); // Stop write (motor emergency stop)
-		Response HandleVR(Command& command); // Velocity [sic] read (motor maximum speed in microsteps/sec)
-		Response HandleVW(Command& command); // Velocity [sic] write (microsteps/sec)
-		Response HandleX(Command& command); // Movement status read
-		Response HandleZW(Command& command); // EEPROM write (save settings)
-		Response HandleZR(Command& command); // EEPROM read (load settings)
-		Response HandleZD(Command& command); // Reset to factory settings (clears both EEPROM and working settings)
+		void HandleOP(const Command& command); // Open shutter
+		void HandleCL(const Command& command); // Close shutter
+		void HandleAW(const Command& command); // AW - Acceleration ramp time write
+		void HandleAR(const Command& command) const;
+		void HandleBR(const Command& command) const; // Read battery low volts threshold
+		void HandleBW(const Command& command); // Read battery low volts threshold
+		void HandleFR(const Command& command) const; // Firmware version read
+		void HandlePR(const Command& command) const; // Step position read
+		void HandlePW(const Command& command); // Step position write (sync)
+		void HandleRR(const Command& command) const; // Range (limit of travel) read
+		void HandleRW(const Command& command); // Range (limit of travel) write
+		void HandleSR(const Command& command); // Request status report
+		void HandleSW(const Command& command); // Stop write (motor emergency stop)
+		void HandleVR(const Command& command) const; // Velocity [sic] read (motor maximum speed in microsteps/sec)
+		void HandleVW(const Command& command); // Velocity [sic] write (microsteps/sec)
+		void HandleX(const Command& command); // Movement status read
+		void HandleZW(const Command& command); // EEPROM write (save settings)
+		void HandleZR(const Command& command); // EEPROM read (load settings)
+		void HandleZD(const Command& command); // Reset to factory settings (clears both EEPROM and working settings)
 		MicrosteppingMotor& motor;
 		PersistentSettings& settings;
 		LimitSwitch& limitSwitches;

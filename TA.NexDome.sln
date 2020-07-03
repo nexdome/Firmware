@@ -13,6 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SharedCode", "SharedCode\Sh
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4BFADFB-E20F-4030-92E8-5401C303E3E8}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		Deploy-Firmware.ps1 = Deploy-Firmware.ps1
 		Gear and Step Calculator.xlsx = Gear and Step Calculator.xlsx

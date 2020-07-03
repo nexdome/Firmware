@@ -1,12 +1,12 @@
 //
-//
+// Handles Rotator <-> Shutter comms when the connection is established and stable
 //
 
 #include "XBeeOnlineState.h"
 #include "XBeeStartupState.h"
 #include "Response.h"
 
-extern Response DispatchCommand(const std::string& command);	// defined in global scope in the .ino file
+extern void DispatchCommand(const Command& command);	// defined in global scope in the .ino file
 
 void XBeeOnlineState::OnEnter()
 	{
@@ -46,21 +46,23 @@ void XBeeOnlineState::OnApiRx64FrameReceived(const std::vector<byte>& payload)
 	if (length < 10)
 		return;	// invalid frame - ignore
 	byte options = payload[9];
-	const auto msgStart = payload.begin() + 10;
-	const auto msgEnd = payload.end();
+    const auto *const msgStart = payload.begin() + 10;
+    const auto *const msgEnd = payload.end();
 	const std::string rxMessage(msgStart, msgEnd);
 #ifdef DEBUG_XBEE_API
 	std::cout << "Rx64 " << rxMessage << std::endl;
 #endif
 	// payload[10] is the first byte of the received data
-	if (length > 10 && payload[10] == '@')
-		{
-		// treat as a valid remote command
-		const auto response = DispatchCommand(rxMessage);
-		machine.SendToRemoteXbee(response.Message);
-		return;
-		}
-	// Test for "Hello" acknowledgement
+	// Hand the payload to the command dispatcher and send the response to the remote XBee.
+    if (length > 10 && payload[10] == '@')
+    {
+		//std::cout << "Cmd " << rxMessage << std::endl;
+        auto command = Command(rxMessage);
+		DispatchCommand(command);
+        machine.SendToRemoteXbee(ResponseBuilder::Message);
+        return;
+    }
+	// Not a command. Test for "Hello" acknowledgement
 	if (rxMessage == XBEE_HELLO_ACK)
 		{
 		handshakeTimer.Stop();

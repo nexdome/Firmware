@@ -29,13 +29,13 @@ void CommandProcessor::sendStatus() const
 	static std::ostringstream converter;
 	converter.clear();
 	converter.str("");
-	converter << Response::header
+	converter << ResponseBuilder::header
 		<< "SES" << separator
 		<< getPositionInWholeSteps() << separator
 		<< microstepsToSteps(motor.limitOfTravel()) << separator
 		<< limitSwitches.isOpen() << separator
 		<< limitSwitches.isClosed()
-		<< Response::terminator;
+		<< ResponseBuilder::terminator;
 	machine.SendToRemoteXbee(converter.str());
 #ifdef SHUTTER_LOCAL_OUTPUT
     std::cout << converter.str() << std::endl;
@@ -43,31 +43,30 @@ void CommandProcessor::sendStatus() const
 	}
 
 
-Response CommandProcessor::HandleCommand(Command& command)
+void CommandProcessor::HandleCommand(const Command& command)
 	{
+    ResponseBuilder::FromSuccessfulCommand(command); // Default response is to echo the command.
 	if (command.IsShutterCommand())
 		{
-		if (command.Verb == "AR") return HandleAR(command); // Ramp time (acceleration) read (milliseconds)
-		if (command.Verb == "AW") return HandleAW(command); // Ramp time (acceleration) write (milliseconds)
-		if (command.Verb == "BR") return HandleBR(command); // Read battery low threshold
-		if (command.Verb == "BW") return HandleBW(command); // Write battery low threshold
-		if (command.Verb == "CL") return HandleCL(command); // Close shutter
-		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
-		if (command.Verb == "OP") return HandleOP(command); // Open shutter
-		if (command.Verb == "PR") return HandlePR(command); // Position read
-		if (command.Verb == "PW") return HandlePW(command); // Position write (sync)
-		if (command.Verb == "RR") return HandleRR(command); // Range Read (get limit of travel)
-		if (command.Verb == "RW") return HandleRW(command); // Range Write (set limit of travel)
-		if (command.Verb == "SR") return HandleSR(command); // Send status report
-		if (command.Verb == "SW") return HandleSW(command); // Emergency stop
-		if (command.Verb == "VR") return HandleVR(command); // Read maximum motor speed
-		if (command.Verb == "VW") return HandleVW(command); // Read maximum motor speed
-		if (command.Verb == "ZD") return HandleZD(command); // Reset to factory settings (load defaults).
-		if (command.Verb == "ZR") return HandleZR(command); // Load settings from persistent storage
-		if (command.Verb == "ZW") return HandleZW(command); // Write settings to persistent storage
+		if (command.Verb == "AR") HandleAR(command); // Ramp time (acceleration) read (milliseconds)
+		if (command.Verb == "AW") HandleAW(command); // Ramp time (acceleration) write (milliseconds)
+		if (command.Verb == "BR") HandleBR(command); // Read battery low threshold
+		if (command.Verb == "BW") HandleBW(command); // Write battery low threshold
+		if (command.Verb == "CL") HandleCL(command); // Close shutter
+		if (command.Verb == "FR") HandleFR(command); // Read firmware version
+		if (command.Verb == "OP") HandleOP(command); // Open shutter
+		if (command.Verb == "PR") HandlePR(command); // Position read
+		if (command.Verb == "PW") HandlePW(command); // Position write (sync)
+		if (command.Verb == "RR") HandleRR(command); // Range Read (get limit of travel)
+		if (command.Verb == "RW") HandleRW(command); // Range Write (set limit of travel)
+		if (command.Verb == "SR") HandleSR(command); // Send status report
+		if (command.Verb == "SW") HandleSW(command); // Emergency stop
+		if (command.Verb == "VR") HandleVR(command); // Read maximum motor speed
+		if (command.Verb == "VW") HandleVW(command); // Read maximum motor speed
+		if (command.Verb == "ZD") HandleZD(command); // Reset to factory settings (load defaults).
+		if (command.Verb == "ZR") HandleZR(command); // Load settings from persistent storage
+		if (command.Verb == "ZW") HandleZW(command); // Write settings to persistent storage
 		}
-	if (command.IsSystemCommand()) {}
-	return Response::Error();
 	}
 
 void CommandProcessor::sendOpenNotification() const
@@ -83,146 +82,131 @@ void CommandProcessor::sendCloseNotification() const
 void CommandProcessor::sendToLocalAndRemote(const std::string& message) const
 	{
 	std::ostringstream output;
-	output << Response::header << message << Response::terminator;
+	output << ResponseBuilder::header << message << ResponseBuilder::terminator;
 	machine.SendToRemoteXbee(output.str());
 	#ifdef SHUTTER_LOCAL_OUTPUT
 	std::cout << output.str() << std::endl;
 	#endif
 	}
 
-Response CommandProcessor::HandleOP(Command& command)
+void CommandProcessor::HandleOP(const Command& command)
 	{
 	if (!(limitSwitches.isOpen() || battery.lowVolts()))
 		{
 		sendOpenNotification();
 		motor.moveToPosition(settings.motor.maxPosition);
 		}
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleCL(Command& command)
+void CommandProcessor::HandleCL(const Command& command)
 	{
 	if (!limitSwitches.isClosed())
 		{
 		sendCloseNotification();
 		motor.moveToPosition(-1000);
 		}
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleAW(Command& command)
+void CommandProcessor::HandleAW(const Command& command)
 	{
 	auto rampTime = command.StepPosition;
 	// The minimum ramp time is 100ms, fail if the user tries to set it lower.
 	if (rampTime < MIN_RAMP_TIME)
-		return Response::Error();
+		return ResponseBuilder::Error();
 	motor.setRampTime(rampTime);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleAR(Command& command) const
+void CommandProcessor::HandleAR(const Command& command) const
 	{
 	const auto rampTime = settings.motor.rampTimeMilliseconds;
-	return Response::FromInteger(command, rampTime);
+	ResponseBuilder::FromInteger(command, rampTime);
 	}
 
-Response CommandProcessor::HandleBR(Command& command) const
+void CommandProcessor::HandleBR(const Command& command) const
 	{
-	return Response::FromInteger(command, settings.batteryMonitor.threshold);
+	ResponseBuilder::FromInteger(command, settings.batteryMonitor.threshold);
 	}
 
-Response CommandProcessor::HandleBW(Command& command)
+void CommandProcessor::HandleBW(const Command& command)
 	{
 	const auto threshold = command.StepPosition;
 	settings.batteryMonitor.threshold = threshold;
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleSW(Command& command)
+void CommandProcessor::HandleSW(const Command& command)
 	{
 	motor.hardStop();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZW(Command& command)
+void CommandProcessor::HandleZW(const Command& command)
 	{
 	settings.Save();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZR(Command& command)
+void CommandProcessor::HandleZR(const Command& command)
 	{
 	settings = PersistentSettings::Load();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZD(Command& command)
+void CommandProcessor::HandleZD(const Command& command)
 	{
 	settings = PersistentSettings();
 	settings.Save();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandlePR(Command& command)
+void CommandProcessor::HandlePR(const Command& command) const
 	{
 	const auto position = microstepsToSteps(motor.getCurrentPosition());
-	auto response = Response::FromInteger(command, position);
-	return response;
+	ResponseBuilder::FromInteger(command, position);
 	}
 
-Response CommandProcessor::HandlePW(Command& command)
+void CommandProcessor::HandlePW(const Command& command)
 	{
 	const auto microsteps = stepsToMicrosteps(command.StepPosition);
 	motor.SetCurrentPosition(microsteps);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleRW(Command& command)
+void CommandProcessor::HandleRW(const Command& command)
 	{
 	const auto microsteps = stepsToMicrosteps(command.StepPosition);
 	motor.SetLimitOfTravel(microsteps);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleSR(Command& command)
+void CommandProcessor::HandleSR(const Command& command)
 	{
 	sendStatus();
-	return Response::NoResponse(command);
+	ResponseBuilder::NoResponse(command);
 	}
 
-Response CommandProcessor::HandleRR(Command& command)
+void CommandProcessor::HandleRR(const Command& command) const
 	{
 	const auto range = microstepsToSteps(motor.limitOfTravel());
-	return Response::FromInteger(command, range);
+	ResponseBuilder::FromInteger(command, range);
 	}
 
-Response CommandProcessor::HandleFR(Command& command)
+void CommandProcessor::HandleFR(const Command& command) const
 	{
-	std::string message;
-	message.append("FR");
-	message.append(SemanticVersion);
-	return Response{ message };
+        ResponseBuilder::FromString(command, SemanticVersion);
 	}
 
-Response CommandProcessor::HandleVR(Command& command)
+void CommandProcessor::HandleVR(const Command& command) const
 	{
 	auto maxSpeed = motor.getMaximumSpeed();
-	return Response::FromInteger(command, microstepsToSteps(maxSpeed));
+	ResponseBuilder::FromInteger(command, microstepsToSteps(maxSpeed));
 	}
 
-Response CommandProcessor::HandleVW(Command& command)
+void CommandProcessor::HandleVW(const Command& command)
 	{
 	uint16_t speed = stepsToMicrosteps(command.StepPosition);
 	if (speed < motor.getMinimumSpeed())
-		return Response::Error();
+		return ResponseBuilder::Error();
 	motor.setMaximumSpeed(speed);
-	return Response::FromSuccessfulCommand(command);
 	}
 
 
-Response CommandProcessor::HandleX(Command& command)
+void CommandProcessor::HandleX(const Command& command)
 	{
 	if (motor.isMoving())
-		return Response::FromInteger(command, 2);
-	return Response::FromInteger(command, 0);
+		return ResponseBuilder::FromInteger(command, 2);
+	ResponseBuilder::FromInteger(command, 0);
 	}

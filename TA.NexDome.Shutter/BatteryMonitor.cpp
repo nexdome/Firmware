@@ -1,12 +1,13 @@
-﻿#include <stdint.h>
-#include <sstream>
+﻿#include <sstream>
 #include "BatteryMonitor.h"
 #include "Response.h"
+#include "CommandProcessor.h"
 
-extern Response DispatchCommand(const std::string& buffer);
+extern void DispatchCommand(const Command& command);
 
 BatteryMonitor::BatteryMonitor(XBeeStateMachine& machine, uint8_t analogPin, BatteryMonitorSettings& settings) :
-    machine(machine), movingAverageVoltage(settings.sampleWindow), analogPin(analogPin), settings(settings)
+    machine(machine),
+    movingAverageVoltage(settings.sampleWindow), analogPin(analogPin), settings(settings)
 	{
 	sampleTimer.Stop();
 	notificationTimer.Stop();
@@ -39,19 +40,20 @@ void BatteryMonitor::checkThresholdAndSendNotification()
 		return;
 	notificationTimer.SetDuration(settings.notifyInterval);
 	std::ostringstream message;
-	message << Response::header << "BV" << movingAverageVoltage.average << Response::terminator;
+	message << ResponseBuilder::header << "BV" << movingAverageVoltage.average << ResponseBuilder::terminator;
 	machine.SendToRemoteXbee(message.str());
 #ifdef SHUTTER_LOCAL_OUTPUT
 	std::cout << message.str() << std::endl;
 #endif
 	if (lowVolts())
 		{
-		const std::string closeShutter = "@CLS";
 		const std::string lowVoltsMessage = "Volts";
-		machine.SendToRemoteXbee(lowVoltsMessage);
+        const std::string closeShutter = "@CLS";
 #ifdef SHUTTER_LOCAL_OUTPUT
 		std::cout << lowVoltsMessage << std::endl;
 #endif
-		::DispatchCommand(closeShutter);
+        auto command = Command(closeShutter);
+        DispatchCommand(command);
+		machine.SendToRemoteXbee(lowVoltsMessage);
 		}
 	}

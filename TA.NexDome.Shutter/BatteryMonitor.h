@@ -33,6 +33,6 @@ private:
 	Timer notificationTimer;
 	unsigned analogPin;
 	BatteryMonitorSettings& settings;
-	};
+    };
 
 #endif // BATTERYMONITOR_H
