@@ -68,7 +68,11 @@ void HandleSerialCommunications()
 			const auto command = Command(hostReceiveBuffer);
 			DispatchCommand(command);
 			if (ResponseBuilder::available())
-				std::cout << ResponseBuilder::Message << std::endl; // send response, if there is one.
+				std::cout
+					<< ResponseBuilder::header
+					<< ResponseBuilder::Message
+					<< ResponseBuilder::terminator
+					<< std::endl; // send response, if there is one.
 			}
 		// fall through to clear the host buffer
 	case '@': // Start of new command
