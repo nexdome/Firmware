@@ -41,35 +41,10 @@ ohserialstream cout(host);
 ihserialstream cin(host);
 } // namespace std
 
-Response DispatchCommand(const std::string &buffer)
-{
-	const auto charCount = buffer.length();
-	if (charCount < 2)
-		return Response::Error();
-	Command command;
-	command.RawCommand = buffer;
-	command.StepPosition = 0;
-	command.Verb.push_back(buffer[1]);
-	if (charCount > 2)
-		command.Verb.push_back(buffer[2]);
-	// If there is no device address then use '0', the default device.
-	if (charCount < 4)
+void DispatchCommand(const Command& command)
 	{
-		command.TargetDevice = '0';
-		return commandProcessor.HandleCommand(command);
+	commandProcessor.HandleCommand(command);
 	}
-	// Use the device address from the command
-	command.TargetDevice = buffer[3];
-	// If the parameter was present, then parse it as an integer; otherwise use 0.
-	if (charCount > 5 && buffer[4] == ',')
-	{
-		auto position = buffer.substr(5);
-		const auto wholeSteps = std::strtoul(position.begin(), NULL, 10);
-		command.StepPosition = wholeSteps;
-	}
-	auto response = commandProcessor.HandleCommand(command);
-	return response;
-}
 
 /*
  * Handles receive data from the host serial interface.
@@ -89,13 +64,17 @@ void HandleSerialCommunications()
 	case '\n': // newline - dispatch the command
 	case '\r': // carriage return - dispatch the command
 		if (hostReceiveBuffer.length() > 1)
-		{
-			hostReceiveBuffer.push_back(rxChar); // include the EOL in the receive buffer.
-			const auto response = DispatchCommand(hostReceiveBuffer);
-			std::cout << response; // send a fully formatted response, or nothing if there is no response.
-			hostReceiveBuffer.clear();
-		}
-		break;
+			{
+			const auto command = Command(hostReceiveBuffer);
+			DispatchCommand(command);
+			if (ResponseBuilder::available())
+				std::cout
+					<< ResponseBuilder::header
+					<< ResponseBuilder::Message
+					<< ResponseBuilder::terminator
+					<< std::endl; // send response, if there is one.
+			}
+		// fall through to clear the host buffer
 	case '@': // Start of new command
 		hostReceiveBuffer.clear();
 	default:

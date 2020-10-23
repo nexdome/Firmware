@@ -1,43 +1,56 @@
-
 #include <sstream>
+#include "Response.h"
 #include "CommandProcessor.h"
 
 /*
- * Stream extraction operator: outputs the response if and only if the message
- * is not empty. An empty message indicates no response, which produces no output.
+ * Originally, this was a builder that returned a reference to the built response.
+ * However, this led to a proliferation of references and was over-complex.
+ * There is no need to ever have more than one response at any moment, so
+ * we now have a single statically allocated response string, which is set
+ * by one or more of the helper methods. This string can then be accessed
+ * directly in the global scope, when a response needs to be sent somewhere.
+ * We are single-threaded run-to-completion, so there should be no issues
+ * with multiple commands in progress overwriting each others responses.
  */
-std::ostream& operator<<(std::ostream& os, const Response& obj)
+std::string ResponseBuilder::Message;
+
+void ResponseBuilder::Error()
 	{
-	if (obj.Message.length() > 0)
-		os << ':' << obj.Message << Response::terminator << std::endl;
-	return os;
+	Message = "Err";
 	}
 
-Response Response::Error()
+bool ResponseBuilder::available() { return Message.length() > 0; }
+
+void ResponseBuilder::startResponse(const Command &command) {
+	Message.clear();
+    Message.append(command.Verb);
+    Message.push_back(command.TargetDevice);
+}
+
+void ResponseBuilder::FromSuccessfulCommand(const Command& command)
 	{
-	auto error = Response{ "Err" };
-	return error;
+    startResponse(command);
 	}
 
-Response Response::FromSuccessfulCommand(Command& command)
+void ResponseBuilder::FromString(const Command& command, const std::string& message)
+{
+    startResponse(command);
+    Message.append(message);
+}
+
+void ResponseBuilder::FromInteger(const Command& command, const int32_t i)
 	{
+    startResponse(command);
 	std::ostringstream converter;
-	converter << command.Verb << command.TargetDevice;
-	return Response{ converter.str() };
+	converter << i;
+    Message.append(converter.str());
 	}
 
-Response Response::FromInteger(Command& command, int32_t i)
-	{
-	std::ostringstream converter;
-	converter << command.Verb << command.TargetDevice << i;
-	return Response{ converter.str() };
-	}
+void ResponseBuilder::NoResponse(const Command &command)
+    {
+        Message.clear();
+    }
 
-Response Response::NoResponse(Command& command)
-	{
-	return Response{ "" };
-	}
-
-const char Response::terminator = '#';
-const char Response::header = ':';
+const char ResponseBuilder::terminator = '#';
+const char ResponseBuilder::header = ':';
 
