@@ -157,7 +157,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties arduino.upload.port="COM10" config.Debug.customdebug_leonardo_debugger_type="universal" debug.view.AnalogPins="1" debug.view.FreeMemory="" VM_ADDITIONAL_PREPROC="" />
+      <UserProperties arduino.upload.port="COM7" config.Debug.customdebug_leonardo_debugger_type="universal" debug.view.AnalogPins="1" debug.view.FreeMemory="" VM_ADDITIONAL_PREPROC="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
