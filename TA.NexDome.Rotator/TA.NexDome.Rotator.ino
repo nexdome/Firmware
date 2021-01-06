@@ -8,12 +8,15 @@
 #include <SafeSerial.h>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
+#include <Timer.h>
 #include "RainSensor.h"
 #include "NexDome.h"
 #include "PersistentSettings.h"
 #include "HomeSensor.h"
 #include "CommandProcessor.h"
 #include "XBeeStartupState.h"
+
+constexpr Duration SerialInactivityTimeout = Timer::Minutes(10);
 
 // Forward declarations
 void onXbeeFrameReceived(FrameType type, std::vector<byte> &payload);
@@ -32,6 +35,7 @@ auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
 auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN, commandProcessor);
 Timer periodicTasks;
+Timer serialInactivityTimer;
 auto rain = RainSensor(RAIN_SENSOR_PIN);
 
 // cin and cout for ArduinoSTL
@@ -58,6 +62,8 @@ void HandleSerialCommunications()
 	const auto rx = host.read();
 	if (rx < 0)
 		return; // No data available.
+
+	serialInactivityTimer.SetDuration(SerialInactivityTimeout);
 	const char rxChar = char(rx);
 	switch (rxChar)
 	{
@@ -161,6 +167,9 @@ void loop()
 			std::cout << "P" << std::dec << commandProcessor.getPositionInWholeSteps() << std::endl;
 		ProcessManualControls();
 		rain.loop();
+		// Release stepper holding torque if there has been no serial communication for "a long time".
+		if (serialInactivityTimer.Expired())
+			stepper.releaseMotor();
 	}
 }
 
