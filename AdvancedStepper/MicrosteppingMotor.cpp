@@ -71,10 +71,10 @@ void MicrosteppingMotor::energizeMotor() const
 	digitalWrite(enablePin, LOW);	// Active low, so energize the coils.
 	}
 
-// Disables the motor coils (releases holding torque).
+// Disables the motor coils (releases holding torque) if configuration requires that.
 void MicrosteppingMotor::releaseMotor()
 	{
-	digitalWrite(enablePin, HIGH);	// active low, so de-energize the coils
+	digitalWrite(enablePin, configuration->useHoldingTorque ? LOW : HIGH);	// active low
 	digitalWrite(stepPin, LOW);		// active high, so ensure we are not commanding a step.
 	}
 

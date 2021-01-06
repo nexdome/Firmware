@@ -13,7 +13,8 @@ PersistentSettings::PersistentSettings() :
 			ROTATOR_HOME_POSITION,	// Current position in microsteps
 			MOTOR_RAMP_TIME,		// Ramp time to full speed in milliseconds
 			ROTATOR_DEFAULT_SPEED,	// Maximum speed in microsteps per second
-			true					// Direction sense reversed?
+			true,					// Direction sense reversed?
+			true,					// Use holding torque?
 		}),
 	home(0, 500, ROTATOR_FULL_REVOLUTION_MICROSTEPS),
 	deadZone(ROTATOR_DEFAULT_DEADZONE)
