@@ -40,7 +40,8 @@ inline Command::Command(const std::string &buffer)
     if (bufferLength > 5 && buffer[4] == ',')
     {
         const auto position = buffer.substr(5);
-        const auto wholeSteps = std::strtoul(position.begin(), nullptr, 10);
+		const auto positionString = position.c_str();
+        const auto wholeSteps = std::strtoul(positionString, nullptr, 10);
         StepPosition = (int32_t)wholeSteps;
     }
 }

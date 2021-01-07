@@ -47,6 +47,7 @@ ihserialstream cin(host);
 
 void DispatchCommand(const Command& command)
 	{
+	//std::cout << command.RawCommand << "V=" << command.Verb << ", T=" << command.TargetDevice << ", P=" << command.StepPosition << std::endl;
 	commandProcessor.HandleCommand(command);
 	}
 
@@ -73,6 +74,7 @@ void HandleSerialCommunications()
 			{
 			const auto command = Command(hostReceiveBuffer);
 			DispatchCommand(command);
+			hostReceiveBuffer.clear();
 			if (ResponseBuilder::available())
 				std::cout
 					<< ResponseBuilder::header
@@ -80,7 +82,7 @@ void HandleSerialCommunications()
 					<< ResponseBuilder::terminator
 					<< std::endl; // send response, if there is one.
 			}
-		// fall through to clear the host buffer
+		break;
 	case '@': // Start of new command
 		hostReceiveBuffer.clear();
 	default:

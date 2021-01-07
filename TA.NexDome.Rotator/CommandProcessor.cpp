@@ -25,7 +25,7 @@ void CommandProcessor::responseToHost(const std::string& rxMessage)
 
 void CommandProcessor::HandleZZ(const Command& command) const
 	{
-	void(*resetFunc) (void) = 0; //declare reset function at address 0
+	void(*resetFunc) (void) = nullptr; //declare reset function at address 0
 	resetFunc(); //call reset
 	}
 

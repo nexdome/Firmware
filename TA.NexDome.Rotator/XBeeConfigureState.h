@@ -15,7 +15,7 @@ class XBeeConfigureState : public IXBeeState
 {
 public:
 	explicit XBeeConfigureState(XBeeStateMachine& machine) : IXBeeState(machine) { index = 0; };
-	std::string name() override { return "Config"; };
+	std::string name() override { return stateName; };
 	void OnTimerExpired() override;
 	void OnEnter() override;
 	void OnSerialLineReceived(const std::string& message) override;
@@ -24,6 +24,7 @@ private:
 bool sendNextAtCommand();
 	unsigned short index;
 	const char* initSequence __ATTR_PROGMEM__ = "RE,WR,AC,MYFFFE,ID6FBF,CH0B,A17,A27,RR6,RN2,CA30,PL4,SM0,CE1,AP2,WR,FR,";
+	const char* stateName __ATTR_PROGMEM__ = "Config";
 };
 
 #endif
