@@ -1,6 +1,8 @@
 assembly-versioning-scheme: MajorMinorPatchTag
 mode: ContinuousDeployment
-next-version: 3.0.0
-branches: {}
+continuous-delivery-fallback-tag: ''
+branches:
+  master: {}
 ignore:
   sha: []
+merge-message-formats: {}
