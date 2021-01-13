@@ -8,12 +8,15 @@
 #include <SafeSerial.h>
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
+#include <Timer.h>
 #include "RainSensor.h"
 #include "NexDome.h"
 #include "PersistentSettings.h"
 #include "HomeSensor.h"
 #include "CommandProcessor.h"
 #include "XBeeStartupState.h"
+
+constexpr Duration SerialInactivityTimeout = Timer::Minutes(10);
 
 // Forward declarations
 void onXbeeFrameReceived(FrameType type, std::vector<byte> &payload);
@@ -32,6 +35,7 @@ auto machine = XBeeStateMachine(xbeeSerial, xbeeApi);
 auto commandProcessor = CommandProcessor(stepper, settings, machine);
 auto home = HomeSensor(&stepper, &settings.home, HOME_INDEX_PIN, commandProcessor);
 Timer periodicTasks;
+Timer serialInactivityTimer;
 auto rain = RainSensor(RAIN_SENSOR_PIN);
 
 // cin and cout for ArduinoSTL
@@ -41,35 +45,11 @@ ohserialstream cout(host);
 ihserialstream cin(host);
 } // namespace std
 
-Response DispatchCommand(const std::string &buffer)
-{
-	const auto charCount = buffer.length();
-	if (charCount < 2)
-		return Response::Error();
-	Command command;
-	command.RawCommand = buffer;
-	command.StepPosition = 0;
-	command.Verb.push_back(buffer[1]);
-	if (charCount > 2)
-		command.Verb.push_back(buffer[2]);
-	// If there is no device address then use '0', the default device.
-	if (charCount < 4)
+void DispatchCommand(const Command& command)
 	{
-		command.TargetDevice = '0';
-		return commandProcessor.HandleCommand(command);
+	//std::cout << command.RawCommand << "V=" << command.Verb << ", T=" << command.TargetDevice << ", P=" << command.StepPosition << std::endl;
+	commandProcessor.HandleCommand(command);
 	}
-	// Use the device address from the command
-	command.TargetDevice = buffer[3];
-	// If the parameter was present, then parse it as an integer; otherwise use 0.
-	if (charCount > 5 && buffer[4] == ',')
-	{
-		auto position = buffer.substr(5);
-		const auto wholeSteps = std::strtoul(position.begin(), NULL, 10);
-		command.StepPosition = wholeSteps;
-	}
-	auto response = commandProcessor.HandleCommand(command);
-	return response;
-}
 
 /*
  * Handles receive data from the host serial interface.
@@ -83,18 +63,25 @@ void HandleSerialCommunications()
 	const auto rx = host.read();
 	if (rx < 0)
 		return; // No data available.
+
+	serialInactivityTimer.SetDuration(SerialInactivityTimeout);
 	const char rxChar = char(rx);
 	switch (rxChar)
 	{
 	case '\n': // newline - dispatch the command
 	case '\r': // carriage return - dispatch the command
 		if (hostReceiveBuffer.length() > 1)
-		{
-			hostReceiveBuffer.push_back(rxChar); // include the EOL in the receive buffer.
-			const auto response = DispatchCommand(hostReceiveBuffer);
-			std::cout << response; // send a fully formatted response, or nothing if there is no response.
+			{
+			const auto command = Command(hostReceiveBuffer);
+			DispatchCommand(command);
 			hostReceiveBuffer.clear();
-		}
+			if (ResponseBuilder::available())
+				std::cout
+					<< ResponseBuilder::header
+					<< ResponseBuilder::Message
+					<< ResponseBuilder::terminator
+					<< std::endl; // send response, if there is one.
+			}
 		break;
 	case '@': // Start of new command
 		hostReceiveBuffer.clear();
@@ -182,6 +169,9 @@ void loop()
 			std::cout << "P" << std::dec << commandProcessor.getPositionInWholeSteps() << std::endl;
 		ProcessManualControls();
 		rain.loop();
+		// Release stepper holding torque if there has been no serial communication for "a long time".
+		if (serialInactivityTimer.Expired())
+			stepper.releaseMotor();
 	}
 }
 

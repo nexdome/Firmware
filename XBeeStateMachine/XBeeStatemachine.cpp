@@ -103,10 +103,9 @@ void XBeeStateMachine::ChangeState(IXBeeState* newState)
 
 void XBeeStateMachine::StateTransitionIfRequested()
 	{
-	// The following line is not diagnostics, it's part of the protocol and must not be commented out.
 	if (nextState != nullptr)
 		{
-		std::cout << "XB->" << nextState->name() << std::endl;
+		std::cout << "XB->" << nextState->name() << std::endl; // Not diagnostics - do not comment out
 #ifdef DEBUG_TIMESTAMP_STATE_CHANGES
 		std::cout << millis() << std::endl;
 #endif

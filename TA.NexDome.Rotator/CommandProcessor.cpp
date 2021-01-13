@@ -23,39 +23,39 @@ void CommandProcessor::responseToHost(const std::string& rxMessage)
 	std::cout << std::endl;
 	}
 
-Response CommandProcessor::HandleZZ(Command& command) const
+void CommandProcessor::HandleZZ(const Command& command) const
 	{
-	void(*resetFunc) (void) = 0; //declare reset function at address 0
+	void(*resetFunc) (void) = nullptr; //declare reset function at address 0
 	resetFunc(); //call reset
 	}
 
-Response CommandProcessor::HandleDR(Command& command) const
+void CommandProcessor::HandleDR(const Command& command) const
 	{
 	const auto deadZone = getDeadZoneWholeSteps();
-	return Response::FromInteger(command, deadZone);
+	ResponseBuilder::FromInteger(command, deadZone);
 	}
 
-Response CommandProcessor::HandleDW(Command& command) const
+void CommandProcessor::HandleDW(const Command& command) const
 	{
 	const auto deadZone = stepsToMicrosteps(command.StepPosition);
 	if (deadZone < 0 || deadZone > (1530 * 8))
-		return Response::Error();
+		ResponseBuilder::Error();
 	settings.deadZone = deadZone;
-	return Response::FromSuccessfulCommand(command);
+	ResponseBuilder::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleHR(Command& command) const
+void CommandProcessor::HandleHR(const Command& command) const
 	{
-	return Response::FromInteger(command, microstepsToSteps(settings.home.position));
+	ResponseBuilder::FromInteger(command, microstepsToSteps(settings.home.position));
 	}
 
-Response CommandProcessor::HandleHW(Command& command) const
+void CommandProcessor::HandleHW(const Command& command) const
 	{
 	const auto position = stepsToMicrosteps(command.StepPosition);
 	if (position < 0 || position > settings.home.microstepsPerRotation)
-		return Response::Error();
+		ResponseBuilder::Error();
 	settings.home.position = position;
-	return Response::FromSuccessfulCommand(command);
+	ResponseBuilder::FromSuccessfulCommand(command);
 	}
 
 void CommandProcessor::sendStatus() const
@@ -70,7 +70,7 @@ void CommandProcessor::sendStatus() const
 		<< getCircumferenceInWholeSteps() << separator
 		<< getHomePositionWholeSteps() << separator
 		<< getDeadZoneWholeSteps()
-		<< Response::terminator;
+		<< ResponseBuilder::terminator;
 	std::cout << status.str() << std::endl;
 	}
 
@@ -79,26 +79,26 @@ void CommandProcessor::sendDirection(const int direction)
 	static const std::string clockwise = "right";
 	static const std::string counterClockwise = "left";
 	if (direction < 0)
-		std::cout << Response::header << counterClockwise << Response::terminator << std::endl;
+		std::cout << ResponseBuilder::header << counterClockwise << ResponseBuilder::terminator << std::endl;
 	else
-		std::cout << Response::header << clockwise << Response::terminator << std::endl;
+		std::cout << ResponseBuilder::header << clockwise << ResponseBuilder::terminator << std::endl;
 	}
 
 
 
-Response CommandProcessor::ForwardToShutter(Command& command) const
+void CommandProcessor::ForwardToShutter(const Command& command) const
 	{
 	machine.SendToRemoteXbee(command.RawCommand);
-	//ToDo: should the response always be successful?
-	return Response::FromSuccessfulCommand(command);
+	ResponseBuilder::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleCommand(Command& command) const
+void CommandProcessor::HandleCommand(const Command& command) const
 	{
+	ResponseBuilder::FromSuccessfulCommand(command); // This is the default response unless overwritten below
 	if (command.IsShutterCommand())
 		{
 		ForwardToShutter(command);
-		return Response::NoResponse(command);
+		ResponseBuilder::NoResponse(command);	// The shutter will send a response asynchronously.
 		}
 
 	if (command.IsRotatorCommand())
@@ -126,18 +126,13 @@ Response CommandProcessor::HandleCommand(Command& command) const
 		if (command.Verb == "ZW") return HandleZW(command); // Write settings to persistent storage
 		if (command.Verb == "ZZ") return HandleZZ(command); // Reboot immediately
 		}
-	if (command.IsSystemCommand())
-		{
-		// There are currently no system commands
-		}
-	return Response::Error();
 	}
 
 
-Response CommandProcessor::HandleAR(Command& command) const
+void CommandProcessor::HandleAR(const Command& command) const
 	{
 	const auto rampTime = settings.motor.rampTimeMilliseconds;
-	return Response::FromInteger(command, rampTime);
+	ResponseBuilder::FromInteger(command, rampTime);
 	}
 
 
@@ -153,119 +148,103 @@ if (abs(delta) >= settings.deadZone)
 	}
 }
 
-Response CommandProcessor::HandleGA(Command& command) const
+void CommandProcessor::HandleGA(const Command& command) const
 	{
 	const auto microstepsPerDegree = settings.home.microstepsPerRotation / 360.0;
 	const auto target = targetStepPosition(command.StepPosition * microstepsPerDegree);
 	rotateToMicrostepPosition(target);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleGS(Command& command) const
+void CommandProcessor::HandleGS(const Command& command) const
 	{
 	const auto target = targetStepPosition(stepsToMicrosteps(command.StepPosition));
 	rotateToMicrostepPosition(target);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleGH(Command& command) const
+void CommandProcessor::HandleGH(const Command& command) const
 	{
 	const auto delta = deltaSteps(settings.home.position);
 	const auto direction = sgn(delta);
 	HomeSensor::findHome(direction == 0 ? 1 : direction);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleAW(Command& command) const
+void CommandProcessor::HandleAW(const Command& command) const
 	{
 	auto rampTime = command.StepPosition;
 	// The minimum ramp time is 100ms, fail if the user tries to set it lower.
 	if (rampTime < MIN_RAMP_TIME)
-		return Response::Error();
+		ResponseBuilder::Error();
 	rotator.setRampTime(rampTime);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleSW(Command& command) const
+void CommandProcessor::HandleSW(const Command& command) const
 	{
 	rotator.hardStop();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleSR(Command& command) const
+void CommandProcessor::HandleSR(const Command& command) const
 	{
 	sendStatus();
-	return Response::NoResponse(command);
+	ResponseBuilder::NoResponse(command);
 	}
 
-Response CommandProcessor::HandleZW(Command& command) const
+void CommandProcessor::HandleZW(const Command& command) const
 	{
 	settings.Save();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZR(Command& command) const
+void CommandProcessor::HandleZR(const Command& command) const
 	{
 	settings = PersistentSettings::Load();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleZD(Command& command) const
+void CommandProcessor::HandleZD(const Command& command) const
 	{
 	settings = PersistentSettings();
 	settings.Save();
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandlePR(Command& command) const
+void CommandProcessor::HandlePR(const Command& command) const
 	{
 	const auto position = microstepsToSteps(rotator.getCurrentPosition());
-	auto response = Response::FromInteger(command, position);
-	return response;
+	ResponseBuilder::FromInteger(command, position);
 	}
 
-Response CommandProcessor::HandlePW(Command& command) const
+void CommandProcessor::HandlePW(const Command& command) const
 	{
 	const auto microsteps = stepsToMicrosteps(command.StepPosition);
 	rotator.SetCurrentPosition(microsteps);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleRW(Command& command) const
+void CommandProcessor::HandleRW(const Command& command) const
 	{
 	const auto microsteps = stepsToMicrosteps(command.StepPosition);
 	settings.home.microstepsPerRotation = microsteps;
-	//rotator.SetLimitOfTravel(microsteps);
-	return Response::FromSuccessfulCommand(command);
 	}
 
-Response CommandProcessor::HandleRR(Command& command) const
+void CommandProcessor::HandleRR(const Command& command) const
 	{
 	const auto range = microstepsToSteps(settings.home.microstepsPerRotation);
-	return Response::FromInteger(command, range);
+	ResponseBuilder::FromInteger(command, range);
 	}
 
-Response CommandProcessor::HandleFR(Command& command) const
+void CommandProcessor::HandleFR(const Command& command) const
 	{
-	std::string message;
-	message.append("FR");
-	message.append(SemanticVersion);
-	return Response{message};
+	ResponseBuilder::FromString(command, SemanticVersion);
 	}
 
-Response CommandProcessor::HandleVR(Command& command) const
+void CommandProcessor::HandleVR(const Command& command) const
 	{
 	auto maxSpeed = rotator.getMaximumSpeed();
-	return Response::FromInteger(command, microstepsToSteps(maxSpeed));
+	ResponseBuilder::FromInteger(command, microstepsToSteps(maxSpeed));
 	}
 
-Response CommandProcessor::HandleVW(Command& command) const
+void CommandProcessor::HandleVW(const Command& command) const
 	{
 	uint16_t speed = stepsToMicrosteps(command.StepPosition);
 	if (speed < rotator.getMinimumSpeed())
-		return Response::Error();
+		ResponseBuilder::Error();
 	rotator.setMaximumSpeed(speed);
-	return Response::FromSuccessfulCommand(command);
 	}
 
 

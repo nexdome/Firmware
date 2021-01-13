@@ -1,0 +1,31 @@
+@startuml Handle Command
+participant loop
+participant handleSerialComms
+participant DispatchCommand
+participant HandleCommand
+participant HandleXXX
+participant Command
+participant Serial
+
+
+loop -> handleSerialComms
+handleSerialComms -> Command : <<construct>>
+activate Command
+Command --> handleSerialComms : command
+handleSerialComms -> DispatchCommand : command&
+activate DispatchCommand
+DispatchCommand -> HandleCommand : command&
+activate HandleCommand
+HandleCommand -> HandleXXX : command&
+activate HandleXXX
+HandleXXX -> HandleXXX : set response
+HandleXXX --> HandleCommand
+deactivate HandleXXX
+HandleCommand --> DispatchCommand 
+deactivate HandleCommand
+DispatchCommand --> handleSerialComms
+deactivate DispatchCommand
+deactivate Command
+handleSerialComms -> Serial : <<write>> response
+handleSerialComms --> loop
+@enduml

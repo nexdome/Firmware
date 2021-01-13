@@ -16,10 +16,12 @@ constexpr Duration XbeeBootTime = Timer::Seconds(2);
 class XBeeStartupState : public IXBeeState
 {
 public:
-	std::string name() override { return "Start"; }
+	std::string name() override { return stateName; }
 	void OnEnter() override;
 	void OnTimerExpired() override;
 	explicit XBeeStartupState(XBeeStateMachine& machine) : IXBeeState(machine) {}
+private:
+	const char* stateName __ATTR_PROGMEM__ = "Start";
 };
 
 #endif

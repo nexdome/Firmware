@@ -10,13 +10,15 @@
                 "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.209\\**",
                 "F:\\Arduino\\hardware\\arduino\\avr\\**",
                 "F:\\Arduino\\tools\\**",
-                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.23\\**"
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.23\\**",
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.1\\**"
             ],
             "forcedInclude": [
                 "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\cores\\arduino\\Arduino.h",
                 "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.209\\cores\\arduino\\Arduino.h",
                 "F:\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h",
-                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.23\\cores\\arduino\\Arduino.h"
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.23\\cores\\arduino\\Arduino.h",
+                "C:\\Users\\Tim\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.1\\cores\\arduino\\Arduino.h"
             ],
             "intelliSenseMode": "msvc-x64"
         }

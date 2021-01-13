@@ -6,15 +6,12 @@
 #include <AdvancedStepper.h>
 #include <XBeeApi.h>
 #include "NexDome.h"
-#include "XBeeStateMachine.h"
+#include "XBeeStatemachine.h"
 #include "XBeeStartupState.h"
 #include "CommandProcessor.h"
 #include "PersistentSettings.h"
 #include "LimitSwitch.h"
-#define DEBUG_CONSERVE_FLASH (defined DEBUG_XBEE_API || defined DEBUG_XBEE_CONFIG)
-#if !DEBUG_CONSERVE_FLASH
 #include "BatteryMonitor.h"
-#endif
 
 void onMotorStopped(); // Forward reference
 
@@ -30,10 +27,8 @@ std::vector<byte> xbeeApiRxBuffer;
 void HandleFrameReceived(FrameType type, const std::vector<byte>& payload); // forward reference
 auto xbee = XBeeApi(xbeeSerial, xbeeApiRxBuffer, ReceiveHandler(HandleFrameReceived));
 auto machine = XBeeStateMachine(xbeeSerial, xbee);
-auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitches);
-#if !DEBUG_CONSERVE_FLASH
 auto batteryMonitor = BatteryMonitor(machine, A0, settings.batteryMonitor);
-#endif
+auto commandProcessor = CommandProcessor(stepper, settings, machine, limitSwitches, batteryMonitor);
 
 // cin and cout for ArduinoSTL
 namespace std
@@ -79,34 +74,9 @@ void ProcessManualControls()
 	}
 
 
-Response DispatchCommand(const std::string& buffer)
+void DispatchCommand(const Command& command)
 	{
-	const auto charCount = buffer.length();
-	if (charCount < 2)
-		return Response::Error();
-	Command command;
-	command.RawCommand = buffer;
-	command.StepPosition = 0;
-	command.Verb.push_back(buffer[1]);
-	if (charCount > 2)
-		command.Verb.push_back(buffer[2]);
-	// If there is no device address then use '0', the default device.
-	if (charCount < 4)
-		{
-		command.TargetDevice = '0';
-		return commandProcessor.HandleCommand(command);
-		}
-	// Use the device address from the command
-	command.TargetDevice = buffer[3];
-	// If the parameter was present, then parse it as an integer; otherwise use 0.
-	if (charCount > 5 && buffer[4] == ',')
-		{
-		const auto position = buffer.substr(5);
-		const auto wholeSteps = std::strtoul(position.begin(), nullptr, 10);
-		command.StepPosition = wholeSteps;
-		}
-	auto response = commandProcessor.HandleCommand(command);
-	return response;
+	commandProcessor.HandleCommand(command);
 	}
 
 
@@ -124,9 +94,10 @@ void HandleSerialCommunications()
 		case '\r': // carriage return - dispatch the command
 			if (hostReceiveBuffer.length() > 1)
 				{
-				hostReceiveBuffer.push_back(rxChar); // include the EOL in the receive buffer.
-				const auto response = DispatchCommand(hostReceiveBuffer);
-				std::cout << response; // send a fully formatted response, or nothing if there is no response.
+                const auto command = Command(hostReceiveBuffer);
+				DispatchCommand(command);
+				if (ResponseBuilder::available())
+				    std::cout << ResponseBuilder::Message << std::endl; // send response, if there is one.
 				hostReceiveBuffer.clear();
 				}
 			break;
@@ -183,7 +154,9 @@ void loop()
 			converter.clear();
 			converter.str("");
 			converter << "S" << wholeSteps;
+#ifdef SHUTTER_LOCAL_OUTPUT
 			std::cout << "S" << std::dec << wholeSteps << std::endl;
+#endif
 			machine.SendToRemoteXbee(converter.str());
 			}
 		}

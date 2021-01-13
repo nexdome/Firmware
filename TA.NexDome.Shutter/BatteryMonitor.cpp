@@ -1,12 +1,13 @@
-﻿
-#include <sstream>
+﻿#include <sstream>
 #include "BatteryMonitor.h"
 #include "Response.h"
 #include "CommandProcessor.h"
 
-BatteryMonitor::BatteryMonitor(XBeeStateMachine& machine, uint8_t analogPin, BatteryMonitorSettings& settings)
-	: machine(machine), analogPin(analogPin), settings(settings),
-	movingAverageVoltage(settings.sampleWindow)
+extern void DispatchCommand(const Command& command);
+
+BatteryMonitor::BatteryMonitor(XBeeStateMachine& machine, uint8_t analogPin, BatteryMonitorSettings& settings) :
+    machine(machine),
+    movingAverageVoltage(settings.sampleWindow), analogPin(analogPin), settings(settings)
 	{
 	sampleTimer.Stop();
 	notificationTimer.Stop();
@@ -19,7 +20,6 @@ void BatteryMonitor::initialize(unsigned long initialDelay)
 	movingAverageVoltage.init(65535);
 	}
 
-
 void BatteryMonitor::loop()
 	{
 	if (!sampleTimer.Expired())
@@ -29,18 +29,31 @@ void BatteryMonitor::loop()
 	checkThresholdAndSendNotification();
 	}
 
+bool BatteryMonitor::lowVolts()
+	{
+	return movingAverageVoltage.average < settings.threshold;
+	}
+
 void BatteryMonitor::checkThresholdAndSendNotification()
 	{
 	if (!notificationTimer.Expired())
 		return;
 	notificationTimer.SetDuration(settings.notifyInterval);
 	std::ostringstream message;
-	message << Response::header << "BV" << movingAverageVoltage.average << Response::terminator;
+	message << ResponseBuilder::header << "BV" << movingAverageVoltage.average << ResponseBuilder::terminator;
 	machine.SendToRemoteXbee(message.str());
+#ifdef SHUTTER_LOCAL_OUTPUT
 	std::cout << message.str() << std::endl;
-	//if (movingAverageVoltage.average < settings.threshold)
-	//	{
-	//	//ToDo: take action on low battery condition
-	//	std::cout << "Auto-close" << std::endl;
-	//	}
+#endif
+	if (lowVolts())
+		{
+		const std::string lowVoltsMessage = "Volts";
+        const std::string closeShutter = "@CLS";
+#ifdef SHUTTER_LOCAL_OUTPUT
+		std::cout << lowVoltsMessage << std::endl;
+#endif
+        auto command = Command(closeShutter);
+        DispatchCommand(command);
+		machine.SendToRemoteXbee(lowVoltsMessage);
+		}
 	}

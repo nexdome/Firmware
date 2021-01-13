@@ -48,6 +48,9 @@
     <ClInclude Include="RainSensor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="__vm\.TA.NexDome.Rotator.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandProcessor.cpp">

@@ -11,7 +11,8 @@ PersistentSettings::PersistentSettings() :
 			0,							// Current position in microsteps
 			MOTOR_RAMP_TIME,			// Ramp time to full speed in milliseconds
 			SHUTTER_DEFAULT_SPEED,		// Maximum speed in microsteps per second
-			true						// Direction reversed
+			true,						// Direction reversed
+			false,						// Use holding torque? (not for shutter - preserve battery)
 		}),
 	batteryMonitor(BatteryMonitorSettings{})
 	{}

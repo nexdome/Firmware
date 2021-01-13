@@ -19,10 +19,7 @@ class CommandProcessor
 public:
 	CommandProcessor(MicrosteppingMotor& rotator, PersistentSettings& settings, XBeeStateMachine& machine);
 	static void responseToHost(const std::string& rxMessage);
-	Response HandleZZ(Command& command) const;
-	Response HandleDR(Command& command) const;
-	Response HandleDW(Command& command) const;
-	Response HandleCommand(Command& command) const;
+	void HandleCommand(const Command& command) const;
 	uint32_t getNormalizedPositionInMicrosteps() const;
 	int32_t getPositionInWholeSteps() const;
 	int32_t getCircumferenceInWholeSteps() const;
@@ -35,27 +32,31 @@ public:
 	int32_t targetStepPosition(uint32_t toMicrostepPosition) const;
 
 private:
-	Response ForwardToShutter(Command& command) const;
-	Response HandleAR(Command& command) const;
-	Response HandleAW(Command& command) const; // AW - Acceleration ramp time write
-	Response HandleFR(Command& command) const; // Firmware version read
-	Response HandleGA(Command& command) const; // GA - GoTo Azimuth (in degrees).
+
 	void rotateToMicrostepPosition(int32_t target) const;
-	Response HandleGS(Command& command) const; // GS - GoTo Step Position
-	Response HandleGH(Command& command) const; // Go to home sensor
-	Response HandleHR(Command& command) const; // Read Home position (steps clockwise from true north)
-	Response HandleHW(Command& command) const; // Write home position (steps clockwise from true north)
-	Response HandlePR(Command& command) const; // Step position read
-	Response HandlePW(Command& command) const; // Step position write (sync)
-	Response HandleRR(Command& command) const; // Range (limit of travel) read
-	Response HandleRW(Command& command) const; // Range (limit of travel) write
-	Response HandleSW(Command& command) const; // Stop write (motor emergency stop)
-	Response HandleSR(Command& command) const; // Status Request
-	Response HandleVR(Command& command) const; // Velocity [sic] read (motor maximum speed in microsteps/sec)
-	Response HandleVW(Command& command) const; // Velocity [sic] write (microsteps/sec)
-	Response HandleZW(Command& command) const; // EEPROM write (save settings)
-	Response HandleZR(Command& command) const; // EEPROM read (load settings)
-	Response HandleZD(Command& command) const; // Reset to factory settings (clears both EEPROM and working settings)
+	void ForwardToShutter(const Command& command) const;
+	void HandleZZ(const Command& command) const;
+	void HandleDR(const Command& command) const;
+	void HandleDW(const Command& command) const;
+	void HandleAR(const Command& command) const;
+	void HandleAW(const Command& command) const; // AW - Acceleration ramp time write
+	void HandleFR(const Command& command) const; // Firmware version read
+	void HandleGA(const Command& command) const; // GA - GoTo Azimuth (in degrees).
+	void HandleGS(const Command& command) const; // GS - GoTo Step Position
+	void HandleGH(const Command& command) const; // Go to home sensor
+	void HandleHR(const Command& command) const; // Read Home position (steps clockwise from true north)
+	void HandleHW(const Command& command) const; // Write home position (steps clockwise from true north)
+	void HandlePR(const Command& command) const; // Step position read
+	void HandlePW(const Command& command) const; // Step position write (sync)
+	void HandleRR(const Command& command) const; // Range (limit of travel) read
+	void HandleRW(const Command& command) const; // Range (limit of travel) write
+	void HandleSW(const Command& command) const; // Stop write (motor emergency stop)
+	void HandleSR(const Command& command) const; // Status Request
+	void HandleVR(const Command& command) const; // Velocity [sic] read (motor maximum speed in microsteps/sec)
+	void HandleVW(const Command& command) const; // Velocity [sic] write (microsteps/sec)
+	void HandleZW(const Command& command) const; // EEPROM write (save settings)
+	void HandleZR(const Command& command) const; // EEPROM read (load settings)
+	void HandleZD(const Command& command) const; // Reset to factory settings (clears both EEPROM and working settings)
 	// Calculates the target microstep position using the shortest direction.
 	int32_t deltaSteps(uint32_t toMicrostepPosition) const;
 	int32_t getDeadZoneWholeSteps() const;

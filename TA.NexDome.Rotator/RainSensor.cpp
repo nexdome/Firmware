@@ -1,11 +1,12 @@
-// 
-// 
-// 
+//
+//
+//
 
 #include <ArduinoSTL.h>
 #include "RainSensor.h"
 #include "CommandProcessor.h"
-extern Response DispatchCommand(const std::string& buffer);
+
+extern void DispatchCommand(const Command& command);
 
 /*
  * Initialize the rain sensor.
@@ -23,9 +24,10 @@ void RainSensor::closeShutter()
 	{
 	closeTimer.SetDuration(repeatDuration);
 	closing = true;
-	const std::string closeShutter = "@CLS";
-	DispatchCommand(closeShutter);
 	std::cout << ":Rain#" << std::endl;
+	const std::string closeShutter = "@CLS";
+	const auto closeCommand = Command(closeShutter);
+	DispatchCommand(closeCommand);
 	}
 
 void RainSensor::loop()
