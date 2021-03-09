@@ -41,15 +41,15 @@ auto rain = RainSensor(RAIN_SENSOR_PIN);
 // cin and cout for ArduinoSTL
 namespace std
 {
-ohserialstream cout(host);
-ihserialstream cin(host);
+	ohserialstream cout(host);
+	ihserialstream cin(host);
 } // namespace std
 
-void DispatchCommand(const Command& command)
-	{
+void DispatchCommand(const Command &command)
+{
 	//std::cout << command.RawCommand << "V=" << command.Verb << ", T=" << command.TargetDevice << ", P=" << command.StepPosition << std::endl;
 	commandProcessor.HandleCommand(command);
-	}
+}
 
 /*
  * Handles receive data from the host serial interface.
@@ -71,7 +71,7 @@ void HandleSerialCommunications()
 	case '\n': // newline - dispatch the command
 	case '\r': // carriage return - dispatch the command
 		if (hostReceiveBuffer.length() > 1)
-			{
+		{
 			const auto command = Command(hostReceiveBuffer);
 			DispatchCommand(command);
 			hostReceiveBuffer.clear();
@@ -81,7 +81,7 @@ void HandleSerialCommunications()
 					<< ResponseBuilder::Message
 					<< ResponseBuilder::terminator
 					<< std::endl; // send response, if there is one.
-			}
+		}
 		break;
 	case '@': // Start of new command
 		hostReceiveBuffer.clear();
@@ -171,7 +171,10 @@ void loop()
 		rain.loop();
 		// Release stepper holding torque if there has been no serial communication for "a long time".
 		if (serialInactivityTimer.Expired())
+		{
 			stepper.releaseMotor();
+			serialInactivityTimer.Stop();
+		}
 	}
 }
 
