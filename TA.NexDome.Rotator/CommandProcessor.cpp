@@ -103,8 +103,8 @@ void CommandProcessor::HandleCommand(const Command& command) const
 
 	if (command.IsRotatorCommand())
 		{
-		if (command.Verb == "AR") return HandleAR(command); // Read firmware version
-		if (command.Verb == "AW") return HandleAW(command); // Read firmware version
+		if (command.Verb == "AR") return HandleAR(command); // Read acceleration ramp time (ms)
+		if (command.Verb == "AW") return HandleAW(command); // Write acceleration ramp time (ms)
 		if (command.Verb == "DR") return HandleDR(command); // Read dead zone (rotator only)
 		if (command.Verb == "DW") return HandleDW(command); // Write dead zone (rotator only)
 		if (command.Verb == "FR") return HandleFR(command); // Read firmware version
